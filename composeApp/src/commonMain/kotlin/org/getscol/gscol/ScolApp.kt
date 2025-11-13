@@ -1,0 +1,53 @@
+package org.getscol.gscol
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import org.getscol.gscol.bottombar.ScolBottomBar
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.ScolNavHost
+import org.getscol.gscol.navigation.TopLevelDestination
+import org.getscol.gscol.navigation.rememberNavigator
+
+@Composable
+fun ScolApp() {
+    val navController = rememberNavController()
+    val navigator = rememberNavigator(navController)
+
+    // Get the current showing screen
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    //Determine if bottom bar should show
+    val topLevelRoutes = TopLevelDestination.entries.map { it.route::class.qualifiedName }
+    val shouldShowBottomBar = topLevelRoutes.contains(
+        currentRoute?.substringBefore("?")
+    )
+
+    Scaffold(
+        bottomBar = {
+            if (shouldShowBottomBar) {
+                ScolBottomBar(
+                    destinations = TopLevelDestination.entries,
+                    currentRoute = currentRoute,
+                    onNavigateDestination = { destinations ->
+                        navigator.navigateToTopLevel(destinations)
+                    },
+                )
+            }
+
+        }) { paddingValues ->
+        ScolNavHost(
+            navController = navController,
+            navigator = navigator,
+            modifier = Modifier.padding(paddingValues)
+
+        )
+    }
+
+
+}

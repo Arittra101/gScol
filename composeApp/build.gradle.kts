@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
+
 }
 
 kotlin {
@@ -39,6 +41,16 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            //navigation 3
+//            implementation(libs.navigation.compose)
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
+
+
+            // Kotlinx Serialization (required for type-safe navigation)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(compose.materialIconsExtended)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
