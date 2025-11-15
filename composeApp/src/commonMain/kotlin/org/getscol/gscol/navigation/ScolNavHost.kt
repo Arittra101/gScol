@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
+import org.getscol.gscol.Helper.composableNoAnimation
 
 @Composable
 fun ScolNavHost(
@@ -18,19 +18,19 @@ fun ScolNavHost(
         navController = navController,
         startDestination = Route.HomeRoute,
     ) {
-        composable<Route.HomeRoute> {
+        composableNoAnimation<Route.HomeRoute> {
             App()
         }
-        composable<Route.CompareRoute> {
+        composableNoAnimation<Route.CompareRoute> {
             App2()
         }
-        composable<Route.Application> {
+        composableNoAnimation<Route.Application>{
             App()
         }
-        composable<Route.Profile> {
+        composableNoAnimation<Route.Profile> {
             App2()
         }
-        composable<Route.Consultant> {
+        composableNoAnimation<Route.Consultant> {
             App()
         }
     }
