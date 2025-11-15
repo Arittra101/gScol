@@ -17,12 +17,21 @@ fun ScolNavHost(
     NavHost(
         navController = navController,
         startDestination = Route.HomeRoute,
-    ){
-       composable<Route.HomeRoute>{
-           App()
-       }
-        composable<Route.CompareRoute>{
+    ) {
+        composable<Route.HomeRoute> {
+            App()
+        }
+        composable<Route.CompareRoute> {
             App2()
+        }
+        composable<Route.Application> {
+            App()
+        }
+        composable<Route.Profile> {
+            App2()
+        }
+        composable<Route.Consultant> {
+            App()
         }
     }
 }

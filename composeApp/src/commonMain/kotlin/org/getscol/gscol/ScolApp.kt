@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.getscol.gscol.bottombar.ScolBottomBar
-import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.ScolNavHost
 import org.getscol.gscol.navigation.TopLevelDestination
 import org.getscol.gscol.navigation.rememberNavigator

@@ -21,22 +21,22 @@ enum class TopLevelDestination(
         label = "Compare"
     ),
 
-//    APPLICATION(
-//        route = Route.Application,
-//        icon = Icons.Default.Home,
-//        label = "Application"
-//    ),
-//
-//    CONSULTANT(
-//        route = Route.Consultant,
-//        icon = Icons.Default.Home,
-//        label = "Consultant"
-//    ),
-//
-//    PROFILE(
-//        route = Route.Profile,
-//        icon = Icons.Default.Home,
-//        label = "Profile"
-//    ),
+    APPLICATION(
+        route = Route.Application,
+        icon = Icons.Default.Home,
+        label = "Application"
+    ),
+
+    CONSULTANT(
+        route = Route.Consultant,
+        icon = Icons.Default.Home,
+        label = "Consultant"
+    ),
+
+    PROFILE(
+        route = Route.Profile,
+        icon = Icons.Default.Home,
+        label = "Profile"
+    ),
 
 }

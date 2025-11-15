@@ -5,9 +5,11 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 
 /*
-   in future we will adopt nav3 if nav3 is available for cmp
-   and file name will be ScolAppState
- */
+   ---------
+   In future we will adopt nav3 if nav3 is available for cmp/kmp
+   File name will be ScolAppState
+   ---------
+*/
 
 
 class Navigator(private val navController: NavController) {

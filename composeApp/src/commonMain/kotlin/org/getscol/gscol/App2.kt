@@ -23,6 +23,7 @@ import scol.composeapp.generated.resources.compose_multiplatform
 @Preview
 fun App2() {
     MaterialTheme {
+        println("App2 create")
         var showContent by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
