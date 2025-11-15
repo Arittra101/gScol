@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -31,6 +30,10 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            //koin
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -43,13 +46,19 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             //navigation 3
-//            implementation(libs.navigation.compose)
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.1")
+            implementation(libs.navigation.compose)
 
 
             // Kotlinx Serialization (required for type-safe navigation)
             implementation(libs.kotlinx.serialization.json)
+
+            //material icon
             implementation(compose.materialIconsExtended)
+
+            //koin
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            api(libs.koin.core)
 
         }
         commonTest.dependencies {
