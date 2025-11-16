@@ -135,3 +135,4 @@ temp/
 
 # Debug files
 *.debug
+/.kotlin/sessions/kotlin-compiler-15687702399890914070.salive
