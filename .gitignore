@@ -136,3 +136,6 @@ temp/
 # Debug files
 *.debug
 /.kotlin/sessions/kotlin-compiler-15687702399890914070.salive
+/.kotlin/sessions/kotlin-compiler-4356486560419225477.salive
+/composeApp/src/iosMain/kotlin/org/getscol/gscol/di/Module.ios.kt
+/composeApp/src/androidMain/kotlin/org/getscol/gscol/di/Modules.android.kt
