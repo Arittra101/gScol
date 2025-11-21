@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 fun appLightColors(): AppColors = AppColors(
     primary = Color(0xFF0057D9),
     onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFD6E2FF),
+    primaryContainer = Color(0xFFD9D9D6),
     onPrimaryContainer = Color(0xFF001A43),
     secondary = Color(0xFF556380),
     onSecondary = Color(0xFFFFFFFF),
@@ -19,7 +19,7 @@ fun appLightColors(): AppColors = AppColors(
     onError = Color(0xFFFFFFFF),
     errorContainer = Color(0xFFFFDAD6),
     onErrorContainer = Color(0xFF410002),
-    background = Color(0xFFFBFCFF),
+    background = Color(0xFFFFFFFF),
     onBackground = Color(0xFF191C20),
     surface = Color(0xFFFCFCFF),
     onSurface = Color(0xFF1A1C1E),
