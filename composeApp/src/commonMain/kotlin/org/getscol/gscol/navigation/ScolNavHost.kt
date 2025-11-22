@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
-import org.getscol.gscol.Helper.composableNoAnimation
+import org.getscol.gscol.core.Helper.composableNoAnimation
 
 @Composable
 fun ScolNavHost(

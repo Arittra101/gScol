@@ -34,6 +34,13 @@ kotlin {
             //koin
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+
+            //okhttp engine android specific
+            implementation(libs.ktor.client.okhttp)
+
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -45,7 +52,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            //navigation 3
+            //navigation 2
             implementation(libs.navigation.compose)
 
 
@@ -59,6 +66,11 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             api(libs.koin.core)
+
+            //ktor
+            implementation(libs.bundles.ktor)
+            implementation(libs.bundles.coil)
+
 
         }
         commonTest.dependencies {
