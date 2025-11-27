@@ -29,4 +29,9 @@ class IosAuthTokenProvider(private val userDefaults: NSUserDefaults) : AuthToken
         userDefaults.removeObjectForKey(KEY_ACCESS_TOKEN)
         userDefaults.removeObjectForKey(KEY_REFRESH_TOKEN)
     }
+
+    override suspend fun saveTokens(accessToken: String?, refreshToken: String?) {
+        userDefaults.setObject(refreshToken, KEY_REFRESH_TOKEN)
+        userDefaults.setObject(accessToken, KEY_ACCESS_TOKEN)
+    }
 }

@@ -3,17 +3,22 @@ package org.getscol.gscol
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.getscol.gscol.bottombar.ScolBottomBar
+import org.getscol.gscol.navigation.NavigationAction
 import org.getscol.gscol.navigation.ScolNavHost
 import org.getscol.gscol.navigation.TopLevelDestination
 import org.getscol.gscol.navigation.rememberNavigator
 
 @Composable
-fun ScolApp() {
+fun ScolApp(
+    currentLogoutEvent: NavigationAction? = null,
+    onLogoutHandler: () -> Unit = {}
+) {
     val navController = rememberNavController()
     val navigator = rememberNavigator(navController)
 
@@ -26,6 +31,13 @@ fun ScolApp() {
     val shouldShowBottomBar = topLevelRoutes.contains(
         currentRoute?.substringBefore("?")
     )
+
+    LaunchedEffect(currentLogoutEvent){
+        currentLogoutEvent?.let {
+            navigator.navigateTo(currentLogoutEvent)
+        }
+        onLogoutHandler()
+    }
 
     Scaffold(
         bottomBar = {
@@ -44,7 +56,6 @@ fun ScolApp() {
             navController = navController,
             navigator = navigator,
             modifier = Modifier.padding(paddingValues)
-
         )
     }
 

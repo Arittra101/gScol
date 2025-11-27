@@ -5,7 +5,7 @@ interface AuthTokenProvider {
 
     fun getRefreshToken(): String?
     suspend fun saveAccessToken(accessToken: String)
-
     suspend fun saveRefreshToken(refreshToken: String)
     suspend fun clearTokens()
+    suspend fun saveTokens(accessToken: String?, refreshToken: String?)
 }

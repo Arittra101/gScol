@@ -30,4 +30,9 @@ class AndroidAuthTokenProvider(private val prefs: SharedPreferences) : AuthToken
         prefs.edit { remove(KEY_ACCESS_TOKEN) }
         prefs.edit { remove(KEY_REFRESH_TOKEN) }
     }
+
+    override suspend fun saveTokens(accessToken: String?, refreshToken: String?) {
+        prefs.edit { putString(KEY_ACCESS_TOKEN, accessToken) }
+        prefs.edit { putString(KEY_REFRESH_TOKEN, refreshToken) }
+    }
 }

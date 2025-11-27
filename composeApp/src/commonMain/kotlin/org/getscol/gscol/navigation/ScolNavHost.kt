@@ -33,5 +33,8 @@ fun ScolNavHost(
         composableNoAnimation<Route.Consultant> {
             App()
         }
+        composableNoAnimation<Route.Login>{
+
+        }
     }
 }
