@@ -1,0 +1,16 @@
+package org.getscol.gscol.core.di
+
+import io.ktor.client.HttpClient
+import org.getscol.gscol.core.data.network.HttpClientFactory
+import org.koin.dsl.module
+
+/**
+ * Network module providing HTTP client and related dependencies
+ */
+val networkModule = module {
+    single<HttpClient> {
+        HttpClientFactory.createHttpClient(engine = get(), get())
+    }
+}
+
+

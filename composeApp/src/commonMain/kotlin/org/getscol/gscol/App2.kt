@@ -13,8 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.coroutineScope
+import org.getscol.gscol.core.data.auth.AuthTokenProvider
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
 
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.compose_multiplatform
@@ -25,6 +28,12 @@ fun App2() {
     MaterialTheme {
         println("App2 create")
         var showContent by remember { mutableStateOf(false) }
+
+        val authTokenProvider: AuthTokenProvider = getKoin().get()
+        LaunchedEffect(Unit) {
+            authTokenProvider.saveAccessToken("1234")
+        }
+
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.primaryContainer)
