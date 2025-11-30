@@ -38,6 +38,9 @@ kotlin {
             //okhttp engine android specific
             implementation(libs.ktor.client.okhttp)
 
+            //timber
+            implementation(libs.timber)
+
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

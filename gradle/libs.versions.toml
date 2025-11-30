@@ -17,6 +17,7 @@ kotlinxSerializationJson = "1.7.3"
 koin = "4.1.1"
 ktor = "3.3.2"
 coil3 = "3.3.0"
+timber = "5.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -33,6 +34,7 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3" }
 compose-material-icons = { module = "org.jetbrains.compose.material:material-icons-extended" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 #koin
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
