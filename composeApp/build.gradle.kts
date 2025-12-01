@@ -74,6 +74,9 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
 
+            //datastore
+            api(libs.datastore)
+            api(libs.datastore.preferences)
 
         }
         commonTest.dependencies {

@@ -7,6 +7,7 @@ expect val platformModule: Module
 fun appModules() = listOf(
     platformModule,
     networkModule,
+    storageModule
 )
 
 
