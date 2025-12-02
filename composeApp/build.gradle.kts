@@ -38,6 +38,9 @@ kotlin {
             //okhttp engine android specific
             implementation(libs.ktor.client.okhttp)
 
+            //timber
+            implementation(libs.timber)
+
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -71,6 +74,9 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
 
+            //datastore
+            api(libs.datastore)
+            api(libs.datastore.preferences)
 
         }
         commonTest.dependencies {
