@@ -33,13 +33,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
+import org.getscol.gscol.auth.data.GoogleAuthProvider
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.google_logo
 import scol.composeapp.generated.resources.scol_hat
@@ -51,8 +55,10 @@ fun LoginScreenRoot() {
 
 @Composable
 fun LoginScreen() {
-    var phoneNumber by remember { mutableStateOf("") }
 
+    val googleAuthProvider: GoogleAuthProvider = koinInject()
+    var phoneNumber by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxSize()

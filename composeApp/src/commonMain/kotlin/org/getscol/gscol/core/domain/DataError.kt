@@ -11,7 +11,8 @@ sealed interface DataError : Error {
         REFRESH_TOKEN_EXPIRED,
         UNAUTHORIZED,
         FORBIDDEN,
-        NOT_FOUND
+        NOT_FOUND,
+        GOOGLE_PLAY_SERVICE_UNAVAILABLE
     }
 
     enum class Local : DataError {

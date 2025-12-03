@@ -1,0 +1,8 @@
+platform :ios, '14.0'
+
+target 'iosApp' do
+  use_frameworks!
+
+  pod 'FirebaseCore', '~> 10.18.0'
+  pod 'GoogleSignIn', '~> 7.0.0'
+end

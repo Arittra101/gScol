@@ -6,10 +6,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    id("com.google.gms.google-services") version "4.4.2" apply true
 
 }
 
 kotlin {
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -40,6 +42,17 @@ kotlin {
 
             //timber
             implementation(libs.timber)
+
+
+            //firebase
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.5.1"))
+            implementation("com.google.firebase:firebase-auth")
+
+            // Google Sign-In
+            implementation("com.google.android.gms:play-services-auth:21.2.0")
+            implementation("androidx.credentials:credentials:1.3.0")
+            implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+            implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
         }
         iosMain.dependencies {
@@ -115,4 +128,3 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-

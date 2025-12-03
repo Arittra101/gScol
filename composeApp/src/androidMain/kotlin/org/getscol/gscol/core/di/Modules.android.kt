@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.SharedPreferences
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
+import org.getscol.gscol.auth.data.GoogleAuthProvider
 import org.getscol.gscol.core.data.auth.AndroidAuthTokenProvider
+import org.getscol.gscol.core.data.auth.AndroidGoogleAuthProvider
 import org.getscol.gscol.core.data.auth.AuthTokenProvider
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
@@ -22,6 +24,7 @@ actual val platformModule: Module = module {
     }
 
     single<AuthTokenProvider> { AndroidAuthTokenProvider(get()) }
+    single<GoogleAuthProvider> { AndroidGoogleAuthProvider(androidContext()) }
 
     single<HttpClientEngine> {
         OkHttp.create()
