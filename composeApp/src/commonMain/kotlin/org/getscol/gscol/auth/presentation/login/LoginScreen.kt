@@ -17,10 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.ArrowRight
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -28,36 +25,52 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.getscol.gscol.auth.presentation.AuthViewmodel
+import org.getscol.gscol.navigation.NavigationAction
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.google_logo
 import scol.composeapp.generated.resources.scol_hat
 
 @Composable
-fun LoginScreenRoot() {
-    LoginScreen()
+fun LoginScreenRoot(navigator: Navigator,viewModel: AuthViewmodel = koinViewModel()) {
+    LoginScreen(navigator)
 }
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navigator: Navigator) {
     var phoneNumber by remember { mutableStateOf("") }
+
+
+    val scope = rememberCoroutineScope()
+
+    scope.launch {
+        delay(1000)
+        navigator.navigateToOtherScreen(Route.OtpVerification)
+    }
+
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         Column(
             modifier = Modifier

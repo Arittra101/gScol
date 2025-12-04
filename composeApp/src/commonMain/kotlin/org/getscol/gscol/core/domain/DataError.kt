@@ -8,6 +8,7 @@ sealed interface DataError : Error {
         SERVER,
         SERIALIZATION,
         UNKNOWN,
+        CAST_ERROR,
         REFRESH_TOKEN_EXPIRED,
         UNAUTHORIZED,
         FORBIDDEN,

@@ -41,15 +41,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.auth.presentation.AuthViewmodel
+import org.getscol.gscol.navigation.NavigationAction
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun VerificationScreenRoot() {
-    VerificationScreen()
+fun OtpVerificationScreenRoot(navigator: Navigator,viewmodel: AuthViewmodel = koinViewModel()) {
+    OtpVerificationScreen(navigator)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VerificationScreen() {
+fun OtpVerificationScreen(navigator: Navigator) {
     var code by remember { mutableStateOf("") }
     var timeLeft by remember { mutableStateOf(59) }
 
@@ -151,7 +156,7 @@ fun VerificationScreen() {
 
             // Verify Button
             Button(
-                onClick = { /* Handle verification */ },
+                onClick = { navigator.navigateTo(NavigationAction.SuccessFullLogInNavigation(Route.HomeRoute,Route.Login)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

@@ -20,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.getscol.gscol.core.data.auth.AuthTokenProvider
+import org.getscol.gscol.navigation.NavigationAction
+import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.theme.ScolTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -29,7 +31,7 @@ import scol.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App() {
+fun App(navigator: Navigator) {
     ScolTheme {
         println("App1 create")
         var showContent by remember { mutableStateOf(false) }

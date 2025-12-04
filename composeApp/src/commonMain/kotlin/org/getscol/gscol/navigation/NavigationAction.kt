@@ -7,5 +7,7 @@ sealed interface NavigationAction {
     data object NavigateToProfileScreen : NavigationAction
     data object NavigateToApplicationScreen : NavigationAction
     data object NavigateToLogInScreen : NavigationAction
+    data object AuthToHomeScreen : NavigationAction
+    data class SuccessFullLogInNavigation(val destinationRoute: Route, val clearRoute: Route) : NavigationAction
 }
 

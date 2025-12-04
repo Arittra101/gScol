@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
+import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
+import org.getscol.gscol.auth.presentation.verfication.OtpVerificationScreenRoot
 import org.getscol.gscol.core.Helper.composableNoAnimation
 
 @Composable
@@ -16,25 +18,28 @@ fun ScolNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.HomeRoute,
+        startDestination = Route.Login,
     ) {
         composableNoAnimation<Route.HomeRoute> {
-            App()
+            App(navigator)
         }
         composableNoAnimation<Route.CompareRoute> {
             App2()
         }
-        composableNoAnimation<Route.Application>{
-            App()
+        composableNoAnimation<Route.Application> {
+            App(navigator)
         }
         composableNoAnimation<Route.Profile> {
             App2()
         }
         composableNoAnimation<Route.Consultant> {
-            App()
+            App(navigator)
         }
-        composableNoAnimation<Route.Login>{
-
+        composableNoAnimation<Route.OtpVerification> {
+            OtpVerificationScreenRoot(navigator)
+        }
+        composableNoAnimation<Route.Login> {
+            LoginScreenRoot(navigator)
         }
     }
 }
