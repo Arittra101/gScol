@@ -12,16 +12,16 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.getscol.gscol.core.data.auth.AuthTokenProvider
+import org.getscol.gscol.auth.data.AuthTokenProvider
 import org.getscol.gscol.core.data.auth.AuthTokenResponse
 import org.getscol.gscol.core.data.auth.RefreshTokenRequest
+import org.getscol.gscol.core.utils.AppLogger
 import org.getscol.gscol.navigation.LogoutEventManager
 import org.getscol.gscol.navigation.NavigationAction
 
@@ -29,6 +29,7 @@ object HttpClientFactory {
     fun createHttpClient(
         engine: HttpClientEngine,
         tokenProvider: AuthTokenProvider,
+        baseUrl: String
     ): HttpClient {
 
         return HttpClient(engine) {
@@ -65,40 +66,44 @@ object HttpClientFactory {
                         }
 
                         try {
+                            // Request new tokens
                             val response: AuthTokenResponse = client.post("auth/refresh") {
                                 contentType(ContentType.Application.Json)
                                 setBody(RefreshTokenRequest(oldRefreshToken))
-                                markAsRefreshTokenRequest()
+                                markAsNoAuth()
                             }.body()
 
-                            val newTokens = AuthTokenResponse(
-                                accessToken = response.accessToken,
-                                refreshToken = response.refreshToken,
-                                expireTime = response.expireTime
+                            // Save new tokens
+                            tokenProvider.saveTokens(
+                                response.accessToken,
+                                response.refreshToken
                             )
-                            tokenProvider.saveTokens(response.accessToken, response.refreshToken)
 
+                            // Return new tokens to Auth plugin
                             BearerTokens(
-                                accessToken = newTokens.accessToken.orEmpty(),
-                                refreshToken = newTokens.refreshToken
+                                accessToken = response.accessToken.orEmpty(),
+                                refreshToken = response.refreshToken.orEmpty()
                             )
 
                         } catch (e: Exception) {
+                            AppLogger.e("Refresh token failed", e)
                             tokenProvider.clearTokens()
-                            LogoutEventManager.sendLogoutEvent(NavigationAction.NavigateToLogInScreen)
+                            LogoutEventManager.sendLogoutEvent(
+                                NavigationAction.NavigateToLogInScreen
+                            )
                             null
                         }
+                    }
+                    sendWithoutRequest { request ->
+                        // Don't send bearer token for requests marked as no-auth
+                        !request.isMarkedAsNoAuth()
                     }
                 }
             }
 
             defaultRequest {
+                url(baseUrl)
                 contentType(ContentType.Application.Json)
-                headers {
-                    if (!tokenProvider.getAccessToken().isNullOrBlank()) {
-                        append("Authorization", "Bearer ${tokenProvider.getAccessToken()}")
-                    }
-                }
             }
         }
     }
