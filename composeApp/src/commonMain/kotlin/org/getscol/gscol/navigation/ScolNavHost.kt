@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
+import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.core.Helper.composableNoAnimation
 
 @Composable
@@ -19,22 +20,22 @@ fun ScolNavHost(
         startDestination = Route.HomeRoute,
     ) {
         composableNoAnimation<Route.HomeRoute> {
-            App()
+            App(navigator)
         }
         composableNoAnimation<Route.CompareRoute> {
             App2()
         }
         composableNoAnimation<Route.Application>{
-            App()
+            App(navigator)
         }
         composableNoAnimation<Route.Profile> {
             App2()
         }
         composableNoAnimation<Route.Consultant> {
-            App()
+            App(navigator)
         }
         composableNoAnimation<Route.Login>{
-
+            LoginScreenRoot()
         }
     }
 }

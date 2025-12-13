@@ -14,22 +14,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.ArrowRight
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,21 +38,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
-import scol.composeapp.generated.resources.google_logo
 import scol.composeapp.generated.resources.scol_hat
 
 @Composable
-fun LoginScreenRoot() {
-    LoginScreen()
+fun LoginScreenRoot(
+    viewModel: LoginViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsState()
+    LoginScreen(
+        state = state,
+        onAction = viewModel::onAction
+    )
 }
 
 @Composable
-fun LoginScreen() {
-    var phoneNumber by remember { mutableStateOf("") }
+fun LoginScreen(
+    state: LoginState,
+    onAction: (LoginAction) -> Unit
+) {
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -78,6 +91,9 @@ fun LoginScreen() {
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(40.dp))
+            
+            // Google login - commented out for future use
+            /*
             Button(
                 onClick = { /* Handle Google login */ },
                 modifier = Modifier.fillMaxWidth(),
@@ -125,9 +141,12 @@ fun LoginScreen() {
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
+            */
+            
+            // Phone number field
             OutlinedTextField(
-                value = phoneNumber,
-                onValueChange = { phoneNumber = it },
+                value = state.phoneNumber,
+                onValueChange = { onAction(LoginAction.OnPhoneNumberChange(it)) },
                 label = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -146,24 +165,87 @@ fun LoginScreen() {
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
                     unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                )
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                isError = state.phoneError != null,
+                supportingText = state.phoneError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } }
             )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Password field
+            OutlinedTextField(
+                value = state.password,
+                onValueChange = { onAction(LoginAction.OnPasswordChange(it)) },
+                label = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            "Enter your password",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
+                ),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                        )
+                    }
+                },
+                isError = state.passwordError != null,
+                supportingText = state.passwordError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } }
+            )
+            
             Spacer(modifier = Modifier.height(20.dp))
+            
+            // Error message
+            if (state.errorMessage != null) {
+                Text(
+                    text = state.errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+            
+            // Login button
             Button(
-                onClick = { /* Handle login */ },
+                onClick = { onAction(LoginAction.OnLoginClick) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error.copy(alpha = 1.2f),
                 ),
                 shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(16.dp),
+                enabled = !state.isLoading
             ) {
-                Text(
-                    "Continue with phone",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text(
+                        "Login",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(70.dp))
             Text(
@@ -175,15 +257,15 @@ fun LoginScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .clickable(
-                    onClick = { /* Handle skip */ }
-                ),
+                .padding(16.dp),
             contentAlignment = Alignment.BottomEnd
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.clickable(
+                    onClick = { /* Handle skip */ }
+                )
             ) {
                 Text(
                     "Skip",

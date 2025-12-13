@@ -19,7 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.getscol.gscol.core.data.auth.AuthTokenProvider
+import org.getscol.gscol.auth.data.AuthTokenProvider
+import org.getscol.gscol.navigation.NavigationAction
+import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.theme.ScolTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -29,7 +31,7 @@ import scol.composeapp.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App() {
+fun App(navigator: Navigator? = null) {
     ScolTheme {
         println("App1 create")
         var showContent by remember { mutableStateOf(false) }
@@ -53,6 +55,12 @@ fun App() {
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("Click me App1!")
+            }
+            Button(
+                onClick = { navigator?.navigateTo(NavigationAction.NavigateToLogInScreen) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text("Go to Login")
             }
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }
