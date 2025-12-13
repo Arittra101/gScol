@@ -12,7 +12,7 @@ import org.getscol.gscol.core.data.network.safeApiCall
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
 
-class KtorAuthApiService(
+class AuthApiServiceImpl(
     private val httpClient: HttpClient
 ) : AuthApiService {
 
