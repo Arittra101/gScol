@@ -44,9 +44,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
-import scol.composeapp.generated.resources.scol_hat
+import scol.composeapp.generated.resources.enter_pass_text
+import scol.composeapp.generated.resources.enter_phone_text
+import scol.composeapp.generated.resources.login_text
+import scol.composeapp.generated.resources.scol_hat_logo
+import scol.composeapp.generated.resources.welcome_text
 
 @Composable
 fun LoginScreenRoot(
@@ -80,18 +85,19 @@ fun LoginScreen(
         ) {
             Spacer(modifier = Modifier.height(50.dp))
             Image(
-                painter = painterResource(resource = Res.drawable.scol_hat),
+                painter = painterResource(resource = Res.drawable.scol_hat_logo),
                 contentDescription = "Logo",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.height(70.dp)
             )
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
-                "Welcome to SCOL",
+                stringResource(Res.string.welcome_text),
                 style = MaterialTheme.typography.headlineLarge,
-                fontSize = 28.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(40.dp))
-            
+
             // Google login - commented out for future use
             /*
             Button(
@@ -142,7 +148,7 @@ fun LoginScreen(
             }
             Spacer(modifier = Modifier.height(20.dp))
             */
-            
+
             // Phone number field
             OutlinedTextField(
                 value = state.phoneNumber,
@@ -154,7 +160,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            "Enter your phone number",
+                            stringResource(Res.string.enter_phone_text),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                         )
@@ -168,11 +174,18 @@ fun LoginScreen(
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 isError = state.phoneError != null,
-                supportingText = state.phoneError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } }
+                supportingText = state.phoneError?.let {
+                    {
+                        Text(
+                            it,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
+
+            Spacer(modifier = Modifier.height(20.dp))
+
             // Password field
             OutlinedTextField(
                 value = state.password,
@@ -184,7 +197,7 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            "Enter your password",
+                            stringResource(Res.string.enter_pass_text),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                         )
@@ -207,11 +220,18 @@ fun LoginScreen(
                     }
                 },
                 isError = state.passwordError != null,
-                supportingText = state.passwordError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } }
+                supportingText = state.passwordError?.let {
+                    {
+                        Text(
+                            it,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             )
-            
+
             Spacer(modifier = Modifier.height(20.dp))
-            
+
             // Error message
             if (state.errorMessage != null) {
                 Text(
@@ -221,7 +241,7 @@ fun LoginScreen(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
-            
+
             // Login button
             Button(
                 onClick = { onAction(LoginAction.OnLoginClick) },
@@ -240,7 +260,7 @@ fun LoginScreen(
                     )
                 } else {
                     Text(
-                        "Login",
+                        stringResource(Res.string.login_text),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
