@@ -14,7 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.coroutineScope
-import org.getscol.gscol.core.data.auth.AuthTokenProvider
+import org.getscol.gscol.auth.data.AuthTokenProvider
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.getKoin

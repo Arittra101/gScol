@@ -1,4 +1,6 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -6,7 +8,15 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    id("com.codingfeline.buildkonfig")
+}
 
+// Load local.properties
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
 }
 
 kotlin {
@@ -15,7 +25,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -25,7 +35,7 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -114,5 +124,21 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+}
+
+buildkonfig {
+    packageName = "com.getscol.gscol"
+
+    defaultConfigs {
+        val baseURL = localProperties.getProperty("base.url", "")
+        require(baseURL.isNotEmpty()) {
+            "Base URL is missing in local.properties!!!"
+        }
+        buildConfigField(
+            STRING,
+            "BASE_URL",
+            baseURL
+        )
+    }
 }
 

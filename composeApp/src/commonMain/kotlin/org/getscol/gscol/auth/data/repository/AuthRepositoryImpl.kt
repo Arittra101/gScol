@@ -1,0 +1,30 @@
+package org.getscol.gscol.auth.data.repository
+
+import org.getscol.gscol.auth.data.AuthTokenProvider
+import org.getscol.gscol.auth.data.api_service.AuthApiService
+import org.getscol.gscol.auth.domain.repository.AuthRepository
+import org.getscol.gscol.core.domain.DataError
+import org.getscol.gscol.core.domain.Result
+
+class AuthRepositoryImpl(
+    private val authApiService: AuthApiService,
+    private val authTokenProvider: AuthTokenProvider
+) : AuthRepository {
+
+    override suspend fun login(
+        phoneNumber: String,
+        password: String
+    ): Result<Unit, DataError.Remote> {
+        return when (val result = authApiService.login(phoneNumber, password)) {
+            is Result.Success -> {
+                // Save tokens to storage
+                authTokenProvider.saveTokens(
+                    accessToken = result.data.accessToken,
+                    refreshToken = result.data.refreshToken
+                )
+                Result.Success(Unit)
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+}

@@ -3,12 +3,32 @@ package org.getscol.gscol.core.data.network
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
+import io.ktor.util.AttributeKey
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.ensureActive
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
 import kotlin.coroutines.coroutineContext
+
+// Attribute key for marking requests that don't require authentication
+private val NoAuthAttributeKey = AttributeKey<Boolean>("NoAuth")
+
+/**
+ * Mark this request as not requiring authentication.
+ * Use this for login, registration, and other public endpoints.
+ */
+fun HttpRequestBuilder.markAsNoAuth() {
+    attributes.put(NoAuthAttributeKey, true)
+}
+
+/**
+ * Check if this request is marked as not requiring authentication.
+ */
+fun HttpRequestBuilder.isMarkedAsNoAuth(): Boolean {
+    return attributes.getOrNull(NoAuthAttributeKey) ?: false
+}
 
 suspend inline fun <reified T> safeApiCall(execute: () -> HttpResponse): Result<T, DataError.Remote> {
     val response = try {
