@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.auth.domain.repository.AuthRepository
+import org.getscol.gscol.auth.domain.validation.AuthValidator
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
 
@@ -42,19 +43,15 @@ class LoginViewModel(
 
         var hasError = false
 
-        if (phoneNumber.isEmpty()) {
-            _state.update { it.copy(phoneError = "Phone number is required") }
-            hasError = true
-        } else if (phoneNumber.length < 10) {
-            _state.update { it.copy(phoneError = "Phone number must be at least 10 digits") }
+        // Validate phone number
+        AuthValidator.validatePhoneNumber(phoneNumber, allowEmpty = false)?.let { error ->
+            _state.update { it.copy(phoneError = error) }
             hasError = true
         }
 
-        if (password.isEmpty()) {
-            _state.update { it.copy(passwordError = "Password is required") }
-            hasError = true
-        } else if (password.length < 6) {
-            _state.update { it.copy(passwordError = "Password must be at least 6 characters") }
+        // Validate password
+        AuthValidator.validatePassword(password, allowEmpty = false)?.let { error ->
+            _state.update { it.copy(passwordError = error) }
             hasError = true
         }
 

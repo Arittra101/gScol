@@ -55,19 +55,22 @@ import scol.composeapp.generated.resources.welcome_text
 
 @Composable
 fun LoginScreenRoot(
-    viewModel: LoginViewModel = koinViewModel()
+    viewModel: LoginViewModel = koinViewModel(),
+    onNavigateToRegistration: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     LoginScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        onNavigateToRegistration = onNavigateToRegistration
     )
 }
 
 @Composable
 fun LoginScreen(
     state: LoginState,
-    onAction: (LoginAction) -> Unit
+    onAction: (LoginAction) -> Unit,
+    onNavigateToRegistration: () -> Unit = {}
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -267,6 +270,31 @@ fun LoginScreen(
                     )
                 }
             }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Navigate to registration
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Don't have an account? ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                )
+                Text(
+                    "Register",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.clickable {
+                        onNavigateToRegistration()
+                    }
+                )
+            }
+            
             Spacer(modifier = Modifier.height(70.dp))
             Text(
                 "By continuing, you agree to our system",
