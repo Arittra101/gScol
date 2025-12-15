@@ -1,8 +1,10 @@
 package org.getscol.gscol.auth.domain.repository
 
+import org.getscol.gscol.auth.domain.model.RegistrationResponse
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
 
 interface AuthRepository {
+    suspend fun register(phone: String, password: String, fullName: String): Result<RegistrationResponse, DataError.Remote>
     suspend fun login(phoneNumber: String, password: String): Result<Unit, DataError.Remote>
 }

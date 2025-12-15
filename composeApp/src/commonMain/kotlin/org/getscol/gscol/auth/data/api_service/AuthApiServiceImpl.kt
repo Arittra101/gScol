@@ -6,6 +6,8 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import org.getscol.gscol.auth.domain.model.LoginRequest
+import org.getscol.gscol.auth.domain.model.RegistrationRequest
+import org.getscol.gscol.auth.domain.model.RegistrationResponse
 import org.getscol.gscol.core.data.auth.AuthTokenResponse
 import org.getscol.gscol.core.data.network.markAsNoAuth
 import org.getscol.gscol.core.data.network.safeApiCall
@@ -15,6 +17,26 @@ import org.getscol.gscol.core.domain.Result
 class AuthApiServiceImpl(
     private val httpClient: HttpClient
 ) : AuthApiService {
+
+    override suspend fun register(
+        phone: String,
+        password: String,
+        fullName: String
+    ): Result<RegistrationResponse, DataError.Remote> {
+        return safeApiCall {
+            httpClient.post("auth/register") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    RegistrationRequest(
+                        phone = phone,
+                        password = password,
+                        fullName = fullName
+                    )
+                )
+                markAsNoAuth()
+            }
+        }
+    }
 
     override suspend fun login(
         phoneNumber: String,

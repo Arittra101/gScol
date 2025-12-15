@@ -2,6 +2,7 @@ package org.getscol.gscol.auth.data.repository
 
 import org.getscol.gscol.auth.data.AuthTokenProvider
 import org.getscol.gscol.auth.data.api_service.AuthApiService
+import org.getscol.gscol.auth.domain.model.RegistrationResponse
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
@@ -10,6 +11,23 @@ class AuthRepositoryImpl(
     private val authApiService: AuthApiService,
     private val authTokenProvider: AuthTokenProvider
 ) : AuthRepository {
+
+    override suspend fun register(
+        phone: String,
+        password: String,
+        fullName: String
+    ): Result<RegistrationResponse, DataError.Remote> {
+        return when (val result = authApiService.register(phone, password, fullName)) {
+            is Result.Success -> {
+                authTokenProvider.saveAccessToken(
+                    accessToken = result.data.data.otpAccessToken,
+                )
+                Result.Success(result.data)
+            }
+
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
 
     override suspend fun login(
         phoneNumber: String,
@@ -24,6 +42,7 @@ class AuthRepositoryImpl(
                 )
                 Result.Success(Unit)
             }
+
             is Result.Error -> Result.Error(result.error)
         }
     }
