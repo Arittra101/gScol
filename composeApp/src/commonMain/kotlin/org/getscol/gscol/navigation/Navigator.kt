@@ -14,11 +14,20 @@ import androidx.navigation.NavController
 
 class Navigator(private val navController: NavController) {
 
+    var authRouteList: MutableList<Route> = mutableListOf()
+
+    /*
+       popUpTo = remove from the backstack and NavBackStackEntry
+       for top level sc bar there NavBackStackEntry is saved in cache
+       if NavBackStackEntry is removed then all the instance like viewmodel will be removed
+     */
+
      fun navigateToTopLevel(destination: TopLevelDestination) {
         navController.navigate(destination.route) {
             popUpTo(Route.HomeRoute) {
                 saveState = true
                 inclusive = false
+                println("Here is the " + destination.route)
             }
             // Avoid multiple copies
             launchSingleTop = true
@@ -29,15 +38,31 @@ class Navigator(private val navController: NavController) {
         }
     }
 
+
     private fun navigateToOtherScreen(route: Route) {
         navController.navigate(route)
     }
 
-    private fun navigateToLogIn(route: Route) {
-        navController.navigate(route) {
-            popUpTo(0) { inclusive = true }
-            launchSingleTop = true
+    fun navigateToAuthScreen(route: Route){
+        authRouteList.add(route)
+        navController.navigate(route)
+    }
+
+    /*
+       only use when we need to navigate  auth screen to any desire screen
+    */
+    fun navigateAuthToDesireScreen(route: Route){
+        val authFirstRoute = authRouteList.getOrNull(0)
+        if(authFirstRoute == null){
+            return
         }
+
+        navController.navigate(route){
+            popUpTo(authFirstRoute){
+                inclusive = true
+            }
+        }
+        authRouteList.clear()
     }
 
     fun navigateBack() {
@@ -48,7 +73,6 @@ class Navigator(private val navController: NavController) {
         when (action) {
             NavigationAction.NavigateToHomeScreen -> navigateToTopLevel(TopLevelDestination.HOME)
             NavigationAction.NavigateToCompareScreen -> navigateToTopLevel(TopLevelDestination.COMPARE)
-            NavigationAction.NavigateToLogInScreen -> navigateToLogIn(Route.Login)
             else -> navigateToTopLevel(TopLevelDestination.COMPARE)
         }
     }
