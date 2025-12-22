@@ -6,6 +6,8 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import org.getscol.gscol.auth.domain.model.ForgotPasswordRequest
+import org.getscol.gscol.auth.domain.model.ForgotPasswordResponse
 import org.getscol.gscol.auth.domain.model.LoginRequest
 import org.getscol.gscol.auth.domain.model.OtpVerificationRequest
 import org.getscol.gscol.auth.domain.model.OtpVerificationResponse
@@ -67,6 +69,16 @@ class AuthApiServiceImpl(
     override suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote> {
         return safeApiCall {
             httpClient.get("auth/resend-otp") {
+            }
+        }
+    }
+
+    override suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote> {
+        return safeApiCall {
+            httpClient.post("auth/forgot-password") {
+                contentType(ContentType.Application.Json)
+                setBody(ForgotPasswordRequest(phone = phone))
+                markAsNoAuth()
             }
         }
     }

@@ -1,5 +1,6 @@
 package org.getscol.gscol.auth.data.api_service
 
+import org.getscol.gscol.auth.domain.model.ForgotPasswordResponse
 import org.getscol.gscol.auth.domain.model.OtpVerificationResponse
 import org.getscol.gscol.auth.domain.model.RegistrationResponse
 import org.getscol.gscol.auth.domain.model.ResendOtpResponse
@@ -22,4 +23,6 @@ interface AuthApiService {
     suspend fun verifyOtp(otp: String): Result<OtpVerificationResponse, DataError.Remote>
 
     suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote>
+
+    suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote>
 }

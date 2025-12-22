@@ -28,6 +28,9 @@ sealed interface Route {
     @Serializable
     object OtpVerification : Route
 
+    @Serializable
+    object ForgotPassword : Route
+
 //    @Serializable
 //    data class SettingsRoute(val userId: Int) : Route
 

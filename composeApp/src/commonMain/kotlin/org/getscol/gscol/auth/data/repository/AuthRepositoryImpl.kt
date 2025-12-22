@@ -2,6 +2,7 @@ package org.getscol.gscol.auth.data.repository
 
 import org.getscol.gscol.auth.data.AuthTokenProvider
 import org.getscol.gscol.auth.data.api_service.AuthApiService
+import org.getscol.gscol.auth.domain.model.ForgotPasswordResponse
 import org.getscol.gscol.auth.domain.model.RegistrationResponse
 import org.getscol.gscol.auth.domain.model.ResendOtpResponse
 import org.getscol.gscol.auth.domain.repository.AuthRepository
@@ -67,6 +68,20 @@ class AuthRepositoryImpl(
         return when (val result = authApiService.resendOtp()) {
             is Result.Success -> {
                 // Update the otpAccessToken with the new one
+                authTokenProvider.saveAccessToken(
+                    accessToken = result.data.data.otpAccessToken
+                )
+                Result.Success(result.data)
+            }
+
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote> {
+        return when (val result = authApiService.forgotPassword(phone)) {
+            is Result.Success -> {
+                // Save otpAccessToken for OTP verification
                 authTokenProvider.saveAccessToken(
                     accessToken = result.data.data.otpAccessToken
                 )

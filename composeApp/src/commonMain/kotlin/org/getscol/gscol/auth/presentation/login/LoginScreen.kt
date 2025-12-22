@@ -56,13 +56,15 @@ import scol.composeapp.generated.resources.welcome_text
 @Composable
 fun LoginScreenRoot(
     viewModel: LoginViewModel = koinViewModel(),
-    onNavigateToRegistration: () -> Unit = {}
+    onNavigateToRegistration: () -> Unit = {},
+    onNavigateToForgotPassword: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     LoginScreen(
         state = state,
         onAction = viewModel::onAction,
-        onNavigateToRegistration = onNavigateToRegistration
+        onNavigateToRegistration = onNavigateToRegistration,
+        onNavigateToForgotPassword = onNavigateToForgotPassword
     )
 }
 
@@ -70,7 +72,8 @@ fun LoginScreenRoot(
 fun LoginScreen(
     state: LoginState,
     onAction: (LoginAction) -> Unit,
-    onNavigateToRegistration: () -> Unit = {}
+    onNavigateToRegistration: () -> Unit = {},
+    onNavigateToForgotPassword: () -> Unit = {}
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -246,7 +249,7 @@ fun LoginScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.clickable {
-                        // TODO: Navigate to forgot password screen
+                        onNavigateToForgotPassword()
                     }
                 )
             }
