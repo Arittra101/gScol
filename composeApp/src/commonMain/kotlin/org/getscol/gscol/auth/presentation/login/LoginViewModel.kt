@@ -22,15 +22,27 @@ class LoginViewModel(
     fun onAction(action: LoginAction) {
         when (action) {
             is LoginAction.OnPhoneNumberChange -> {
-                _state.update { it.copy(phoneNumber = action.phoneNumber, phoneError = null) }
+                _state.update { it.copy(phoneNumber = action.phoneNumber) }
+                validatePhoneNumber(action.phoneNumber)
             }
             is LoginAction.OnPasswordChange -> {
-                _state.update { it.copy(password = action.password, passwordError = null) }
+                _state.update { it.copy(password = action.password) }
+                validatePassword(action.password)
             }
             LoginAction.OnLoginClick -> {
                 login()
             }
         }
+    }
+
+    private fun validatePhoneNumber(phoneNumber: String) {
+        val error = AuthValidator.validatePhoneNumber(phoneNumber, allowEmpty = true)
+        _state.update { it.copy(phoneError = error) }
+    }
+
+    private fun validatePassword(password: String) {
+        val error = AuthValidator.validatePassword(password, allowEmpty = true)
+        _state.update { it.copy(passwordError = error) }
     }
 
     private fun login() {
