@@ -233,6 +233,24 @@ fun LoginScreen(
                 }
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Forgot Password link
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    "Forgot Password?",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.clickable {
+                        // TODO: Navigate to forgot password screen
+                    }
+                )
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
 
             // Error message
