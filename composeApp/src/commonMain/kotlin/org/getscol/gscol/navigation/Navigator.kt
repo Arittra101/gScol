@@ -49,6 +49,7 @@ class Navigator(private val navController: NavController) {
             NavigationAction.NavigateToHomeScreen -> navigateToTopLevel(TopLevelDestination.HOME)
             NavigationAction.NavigateToCompareScreen -> navigateToTopLevel(TopLevelDestination.COMPARE)
             NavigationAction.NavigateToLogInScreen -> navigateToLogIn(Route.Login)
+            NavigationAction.NavigateToOtpVerificationScreen -> navigateToOtherScreen(Route.OtpVerification)
             else -> navigateToTopLevel(TopLevelDestination.COMPARE)
         }
     }

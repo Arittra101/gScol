@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
 import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
+import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.core.Helper.composableNoAnimation
 
@@ -50,8 +51,19 @@ fun ScolNavHost(
                     }
                 },
                 onNavigateToOtpVerification = {
-                    // TODO: Navigate to OTP verification screen after user confirmation
-                    println("Registration successful!")
+                    navController.navigate(Route.OtpVerification) {
+                        popUpTo(Route.Registration) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composableNoAnimation<Route.OtpVerification> {
+            OtpVerificationScreenRoot(
+                onVerificationSuccess = {
+                    // Navigate to home screen after successful verification
+                    navController.navigate(Route.HomeRoute) {
+                        popUpTo(Route.OtpVerification) { inclusive = true }
+                    }
                 }
             )
         }

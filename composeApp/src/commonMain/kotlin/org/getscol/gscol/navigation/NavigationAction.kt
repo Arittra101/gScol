@@ -7,5 +7,6 @@ sealed interface NavigationAction {
     data object NavigateToProfileScreen : NavigationAction
     data object NavigateToApplicationScreen : NavigationAction
     data object NavigateToLogInScreen : NavigationAction
+    data object NavigateToOtpVerificationScreen : NavigationAction
 }
 

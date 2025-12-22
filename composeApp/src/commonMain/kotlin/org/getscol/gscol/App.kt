@@ -37,9 +37,9 @@ fun App(navigator: Navigator? = null) {
         var showContent by remember { mutableStateOf(false) }
 
         //for testing purposes
-        val authTokenProvider : AuthTokenProvider = getKoin().get()
+        val authTokenProvider: AuthTokenProvider = getKoin().get()
         LaunchedEffect(Unit) {
-            val a  = authTokenProvider.getAccessToken()
+            val a = authTokenProvider.getAccessToken()
             println("access token get App  $a")
         }
 
@@ -61,6 +61,12 @@ fun App(navigator: Navigator? = null) {
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Go to Login")
+            }
+            Button(
+                onClick = { navigator?.navigateTo(NavigationAction.NavigateToOtpVerificationScreen) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text("Go to OtpVerification")
             }
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }
