@@ -10,6 +10,7 @@ import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreenRo
 import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.auth.presentation.registration.RegistrationScreenRoot
+import org.getscol.gscol.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.core.Helper.composableNoAnimation
 
 @Composable
@@ -62,7 +63,7 @@ fun ScolNavHost(
             )
         }
         composableNoAnimation<Route.ForgotPassword> {
-            ForgotPasswordScreenRoot(
+            ResetPasswordRoute(
                 onNavigateToOtpVerification = {
                     navController.navigate(Route.OtpVerification) {
                         popUpTo(Route.ForgotPassword) { inclusive = true }

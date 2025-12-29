@@ -1,19 +1,23 @@
 package org.getscol.gscol.auth.presentation.forgotpassword
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -31,18 +35,20 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
-import scol.composeapp.generated.resources.Res
-import scol.composeapp.generated.resources.scol_hat_logo
 
 @Composable
 fun ForgotPasswordScreenRoot(
@@ -71,14 +77,21 @@ fun ForgotPasswordScreen(
     onAction: (ForgotPasswordAction) -> Unit,
     onNavigateBack: () -> Unit = {}
 ) {
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // Create BringIntoViewRequesters for each field
+    val bringIntoViewRequester1 = remember { BringIntoViewRequester() }
+
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         text = "Forgot Password",
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Left,
                         fontWeight = FontWeight.SemiBold
                     )
                 },
@@ -96,126 +109,132 @@ fun ForgotPasswordScreen(
             )
         }
     ) { padding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(padding)
+                .consumeWindowInsets(padding)
+                .verticalScroll(scrollState)
+                .padding(top = 167.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                "Forget Password",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(
+                text = "Enter your email or phone number\n to get verified.",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(44.dp))
+
+            // Phone number field 1
+            OutlinedTextField(
+                value = state.phoneNumber,
+                onValueChange = { onAction(ForgotPasswordAction.OnPhoneNumberChange(it)) },
+                label = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            "Enter Phone Number",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color(0xFF8B3838)
+                        )
+                    }
+                },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(50.dp))
-
-                Image(
-                    painter = painterResource(resource = Res.drawable.scol_hat_logo),
-                    contentDescription = "Logo",
-                    modifier = Modifier.height(70.dp)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    "Reset Your Password",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    "Enter your phone number and we'll send you an OTP to reset your password",
-                    fontSize = 14.sp,
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(40.dp))
-
-                // Phone number field
-                OutlinedTextField(
-                    value = state.phoneNumber,
-                    onValueChange = { onAction(ForgotPasswordAction.OnPhoneNumberChange(it)) },
-                    label = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                "Enter Phone Number",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                            )
+                    .fillMaxWidth()
+                    .padding(horizontal = 38.dp)
+                    .bringIntoViewRequester(bringIntoViewRequester1)
+                    .onFocusEvent { focusState ->
+                        if (focusState.isFocused) {
+                            coroutineScope.launch {
+                                delay(300) // Wait for keyboard animation
+                                bringIntoViewRequester1.bringIntoView()
+                            }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF8B3838).copy(alpha = 0.3f),
-                        unfocusedBorderColor = Color(0xFF8B3838).copy(alpha = 0.3f),
-                    ),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    isError = state.phoneError != null,
-                    supportingText = state.phoneError?.let {
-                        {
-                            Text(
-                                it,
-                                color = Color.Red
-                            )
-                        }
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF8B3838).copy(alpha = 0.3f),
+                    unfocusedBorderColor = Color(0x999999).copy(alpha = 0.3f),
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                isError = state.phoneError != null,
+                supportingText = state.phoneError?.let {
+                    {
+                        Text(
+                            it,
+                            color = Color.Red
+                        )
                     }
+                }
+            )
+
+            Spacer(modifier =
+                if(state.errorMessage != null) Modifier.height(20.dp)
+                else Modifier.height(0.dp)
+            )
+
+            // Error message
+            if (state.errorMessage != null) {
+                Text(
+                    text = state.errorMessage,
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    textAlign = TextAlign.Center
                 )
+            }
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
-                // Error message
-                if (state.errorMessage != null) {
+            // Send OTP button
+            Button(
+                onClick = { onAction(ForgotPasswordAction.OnSendOtpClick) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .padding(horizontal = 38.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF8B3838),
+                    disabledContainerColor = Color(0xFF8B3838).copy(alpha = 0.5f)
+                ),
+                shape = RoundedCornerShape(16.dp),
+                enabled = !state.isLoading
+            ) {
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
                     Text(
-                        text = state.errorMessage,
-                        color = Color.Red,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        textAlign = TextAlign.Center
+                        text = "Submit",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                // Send OTP button
-                Button(
-                    onClick = { onAction(ForgotPasswordAction.OnSendOtpClick) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF8B3838),
-                        disabledContainerColor = Color(0xFF8B3838).copy(alpha = 0.5f)
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    enabled = !state.isLoading
-                ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color.White,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(
-                            text = "Send OTP",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(32.dp))
             }
+
+            // Extra bottom padding to ensure button is visible when keyboard appears
+            Spacer(modifier = Modifier.height(250.dp))
         }
     }
 }

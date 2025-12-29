@@ -37,12 +37,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.ktor.client.request.invoke
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -89,7 +91,7 @@ fun LoginScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(130.dp))
             Image(
                 painter = painterResource(resource = Res.drawable.scol_hat_logo),
                 contentDescription = "Logo",
@@ -102,7 +104,7 @@ fun LoginScreen(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
             )
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(56.dp))
 
             // Google login - commented out for future use
             /*
@@ -160,17 +162,12 @@ fun LoginScreen(
                 value = state.phoneNumber,
                 onValueChange = { onAction(LoginAction.OnPhoneNumberChange(it)) },
                 label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            stringResource(Res.string.enter_phone_text),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
+                    Text(
+                        stringResource(Res.string.enter_phone_text),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -190,24 +187,19 @@ fun LoginScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Password field
             OutlinedTextField(
                 value = state.password,
                 onValueChange = { onAction(LoginAction.OnPasswordChange(it)) },
                 label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            stringResource(Res.string.enter_pass_text),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
+                    Text(
+                        stringResource(Res.string.enter_pass_text),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -215,26 +207,30 @@ fun LoginScreen(
                     focusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
                     unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
                 ),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible)
+                    VisualTransformation.None
+                else
+                    PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 trailingIcon = {
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
                         Icon(
-                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                            imageVector = if (passwordVisible)
+                                Icons.Default.Visibility
+                            else
+                                Icons.Default.VisibilityOff,
+                            contentDescription = null
                         )
                     }
                 },
                 isError = state.passwordError != null,
                 supportingText = state.passwordError?.let {
                     {
-                        Text(
-                            it,
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Text(it, color = MaterialTheme.colorScheme.error)
                     }
                 }
             )
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -254,7 +250,7 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Error message
             if (state.errorMessage != null) {
@@ -271,9 +267,9 @@ fun LoginScreen(
                 onClick = { onAction(LoginAction.OnLoginClick) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error.copy(alpha = 1.2f),
+                    containerColor = Color(0xFF8B3838),
                 ),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
                 contentPadding = PaddingValues(16.dp),
                 enabled = !state.isLoading
             ) {
@@ -315,13 +311,7 @@ fun LoginScreen(
                     }
                 )
             }
-            
-            Spacer(modifier = Modifier.height(70.dp))
-            Text(
-                "By continuing, you agree to our system",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
-            )
+
         }
         Box(
             modifier = Modifier

@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -43,8 +44,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
+import scol.composeapp.generated.resources.enter_pass
+import scol.composeapp.generated.resources.enter_phone_text
 import scol.composeapp.generated.resources.scol_hat_logo
 
 @Composable
@@ -90,7 +94,7 @@ fun RegistrationScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(130.dp))
             Image(
                 painter = painterResource(resource = Res.drawable.scol_hat_logo),
                 contentDescription = "Logo",
@@ -98,29 +102,32 @@ fun RegistrationScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                "Create Account",
-                style = MaterialTheme.typography.headlineLarge,
-                fontSize = 30.sp,
+                "Create New Account",
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
             )
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                "Register today. Study abroad tomorrow.",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(36.dp))
 
             // Full name field
             OutlinedTextField(
                 value = state.fullName,
                 onValueChange = { onAction(RegistrationAction.OnFullNameChange(it)) },
                 label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            "Enter Full Name",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
+                    Text(
+                        stringResource(Res.string.enter_phone_text),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -140,24 +147,19 @@ fun RegistrationScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Phone number field
             OutlinedTextField(
                 value = state.phoneNumber,
                 onValueChange = { onAction(RegistrationAction.OnPhoneNumberChange(it)) },
                 label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            "Enter Phone Number",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
+                    Text(
+                        stringResource(Res.string.enter_pass),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -177,24 +179,19 @@ fun RegistrationScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Password field
             OutlinedTextField(
                 value = state.password,
                 onValueChange = { onAction(RegistrationAction.OnPasswordChange(it)) },
                 label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            "Enter Password",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
+                    Text(
+                        stringResource(Res.string.enter_pass),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp),
@@ -240,9 +237,9 @@ fun RegistrationScreen(
                 onClick = { onAction(RegistrationAction.OnRegisterClick) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error.copy(alpha = 1.2f),
+                    containerColor = Color(0xFF8B3838),
                 ),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
                 contentPadding = PaddingValues(16.dp),
                 enabled = !state.isLoading
             ) {
@@ -270,27 +267,23 @@ fun RegistrationScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Already have an account? ",
+                    "already have an account? ",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    color = Color.Gray,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
-                    "Login",
+                    "Log in",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.error,
+                    fontSize = 12.sp,
                     modifier = Modifier.clickable {
                         onAction(RegistrationAction.OnNavigateToLogin)
                     }
                 )
             }
-
-            Spacer(modifier = Modifier.height(70.dp))
-            Text(
-                "By continuing, you agree to our system",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
-            )
         }
     }
 }

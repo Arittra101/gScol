@@ -2,6 +2,7 @@ package org.getscol.gscol.auth.presentation.otp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,10 +37,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.koin.compose.viewmodel.koinViewModel
@@ -70,6 +75,7 @@ fun OtpVerificationScreen(
     onAction: (OtpVerificationAction) -> Unit,
     onNavigateBack: () -> Unit = {}
 ) {
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,7 +83,7 @@ fun OtpVerificationScreen(
                     Text(
                         text = "Verification",
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Left,
                         fontWeight = FontWeight.SemiBold
                     )
                 },
@@ -100,30 +106,32 @@ fun OtpVerificationScreen(
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(padding)
-                .padding(24.dp),
+            /*.padding(24.dp)*/,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(116.dp))
 
             // Title
             Text(
                 text = "Enter Verification Code",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                style = MaterialTheme.typography.bodyMedium,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(22.dp))
 
             // Subtitle
             Text(
-                text = "We sent a 6-digit code to your phone number.",
-                fontSize = 14.sp,
+                text = "We sent a 6-digit code to your phone \nnumber.",
+                fontSize = 16.sp,
                 color = Color.Gray,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             // OTP Input Boxes
             OtpInputField(
@@ -159,59 +167,42 @@ fun OtpVerificationScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Timer
             val minutes = state.tokenExpirationSeconds / 60
             val seconds = state.tokenExpirationSeconds % 60
+            val timeText =
+                "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+
             Text(
-                text = "Code expires in:   ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}",
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(fontWeight = FontWeight.Bold, color = Color(0xFF525252))
+                    ) {
+                        append("Code expires in: ")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = if (state.tokenExpirationSeconds < 30) Color.Red else Color.DarkGray
+                        )
+                    ) {
+                        append(timeText)
+                    }
+                },
                 fontSize = 14.sp,
-                color = if (state.tokenExpirationSeconds < 30) Color.Red else Color.DarkGray,
-                fontWeight = if (state.tokenExpirationSeconds < 30) FontWeight.Bold else FontWeight.Normal
+                textAlign = TextAlign.Center
             )
+
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Didn't receive code / Resend
-            if (state.canResend) {
-                TextButton(
-                    onClick = { onAction(OtpVerificationAction.OnResendClick) },
-                    enabled = !state.isResending
-                ) {
-                    if (state.isResending) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            color = Color(0xFF8B3838),
-                            strokeWidth = 2.dp
-                        )
-                        Spacer(modifier = Modifier.size(8.dp))
-                    }
-                    Text(
-                        text = if (state.isResending) "Resending..." else "Resend Code",
-                        fontSize = 14.sp,
-                        color = Color(0xFF8B3838),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            } else {
-                val resendMinutes = state.resendAvailableSeconds / 60
-                val resendSeconds = state.resendAvailableSeconds % 60
-                Text(
-                    text = "Resend code in ${resendMinutes.toString().padStart(2, '0')}:${resendSeconds.toString().padStart(2, '0')}",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Verify Button
             Button(
                 onClick = { onAction(OtpVerificationAction.OnVerifyClick) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .padding(horizontal = 24.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF8B3838),
                     disabledContainerColor = Color(0xFF8B3838).copy(alpha = 0.5f)
@@ -235,6 +226,62 @@ fun OtpVerificationScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+
+            // Didn't receive code / Resend
+           /* if (state.canResend) {
+                TextButton(
+                    onClick = { onAction(OtpVerificationAction.OnResendClick) },
+                    enabled = !state.isResending
+                ) {
+                    if (state.isResending) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = Color(0xFF8B3838),
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                    }
+                    Text(
+                        text = if (state.isResending) "Resending..." else "Resend Code",
+                        fontSize = 14.sp,
+                        color = Color(0xFF8B3838),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            } else {
+                val resendMinutes = state.resendAvailableSeconds / 60
+                val resendSeconds = state.resendAvailableSeconds % 60
+                Text(
+                    text = "Resend code in ${
+                        resendMinutes.toString().padStart(2, '0')
+                    }:${resendSeconds.toString().padStart(2, '0')}",
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }*/
+
+            if (state.canResend) {
+                val resendMinutes = state.resendAvailableSeconds / 60
+                val resendSeconds = state.resendAvailableSeconds % 60
+                Text(
+                    text = "Resend code in ${
+                        resendMinutes.toString().padStart(2, '0')
+                    }:${resendSeconds.toString().padStart(2, '0')}",
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                )
+
+            } else {
+                Text(
+                    text = "Didn't receive the code?",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Gray,
+                    modifier = Modifier.clickable{
+                        println("click")
+                        onAction(OtpVerificationAction.OnResendClick) }
+                )
+            }
         }
     }
 }
@@ -253,7 +300,7 @@ fun OtpInputField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         decorationBox = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 repeat(otpLength) { index ->

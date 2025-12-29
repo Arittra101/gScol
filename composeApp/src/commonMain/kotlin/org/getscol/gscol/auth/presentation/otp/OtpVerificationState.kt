@@ -10,8 +10,8 @@ data class OtpVerificationState(
     val isVerificationSuccessful: Boolean = false,
     
     // Timer states
-    val tokenExpirationSeconds: Int = 180, // 3 minutes = 180 seconds
-    val resendAvailableSeconds: Int = 60, // Can resend after 60 seconds
+    val tokenExpirationSeconds: Int = 5, // 3 minutes = 180 seconds
+    val resendAvailableSeconds: Int = 5, // Can resend after 60 seconds
     val isTokenExpired: Boolean = false,
     val canResend: Boolean = false
 )
