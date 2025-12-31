@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.auth.domain.validation.AuthValidator
-import org.getscol.gscol.core.domain.DataError
+import org.getscol.gscol.auth.utils.toUiMessage
 import org.getscol.gscol.core.domain.Result
 
 class LoginViewModel(
@@ -25,12 +25,55 @@ class LoginViewModel(
                 _state.update { it.copy(phoneNumber = action.phoneNumber) }
                 validatePhoneNumber(action.phoneNumber)
             }
+
             is LoginAction.OnPasswordChange -> {
                 _state.update { it.copy(password = action.password) }
                 validatePassword(action.password)
             }
+
             LoginAction.OnLoginClick -> {
                 login()
+            }
+        }
+    }
+
+    private fun login() {
+        _state.update { it.copy(errorMessage = null) }
+
+        if (!isFormValid()) {
+            _state.update { it.copy(errorMessage = "Please fill up all the required fields!") }
+            return
+        }
+        val state = _state.value
+
+        // Perform login
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+
+            when (
+                val result = authRepository.login(
+                    state.phoneNumber,
+                    state.password
+                )
+            ) {
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            isLoginSuccessful = true,
+                            errorMessage = null
+                        )
+                    }
+                }
+
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = result.error.toUiMessage()
+                        )
+                    }
+                }
             }
         }
     }
@@ -45,66 +88,18 @@ class LoginViewModel(
         _state.update { it.copy(passwordError = error) }
     }
 
-    private fun login() {
-        // Clear previous errors
-        _state.update { it.copy(errorMessage = null, phoneError = null, passwordError = null) }
+    private fun isFormValid(): Boolean {
+        val state = _state.value
 
-        // Validate inputs
-        val phoneNumber = _state.value.phoneNumber.trim()
-        val password = _state.value.password
+        val phoneError =
+            AuthValidator.validatePhoneNumber(state.phoneNumber.trim(), allowEmpty = false)
 
-        var hasError = false
+        val passwordError =
+            AuthValidator.validatePassword(state.password, allowEmpty = false)
 
-        // Validate phone number
-        AuthValidator.validatePhoneNumber(phoneNumber, allowEmpty = false)?.let { error ->
-            _state.update { it.copy(phoneError = error) }
-            hasError = true
-        }
-
-        // Validate password
-        AuthValidator.validatePassword(password, allowEmpty = false)?.let { error ->
-            _state.update { it.copy(passwordError = error) }
-            hasError = true
-        }
-
-        if (hasError) return
-
-        // Perform login
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-
-            when (val result = authRepository.login(phoneNumber, password)) {
-                is Result.Success -> {
-                    _state.update { 
-                        it.copy(
-                            isLoading = false,
-                            isLoginSuccessful = true,
-                            errorMessage = null
-                        )
-                    }
-                }
-                is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        DataError.Remote.REQUEST_TIMEOUT ->
-                            "Request timeout. Please try again."
-                        DataError.Remote.NO_INTERNET ->
-                            "No internet connection. Please check your network."
-                        DataError.Remote.SERVER ->
-                            "Server error. Please try again later."
-                        DataError.Remote.SERIALIZATION ->
-                            "Invalid response from server."
-                        DataError.Remote.TOO_MANY_REQUESTS ->
-                            "Too many requests. Please try again later."
-                        else -> "Invalid phone number or password."
-                    }
-                    _state.update { 
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = errorMessage
-                        )
-                    }
-                }
-            }
-        }
+        return listOf(
+            phoneError,
+            passwordError,
+        ).all { it == null }
     }
 }

@@ -52,6 +52,7 @@ fun AppTextField(
         },
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
+        singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
             unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
