@@ -15,6 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import org.jetbrains.compose.resources.stringResource
+import scol.composeapp.generated.resources.Res
+import scol.composeapp.generated.resources.and_text
+import scol.composeapp.generated.resources.i_agree_the
+import scol.composeapp.generated.resources.privacy_policy
+import scol.composeapp.generated.resources.terms_of_service
 
 @Composable
 fun TermsAndPrivacyCheckBox(
@@ -36,7 +42,7 @@ fun TermsAndPrivacyCheckBox(
         )
 
         val annotatedText = buildAnnotatedString {
-            append("I agree to the ")
+            append(stringResource(Res.string.i_agree_the))
 
             pushStringAnnotation(tag = "TERMS", annotation = "terms")
             pushStyle(
@@ -45,11 +51,11 @@ fun TermsAndPrivacyCheckBox(
                     fontWeight = FontWeight.Bold,
                 )
             )
-            append("Terms of Service")
+            append(stringResource(Res.string.terms_of_service))
             pop()
             pop()
 
-            append(" and ")
+            append(stringResource(Res.string.and_text))
 
             pushStringAnnotation(tag = "PRIVACY", annotation = "privacy")
             pushStyle(
@@ -58,7 +64,7 @@ fun TermsAndPrivacyCheckBox(
                     fontWeight = FontWeight.Bold,
                 )
             )
-            append("Privacy Policy")
+            append(stringResource(Res.string.privacy_policy))
             pop()
             pop()
         }

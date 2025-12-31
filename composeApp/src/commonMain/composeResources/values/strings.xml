@@ -16,4 +16,8 @@
     <string name="create_new_account">Create new account</string>
     <string name="register_today">Register today. Study abroad tomorrow.</string>
     <string name="already_have_account">already have an account? </string>
+    <string name="i_agree_the">I agree to the </string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="and_text"> and </string>
 </resources>

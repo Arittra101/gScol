@@ -53,6 +53,7 @@ import scol.composeapp.generated.resources.enter_pass
 import scol.composeapp.generated.resources.enter_phone_text
 import scol.composeapp.generated.resources.login_text
 import scol.composeapp.generated.resources.register_today
+import scol.composeapp.generated.resources.signup_text
 
 @Composable
 fun RegistrationScreenRoot(
@@ -220,7 +221,7 @@ fun RegistrationScreen(
                         )
                     } else {
                         Text(
-                            "Register",
+                            stringResource(Res.string.signup_text),
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
