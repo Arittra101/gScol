@@ -1,9 +1,7 @@
 package org.getscol.gscol.auth.presentation.forgotpassword
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -16,7 +14,6 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -26,8 +23,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -48,7 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.components.AppTextField
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import scol.composeapp.generated.resources.Res
+import scol.composeapp.generated.resources.enter_phone_text
+import scol.composeapp.generated.resources.enter_phone_to_verify
+import scol.composeapp.generated.resources.forget_password
+import scol.composeapp.generated.resources.submit_text
 
 @Composable
 fun ForgotPasswordScreenRoot(
@@ -89,9 +91,11 @@ fun ForgotPasswordScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Forgot Password",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Left,
+                        text = stringResource(Res.string.forget_password),
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(end = 20.dp),
+                        textAlign = TextAlign.Center,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
                 },
@@ -122,7 +126,7 @@ fun ForgotPasswordScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                "Forget Password",
+                stringResource(Res.string.forget_password),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -131,7 +135,7 @@ fun ForgotPasswordScreen(
             Spacer(modifier = Modifier.height(14.dp))
 
             Text(
-                text = "Enter your email or phone number\n to get verified.",
+                text = stringResource(Res.string.enter_phone_to_verify),
                 fontSize = 16.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Center
@@ -140,23 +144,9 @@ fun ForgotPasswordScreen(
             Spacer(modifier = Modifier.height(44.dp))
 
             // Phone number field 1
-            OutlinedTextField(
+            AppTextField(
                 value = state.phoneNumber,
-                onValueChange = { onAction(ForgotPasswordAction.OnPhoneNumberChange(it)) },
-                label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            "Enter Phone Number",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            color = Color(0xFF8B3838)
-                        )
-                    }
-                },
+                onValueChange = { ForgotPasswordAction.OnPhoneNumberChange(it) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 38.dp)
@@ -164,31 +154,21 @@ fun ForgotPasswordScreen(
                     .onFocusEvent { focusState ->
                         if (focusState.isFocused) {
                             coroutineScope.launch {
-                                delay(300) // Wait for keyboard animation
+                                delay(300)
                                 bringIntoViewRequester1.bringIntoView()
                             }
                         }
                     },
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF8B3838).copy(alpha = 0.3f),
-                    unfocusedBorderColor = Color(0x999999).copy(alpha = 0.3f),
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                isError = state.phoneError != null,
-                supportingText = state.phoneError?.let {
-                    {
-                        Text(
-                            it,
-                            color = Color.Red
-                        )
-                    }
-                }
+                label = stringResource(Res.string.enter_phone_text),
+                labelAlign = TextAlign.Center,
+                keyboardType = KeyboardType.Phone,
+                errorText = state.phoneError
             )
 
-            Spacer(modifier =
-                if(state.errorMessage != null) Modifier.height(20.dp)
-                else Modifier.height(0.dp)
+            Spacer(
+                modifier =
+                    if (state.errorMessage != null) Modifier.height(20.dp)
+                    else Modifier.height(0.dp)
             )
 
             // Error message
@@ -226,7 +206,7 @@ fun ForgotPasswordScreen(
                     )
                 } else {
                     Text(
-                        text = "Submit",
+                        text = stringResource(Res.string.submit_text),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.auth.domain.validation.AuthValidator
-import org.getscol.gscol.core.domain.DataError
+import org.getscol.gscol.auth.utils.toUiMessage
 import org.getscol.gscol.core.domain.Result
 
 class ForgotPasswordViewModel(
@@ -62,23 +62,10 @@ class ForgotPasswordViewModel(
                     }
                 }
                 is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        DataError.Remote.REQUEST_TIMEOUT ->
-                            "Request timeout. Please try again."
-                        DataError.Remote.NO_INTERNET ->
-                            "No internet connection. Please check your network."
-                        DataError.Remote.SERVER ->
-                            "Server error. Please try again later."
-                        DataError.Remote.SERIALIZATION ->
-                            "Invalid response from server."
-                        DataError.Remote.TOO_MANY_REQUESTS ->
-                            "Too many requests. Please try again later."
-                        else -> "Phone number not found. Please check and try again."
-                    }
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = errorMessage
+                            errorMessage = result.error.toUiMessage()
                         )
                     }
                 }

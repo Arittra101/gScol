@@ -11,6 +11,7 @@
     <string name="dont_have_account">don't have an account?</string>
     <string name="signup_text">Sign Up</string>
     <string name="skip_text">Skip</string>
+    <string name="submit_text">Submit</string>
     <string name="confirmed_password_text">Confirm Password</string>
     <string name="create_account">Create Account</string>
     <string name="create_new_account">Create new account</string>
@@ -20,4 +21,5 @@
     <string name="terms_of_service">Terms of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="and_text"> and </string>
+    <string name="enter_phone_to_verify">Enter your email or phone number\n to get verified.</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
+import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreen
 import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
@@ -51,7 +52,7 @@ fun ScolNavHost(
         composableNoAnimation<Route.Registration> {
             RegistrationScreenRoot(
                 onNavigateToLogin = {
-                   navigator.navigateBack()
+                    navigator.navigateBack()
                 },
                 onNavigateToOtpVerification = {
                     navController.navigate(Route.OtpVerification) {
@@ -61,7 +62,7 @@ fun ScolNavHost(
             )
         }
         composableNoAnimation<Route.ForgotPassword> {
-            ResetPasswordRoute(
+            ForgotPasswordScreenRoot(
                 onNavigateToOtpVerification = {
                     navController.navigate(Route.OtpVerification) {
                         popUpTo(Route.ForgotPassword) { inclusive = true }

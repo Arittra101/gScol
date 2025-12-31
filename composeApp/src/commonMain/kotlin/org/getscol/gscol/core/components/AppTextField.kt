@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -32,6 +33,7 @@ fun AppTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
+    labelAlign: TextAlign = TextAlign.Left,
     modifier: Modifier = Modifier,
     keyboardType: KeyboardType = KeyboardType.Text,
     isPassword: Boolean = false,
@@ -45,6 +47,8 @@ fun AppTextField(
         label = {
             Text(
                 text = label,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = labelAlign,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = Color.Gray
