@@ -51,9 +51,7 @@ fun ScolNavHost(
         composableNoAnimation<Route.Registration> {
             RegistrationScreenRoot(
                 onNavigateToLogin = {
-                    navController.navigate(Route.Login) {
-                        popUpTo(Route.Registration) { inclusive = true }
-                    }
+                   navigator.navigateBack()
                 },
                 onNavigateToOtpVerification = {
                     navController.navigate(Route.OtpVerification) {

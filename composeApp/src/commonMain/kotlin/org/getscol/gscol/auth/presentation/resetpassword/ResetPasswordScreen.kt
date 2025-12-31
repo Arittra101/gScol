@@ -48,8 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.confirmed_password_text
-import scol.composeapp.generated.resources.enter_password
-
+import scol.composeapp.generated.resources.enter_pass
 
 @Composable
 fun ResetPasswordRoute(
@@ -141,7 +140,7 @@ fun ResetPasswordScreen(
                     onValueChange = { onAction(ForgotPasswordAction.OnPhoneNumberChange(it)) },
                     label = {
                         Text(
-                            stringResource(Res.string.enter_password),
+                            stringResource(Res.string.enter_pass),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             color = Color.Gray

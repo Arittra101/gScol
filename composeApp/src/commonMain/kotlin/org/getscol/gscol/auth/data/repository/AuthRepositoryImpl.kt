@@ -8,7 +8,6 @@ import org.getscol.gscol.auth.domain.model.ResendOtpResponse
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
-import org.getscol.gscol.core.utils.AppLogger
 
 class AuthRepositoryImpl(
     private val authApiService: AuthApiService,

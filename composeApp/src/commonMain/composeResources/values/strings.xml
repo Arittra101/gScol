@@ -2,10 +2,18 @@
 <resources>
     <string name="app_name">SCOL</string>
     <string name="welcome_text">Welcome to SCOL</string>
+    <string name="enter_name_text">Enter full name</string>
     <string name="enter_phone_text">Enter your phone number</string>
     <string name="enter_pass_text">Enter your password</string>
     <string name="enter_pass">Enter password</string>
-    <string name="login_text">Login</string>
+    <string name="forget_password">Forget password?</string>
+    <string name="login_text">Log in</string>
+    <string name="dont_have_account">don't have an account?</string>
+    <string name="signup_text">Sign Up</string>
+    <string name="skip_text">Skip</string>
     <string name="confirmed_password_text">Confirm Password</string>
-    <string name="enter_password">Enter Password</string>
+    <string name="create_account">Create Account</string>
+    <string name="create_new_account">Create new account</string>
+    <string name="register_today">Register today. Study abroad tomorrow.</string>
+    <string name="already_have_account">already have an account? </string>
 </resources>
