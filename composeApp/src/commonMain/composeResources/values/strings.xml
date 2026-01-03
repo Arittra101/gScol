@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="app_name">SCOL</string>
+    <string name="go_beyond">Go Beyond &amp; Grow Beyond</string>
     <string name="welcome_text">Welcome to SCOL</string>
     <string name="enter_name_text">Enter full name</string>
     <string name="enter_phone_text">Enter your phone number</string>

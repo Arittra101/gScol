@@ -13,6 +13,7 @@ import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.core.Helper.composableNoAnimation
+import org.getscol.gscol.splash.SplashScreen
 
 @Composable
 fun ScolNavHost(
@@ -22,8 +23,18 @@ fun ScolNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.HomeRoute,
+        startDestination = Route.Splash,
     ) {
+        composableNoAnimation<Route.Splash> {
+            SplashScreen(
+                onNavigateToHome = {
+                    navController.navigate(Route.HomeRoute) {
+                        popUpTo(Route.Splash) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composableNoAnimation<Route.HomeRoute> {
             App(navigator)
         }

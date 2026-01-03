@@ -34,4 +34,7 @@ sealed interface Route {
 //    @Serializable
 //    data class SettingsRoute(val userId: Int) : Route
 
+
+    @Serializable
+    object Splash : Route
 }
