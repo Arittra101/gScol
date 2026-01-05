@@ -8,6 +8,7 @@ import org.getscol.gscol.auth.domain.model.ResendOtpResponse
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
+import org.getscol.gscol.core.domain.asUnit
 
 class AuthRepositoryImpl(
     private val authApiService: AuthApiService,
@@ -69,7 +70,7 @@ class AuthRepositoryImpl(
             is Result.Success -> {
                 // Update the otpAccessToken with the new one
                 authTokenProvider.saveAccessToken(
-                    accessToken = result.data.data.otpAccessToken
+                    accessToken = result.data.data?.otpAccessToken
                 )
                 Result.Success(result.data)
             }
@@ -91,4 +92,9 @@ class AuthRepositoryImpl(
             is Result.Error -> Result.Error(result.error)
         }
     }
+
+    override suspend fun resetPassword(newPassword: String): Result<Unit, DataError.Remote> {
+        return authApiService.resetPassword(newPassword).asUnit()
+    }
+
 }

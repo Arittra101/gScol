@@ -14,6 +14,22 @@ import androidx.navigation.NavController
 
 class Navigator(private val navController: NavController) {
 
+    enum class AuthRoute {
+        LOGIN,
+        REGISTRATION,
+        FORGOT_PASSWORD,
+        OTP_VERIFICATION
+    }
+
+    private var _loginCachedRoute: Route? = null
+    val loginCachedRoute: Route? get() = _loginCachedRoute
+
+    fun setLoginCachedRoute(route: Route) {
+        _loginCachedRoute = route
+    }
+
+    private val authRoute = mutableListOf<Route>()
+
      fun navigateToTopLevel(destination: TopLevelDestination) {
         navController.navigate(destination.route) {
             popUpTo(Route.HomeRoute) {
@@ -29,18 +45,36 @@ class Navigator(private val navController: NavController) {
         }
     }
 
-    private fun navigateToOtherScreen(route: Route) {
-        navController.navigate(route)
-    }
+    /* for reset password support & login screen support */
+     fun navigateToOtherScreen(route: Route?, clearCachedRoute: Boolean? = null, dropScreen: Boolean? = null) {
+         val targetRoute = route ?: _loginCachedRoute
+         if (targetRoute == null) return
 
-    private fun navigateToLogIn(route: Route) {
-        navController.navigate(route) {
-            popUpTo(0) { inclusive = true }
-            launchSingleTop = true
+         navController.navigate(targetRoute) {
+             if (dropScreen == true) {
+                 val currentScreen = navController.currentBackStackEntry?.destination?.id ?: return@navigate
+                 popUpTo(currentScreen) { inclusive = true }
+             }
+             else if (_loginCachedRoute != null) {
+                 authRoute.firstOrNull()?.let { popUpTo(it) { inclusive = true } }
+                 authRoute.clear()
+             }
         }
+
+         if (clearCachedRoute == null) _loginCachedRoute = null
+     }
+
+    fun navigateToAuthScreen(loginRoute: Route) {
+        authRoute.add(loginRoute)
+        navController.navigate(loginRoute)
     }
 
     fun navigateBack() {
+        navController.popBackStack()
+    }
+
+    fun navigateAuthScreenBack(route: Route){
+        authRoute.remove(route)
         navController.popBackStack()
     }
 
@@ -48,7 +82,7 @@ class Navigator(private val navController: NavController) {
         when (action) {
             NavigationAction.NavigateToHomeScreen -> navigateToTopLevel(TopLevelDestination.HOME)
             NavigationAction.NavigateToCompareScreen -> navigateToTopLevel(TopLevelDestination.COMPARE)
-            NavigationAction.NavigateToLogInScreen -> navigateToLogIn(Route.Login)
+            NavigationAction.NavigateToLogInScreen -> navigateToAuthScreen(Route.Login)
             NavigationAction.NavigateToOtpVerificationScreen -> navigateToOtherScreen(Route.OtpVerification)
             else -> navigateToTopLevel(TopLevelDestination.COMPARE)
         }

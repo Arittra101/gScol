@@ -31,12 +31,14 @@ object AuthValidator {
      */
     fun validatePassword(
         password: String,
-        allowEmpty: Boolean = false
+        allowEmpty: Boolean = false,
+        confirmPassword: String? = null,
     ): String? {
         if (password.isEmpty()) {
             return if (allowEmpty) null else "Password is required"
         }
         return when {
+            confirmPassword != null && password != confirmPassword -> "Passwords do not match"
             !password.any { it.isUpperCase() } ->
                 "Password must contain at least one uppercase letter"
             !password.any { it.isLowerCase() } ->

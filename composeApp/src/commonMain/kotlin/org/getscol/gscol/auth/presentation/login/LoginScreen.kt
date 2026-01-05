@@ -24,16 +24,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.core.components.AppTextField
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -47,28 +52,41 @@ import scol.composeapp.generated.resources.scol_hat_logo
 import scol.composeapp.generated.resources.signup_text
 import scol.composeapp.generated.resources.skip_text
 import scol.composeapp.generated.resources.welcome_text
+import androidx.compose.ui.backhandler.BackHandler
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreenRoot(
     viewModel: LoginViewModel = koinViewModel(),
-    onNavigateToRegistration: () -> Unit = {},
-    onNavigateToForgotPassword: () -> Unit = {}
+    navigator: Navigator
 ) {
     val state by viewModel.state.collectAsState()
-    LoginScreen(
-        state = state,
-        onAction = viewModel::onAction,
-        onNavigateToRegistration = onNavigateToRegistration,
-        onNavigateToForgotPassword = onNavigateToForgotPassword
-    )
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEffect.collect { effect ->
+            when (effect) {
+                LoginUiEffect.LoginSuccess -> {
+                    navigator.navigateToOtherScreen(route = Route.Desire, clearCachedRoute = true, dropScreen = true)
+                }
+                is LoginUiEffect.ShowToast -> {
+//                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+                LoginUiEffect.NavigateBack -> {
+//                    navController.popBackStack()
+                }
+            }
+        }
+    }
+
+    LoginScreen(state = state, onAction = viewModel::onAction, navigator = navigator)
+    BackHandler { navigator.navigateAuthScreenBack(Route.Login) }
 }
 
 @Composable
 fun LoginScreen(
     state: LoginState,
     onAction: (LoginAction) -> Unit,
-    onNavigateToRegistration: () -> Unit = {},
-    onNavigateToForgotPassword: () -> Unit = {}
+    navigator: Navigator
 ) {
 
     Box(
@@ -134,9 +152,7 @@ fun LoginScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Black,
-                    modifier = Modifier.clickable {
-                        onNavigateToForgotPassword()
-                    }
+                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.ForgotPassword) }
                 )
             }
 
@@ -197,9 +213,7 @@ fun LoginScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.clickable {
-                        onNavigateToRegistration()
-                    }
+                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.SignUp) }
                 )
             }
 

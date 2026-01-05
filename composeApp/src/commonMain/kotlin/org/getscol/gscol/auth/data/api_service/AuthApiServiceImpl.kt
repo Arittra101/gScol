@@ -6,6 +6,8 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import org.getscol.gscol.auth.data.authdto.AuthPassResetReqDto
+import org.getscol.gscol.auth.data.authdto.AuthPassResetResponseDto
 import org.getscol.gscol.auth.domain.model.ForgotPasswordRequest
 import org.getscol.gscol.auth.domain.model.ForgotPasswordResponse
 import org.getscol.gscol.auth.domain.model.LoginRequest
@@ -14,7 +16,7 @@ import org.getscol.gscol.auth.domain.model.OtpVerificationResponse
 import org.getscol.gscol.auth.domain.model.RegistrationRequest
 import org.getscol.gscol.auth.domain.model.RegistrationResponse
 import org.getscol.gscol.auth.domain.model.ResendOtpResponse
-import org.getscol.gscol.core.data.auth.AuthTokenResponse
+import org.getscol.gscol.core.data.dto.auth.AuthTokenResponse
 import org.getscol.gscol.core.data.network.markAsNoAuth
 import org.getscol.gscol.core.data.network.safeApiCall
 import org.getscol.gscol.core.domain.DataError
@@ -67,10 +69,7 @@ class AuthApiServiceImpl(
     }
 
     override suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote> {
-        return safeApiCall {
-            httpClient.get("auth/resend-otp") {
-            }
-        }
+        return safeApiCall { httpClient.get("auth/resend-otp") {} }
     }
 
     override suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote> {
@@ -79,6 +78,15 @@ class AuthApiServiceImpl(
                 contentType(ContentType.Application.Json)
                 setBody(ForgotPasswordRequest(phone = phone))
                 markAsNoAuth()
+            }
+        }
+    }
+
+    override suspend fun resetPassword(newPassword: String): Result<AuthPassResetResponseDto, DataError.Remote> {
+        return safeApiCall {
+            httpClient.post("auth/reset-password") {
+                contentType(ContentType.Application.Json)
+                setBody(AuthPassResetReqDto(newPassword = newPassword))
             }
         }
     }

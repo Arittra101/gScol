@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
-import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreen
+import org.getscol.gscol.DesireScreen
 import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
@@ -39,27 +39,14 @@ fun ScolNavHost(
         composableNoAnimation<Route.Consultant> {
             App(navigator)
         }
-        composableNoAnimation<Route.Login> {
-            LoginScreenRoot(
-                onNavigateToRegistration = {
-                    navController.navigate(Route.Registration)
-                },
-                onNavigateToForgotPassword = {
-                    navController.navigate(Route.ForgotPassword)
-                }
-            )
+        composableNoAnimation<Route.Desire> {
+            DesireScreen()
         }
-        composableNoAnimation<Route.Registration> {
-            RegistrationScreenRoot(
-                onNavigateToLogin = {
-                    navigator.navigateBack()
-                },
-                onNavigateToOtpVerification = {
-                    navController.navigate(Route.OtpVerification) {
-                        popUpTo(Route.Registration) { inclusive = true }
-                    }
-                }
-            )
+        composableNoAnimation<Route.Login> {
+            LoginScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.SignUp> {
+            RegistrationScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.ForgotPassword> {
             ForgotPasswordScreenRoot(
@@ -85,6 +72,9 @@ fun ScolNavHost(
                     navController.popBackStack()
                 }
             )
+        }
+        composableNoAnimation<Route.ResetPassword> {
+            ResetPasswordRoute(navigator = navigator)
         }
     }
 }

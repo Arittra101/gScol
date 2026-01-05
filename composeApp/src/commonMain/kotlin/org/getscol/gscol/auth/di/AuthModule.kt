@@ -9,6 +9,7 @@ import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordViewMode
 import org.getscol.gscol.auth.presentation.login.LoginViewModel
 import org.getscol.gscol.auth.presentation.otp.OtpVerificationViewModel
 import org.getscol.gscol.auth.presentation.registration.RegistrationViewModel
+import org.getscol.gscol.auth.presentation.resetpassword.ResetPasswordViewmodel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -28,4 +29,5 @@ val authModule = module {
     viewModelOf(::RegistrationViewModel)
     viewModelOf(::OtpVerificationViewModel)
     viewModelOf(::ForgotPasswordViewModel)
+    viewModelOf(::ResetPasswordViewmodel)
 }

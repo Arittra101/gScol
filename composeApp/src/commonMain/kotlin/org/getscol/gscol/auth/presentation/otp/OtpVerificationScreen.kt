@@ -227,51 +227,7 @@ fun OtpVerificationScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Didn't receive code / Resend
-           /* if (state.canResend) {
-                TextButton(
-                    onClick = { onAction(OtpVerificationAction.OnResendClick) },
-                    enabled = !state.isResending
-                ) {
-                    if (state.isResending) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            color = Color(0xFF8B3838),
-                            strokeWidth = 2.dp
-                        )
-                        Spacer(modifier = Modifier.size(8.dp))
-                    }
-                    Text(
-                        text = if (state.isResending) "Resending..." else "Resend Code",
-                        fontSize = 14.sp,
-                        color = Color(0xFF8B3838),
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            } else {
-                val resendMinutes = state.resendAvailableSeconds / 60
-                val resendSeconds = state.resendAvailableSeconds % 60
-                Text(
-                    text = "Resend code in ${
-                        resendMinutes.toString().padStart(2, '0')
-                    }:${resendSeconds.toString().padStart(2, '0')}",
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
-            }*/
-
-            if (state.canResend) {
-                val resendMinutes = state.resendAvailableSeconds / 60
-                val resendSeconds = state.resendAvailableSeconds % 60
-                Text(
-                    text = "Resend code in ${
-                        resendMinutes.toString().padStart(2, '0')
-                    }:${resendSeconds.toString().padStart(2, '0')}",
-                    fontSize = 14.sp,
-                    color = Color.Gray,
-                )
-
-            } else {
+            if(state.isTokenExpired) {
                 Text(
                     text = "Didn't receive the code?",
                     fontSize = 16.sp,
@@ -281,6 +237,19 @@ fun OtpVerificationScreen(
                         println("click")
                         onAction(OtpVerificationAction.OnResendClick) }
                 )
+            }
+
+            if (state.resendingOtp) {
+                val resendMinutes = state.resendAvailableSeconds / 60
+                val resendSeconds = state.resendAvailableSeconds % 60
+                Text(
+                    text = "Resend code in ${
+                        resendMinutes.toString().padStart(2, '0')
+                    }:${resendSeconds.toString().padStart(2, '0')}",
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                )
+
             }
         }
     }

@@ -2,13 +2,17 @@ package org.getscol.gscol.auth.presentation.registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.auth.domain.validation.AuthValidator
+import org.getscol.gscol.auth.presentation.registration.components.RegistrationUiEffect
 import org.getscol.gscol.auth.utils.toUiMessage
 import org.getscol.gscol.core.domain.Result
 
@@ -18,6 +22,10 @@ class RegistrationViewModel(
 
     private val _state = MutableStateFlow(RegistrationState())
     val state: StateFlow<RegistrationState> = _state.asStateFlow()
+
+    private val _uiEffectState = MutableSharedFlow<RegistrationUiEffect>()
+    val uiEffectState: SharedFlow<RegistrationUiEffect> = _uiEffectState.asSharedFlow()
+
 
     fun onAction(action: RegistrationAction) {
         when (action) {
@@ -38,16 +46,11 @@ class RegistrationViewModel(
 
             is RegistrationAction.OnConfirmPassWordChange -> {
                 _state.update { it.copy(confirmPassword = action.confirmPassword) }
-                validateConfirmPassword(
-                    state.value.password,
-                    action.confirmPassword
-                )
+                validateConfirmPassword(state.value.password, action.confirmPassword)
             }
 
             is RegistrationAction.OnTermsAcceptedChange -> {
-                _state.update {
-                    it.copy(isTermsAccepted = action.accepted)
-                }
+                _state.update { it.copy(isTermsAccepted = action.accepted) }
             }
 
             RegistrationAction.OnRegisterClick -> {
@@ -93,6 +96,7 @@ class RegistrationViewModel(
                             errorMessage = null
                         )
                     }
+                    _uiEffectState.emit(RegistrationUiEffect.RegistrationSuccess)
                 }
 
                 is Result.Error -> {

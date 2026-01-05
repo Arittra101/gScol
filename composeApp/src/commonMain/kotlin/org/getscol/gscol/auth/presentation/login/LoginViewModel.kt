@@ -2,8 +2,12 @@ package org.getscol.gscol.auth.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,6 +23,9 @@ class LoginViewModel(
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state.asStateFlow()
 
+    private val _uiEffect = MutableSharedFlow<LoginUiEffect>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val uiEffect: SharedFlow<LoginUiEffect> = _uiEffect.asSharedFlow()
+
     fun onAction(action: LoginAction) {
         when (action) {
             is LoginAction.OnPhoneNumberChange -> {
@@ -31,7 +38,7 @@ class LoginViewModel(
                 validatePassword(action.password)
             }
 
-            LoginAction.OnLoginClick -> {
+            is LoginAction.OnLoginClick -> {
                 login()
             }
         }
@@ -49,7 +56,6 @@ class LoginViewModel(
         // Perform login
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-
             when (
                 val result = authRepository.login(
                     state.phoneNumber,
@@ -64,6 +70,8 @@ class LoginViewModel(
                             errorMessage = null
                         )
                     }
+
+                    _uiEffect.emit(LoginUiEffect.LoginSuccess)
                 }
 
                 is Result.Error -> {
@@ -91,11 +99,8 @@ class LoginViewModel(
     private fun isFormValid(): Boolean {
         val state = _state.value
 
-        val phoneError =
-            AuthValidator.validatePhoneNumber(state.phoneNumber.trim(), allowEmpty = false)
-
-        val passwordError =
-            AuthValidator.validatePassword(state.password, allowEmpty = false)
+        val phoneError = AuthValidator.validatePhoneNumber(state.phoneNumber.trim(), allowEmpty = false)
+        val passwordError = AuthValidator.validatePassword(state.password, allowEmpty = false)
 
         return listOf(
             phoneError,

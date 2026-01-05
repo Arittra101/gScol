@@ -16,12 +16,11 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.getscol.gscol.auth.data.AuthTokenProvider
-import org.getscol.gscol.core.data.auth.AuthTokenResponse
-import org.getscol.gscol.core.data.auth.RefreshTokenRequest
+import org.getscol.gscol.core.data.dto.auth.AuthTokenResponse
+import org.getscol.gscol.core.data.dto.auth.RefreshTokenRequest
 import org.getscol.gscol.core.utils.AppLogger
 import org.getscol.gscol.navigation.LogoutEventManager
 import org.getscol.gscol.navigation.NavigationAction

@@ -24,9 +24,7 @@ class OtpVerificationViewModel(
     private var expirationTimerJob: Job? = null
     private var resendTimerJob: Job? = null
 
-    init {
-        startTimers()
-    }
+    init { startOtpExpireTimer() }
 
     fun onAction(action: OtpVerificationAction) {
         when (action) {
@@ -41,42 +39,49 @@ class OtpVerificationViewModel(
 
             OtpVerificationAction.OnResendClick -> {
                 resendOtp()
+                startResendOtpTimer()
+                startOtpExpireTimer()
             }
         }
     }
 
-    private fun startTimers() {
+    private fun startResendOtpTimer(){
+        resendTimerJob?.cancel()
+        resendTimerJob = viewModelScope.launch {
+            var secondsRemaining = _state.value.resendAvailableSeconds
+            if(secondsRemaining == 0) secondsRemaining = 7
+            while (secondsRemaining > 0) {
+                delay(1000)
+                secondsRemaining--
+                _state.update {
+                    it.copy(
+                        resendAvailableSeconds = secondsRemaining,
+                        resendingOtp = secondsRemaining != 0
+                    )
+                }
+            }
+        }
+    }
+
+    private fun startOtpExpireTimer() {
         // Start expiration countdown (3 minutes)
         expirationTimerJob?.cancel()
         expirationTimerJob = viewModelScope.launch {
             var secondsRemaining = _state.value.tokenExpirationSeconds
+            if(secondsRemaining == 0) secondsRemaining = 13
             while (secondsRemaining > 0) {
                 delay(1000)
                 secondsRemaining--
                 _state.update { 
                     it.copy(
                         tokenExpirationSeconds = secondsRemaining,
-                        isTokenExpired = secondsRemaining == 0
-                    ) 
-                }
-            }
-        }
-
-        // Start resend countdown (60 seconds)
-        resendTimerJob?.cancel()
-        resendTimerJob = viewModelScope.launch {
-            var secondsRemaining = _state.value.resendAvailableSeconds
-            while (secondsRemaining > 0) {
-                delay(1000)
-                secondsRemaining--
-                _state.update { 
-                    it.copy(
-                        resendAvailableSeconds = secondsRemaining,
+                        isTokenExpired = secondsRemaining == 0,
                         canResend = secondsRemaining == 0
                     ) 
                 }
             }
         }
+
     }
 
     private fun validateOtp(otp: String) {
@@ -155,25 +160,19 @@ class OtpVerificationViewModel(
         }
 
         viewModelScope.launch {
-            _state.update { it.copy(isResending = true, errorMessage = null) }
+            _state.update { it.copy(isTokenExpired = false, errorMessage = null, resendingOtp = true) }
 
             when (val result = authRepository.resendOtp()) {
                 is Result.Success -> {
                     _state.update {
                         it.copy(
                             isResending = false,
-                            otp = "", // Clear OTP input
                             otpError = null,
                             errorMessage = null,
-                            // Reset timers with new values from response
-                            tokenExpirationSeconds = result.data.data.expiresIn,
-                            resendAvailableSeconds = result.data.data.retryAfter,
                             isTokenExpired = false,
-                            canResend = false
                         )
                     }
                     // Restart timers
-                    startTimers()
                 }
 
                 is Result.Error -> {
@@ -192,12 +191,16 @@ class OtpVerificationViewModel(
 
                         else -> "Failed to resend OTP. Please try again."
                     }
+                    print("get the error")
                     _state.update {
                         it.copy(
                             isResending = false,
-                            errorMessage = errorMessage
+                            errorMessage = errorMessage,
+                            resendingOtp = false
                         )
                     }
+                    resendTimerJob?.cancel()
+
                 }
             }
         }

@@ -29,18 +29,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.auth.presentation.registration.components.RegistrationUiEffect
 import org.getscol.gscol.auth.presentation.registration.components.TermsAndPrivacyCheckBox
 import org.getscol.gscol.core.components.AppTextField
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
@@ -54,36 +60,42 @@ import scol.composeapp.generated.resources.enter_phone_text
 import scol.composeapp.generated.resources.login_text
 import scol.composeapp.generated.resources.register_today
 import scol.composeapp.generated.resources.signup_text
+import androidx.compose.ui.backhandler.BackHandler
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RegistrationScreenRoot(
     viewModel: RegistrationViewModel = koinViewModel(),
-    onNavigateToLogin: () -> Unit,
-    onNavigateToOtpVerification: () -> Unit
+    navigator: Navigator
 ) {
     val state by viewModel.state.collectAsState()
 
-    // Handle successful registration
-    state.registrationData?.let { data ->
-        onNavigateToOtpVerification()
-    }
-
-    RegistrationScreen(
-        state = state,
-        onAction = { action ->
-            when (action) {
-                RegistrationAction.OnNavigateToLogin -> onNavigateToLogin()
-                else -> viewModel.onAction(action)
+    LaunchedEffect(Unit) {
+        viewModel.uiEffectState.collect { effect ->
+            when (effect) {
+                is RegistrationUiEffect.RegistrationSuccess -> {
+                    navigator.navigateToOtherScreen(route = Route.OtpVerification)
+                }
+                is RegistrationUiEffect.ShowToast -> {
+//                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+                is RegistrationUiEffect.NavigateBack -> {
+//                    navController.popBackStack()
+                }
             }
         }
-    )
+    }
+
+    BackHandler { navigator.navigateAuthScreenBack(Route.SignUp) }
+    RegistrationScreen(state = state, onAction = viewModel::onAction,navigator)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
     state: RegistrationState,
-    onAction: (RegistrationAction) -> Unit
+    onAction: (RegistrationAction) -> Unit,
+    navigator: Navigator
 ) {
 
     Scaffold(
@@ -250,9 +262,7 @@ fun RegistrationScreen(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error,
                         fontSize = 12.sp,
-                        modifier = Modifier.clickable {
-                            onAction(RegistrationAction.OnNavigateToLogin)
-                        }
+                        modifier = Modifier.clickable { navigator.navigateAuthScreenBack(Route.SignUp) }
                     )
                 }
                 Spacer(modifier = Modifier.height(40.dp))
