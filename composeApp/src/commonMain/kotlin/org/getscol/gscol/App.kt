@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import org.getscol.gscol.auth.data.AuthTokenProvider
 import org.getscol.gscol.navigation.NavigationAction
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.ScolTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -37,9 +38,9 @@ fun App(navigator: Navigator? = null) {
         var showContent by remember { mutableStateOf(false) }
 
         //for testing purposes
-        val authTokenProvider : AuthTokenProvider = getKoin().get()
+        val authTokenProvider: AuthTokenProvider = getKoin().get()
         LaunchedEffect(Unit) {
-            val a  = authTokenProvider.getAccessToken()
+            val a = authTokenProvider.getAccessToken()
             println("access token get App  $a")
         }
 
@@ -57,10 +58,16 @@ fun App(navigator: Navigator? = null) {
                 Text("Click me App1!")
             }
             Button(
-                onClick = { navigator?.navigateTo(NavigationAction.NavigateToLogInScreen) },
+                onClick = { navigator?.navigateToAuthScreen(Route.Login) },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("Go to Login")
+            }
+            Button(
+                onClick = { navigator?.navigateTo(NavigationAction.NavigateToOtpVerificationScreen) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Text("Go to OtpVerification")
             }
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }

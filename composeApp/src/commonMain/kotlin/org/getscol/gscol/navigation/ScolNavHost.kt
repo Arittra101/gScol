@@ -6,9 +6,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
 import org.getscol.gscol.App2
+import org.getscol.gscol.DesireScreen
+import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
+import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.auth.presentation.registration.RegistrationScreenRoot
+import org.getscol.gscol.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.core.Helper.composableNoAnimation
+import org.getscol.gscol.splash.SplashScreen
 
 @Composable
 fun ScolNavHost(
@@ -18,8 +23,18 @@ fun ScolNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.HomeRoute,
+        startDestination = Route.Splash,
     ) {
+        composableNoAnimation<Route.Splash> {
+            SplashScreen(
+                onNavigateToHome = {
+                    navController.navigate(Route.HomeRoute) {
+                        popUpTo(Route.Splash) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composableNoAnimation<Route.HomeRoute> {
             App(navigator)
         }
@@ -35,25 +50,23 @@ fun ScolNavHost(
         composableNoAnimation<Route.Consultant> {
             App(navigator)
         }
-        composableNoAnimation<Route.Login> {
-            LoginScreenRoot(
-                onNavigateToRegistration = {
-                    navController.navigate(Route.Registration)
-                }
-            )
+        composableNoAnimation<Route.Desire> {
+            DesireScreen()
         }
-        composableNoAnimation<Route.Registration> {
-            RegistrationScreenRoot(
-                onNavigateToLogin = {
-                    navController.navigate(Route.Login) {
-                        popUpTo(Route.Registration) { inclusive = true }
-                    }
-                },
-                onNavigateToOtpVerification = {
-                    // TODO: Navigate to OTP verification screen after user confirmation
-                    println("Registration successful!")
-                }
-            )
+        composableNoAnimation<Route.Login> {
+            LoginScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.SignUp> {
+            RegistrationScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.ForgotPassword> {
+            ForgotPasswordScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.OtpVerification> {
+            OtpVerificationScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.ResetPassword> {
+            ResetPasswordRoute(navigator = navigator)
         }
     }
 }

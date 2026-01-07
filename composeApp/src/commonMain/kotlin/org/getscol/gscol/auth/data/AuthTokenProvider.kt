@@ -2,6 +2,7 @@ package org.getscol.gscol.auth.data
 
 import org.getscol.gscol.core.data.storage.LocalStorage
 import org.getscol.gscol.core.data.storage.StorageKeys
+import org.getscol.gscol.core.utils.AppLogger
 
 class AuthTokenProvider(
     private val localStorage: LocalStorage
@@ -30,6 +31,7 @@ class AuthTokenProvider(
     }
 
     suspend fun clearTokens() {
+        AppLogger.d("clearTokens token ")
         localStorage.remove(StorageKeys.ACCESS_TOKEN)
         localStorage.remove(StorageKeys.REFRESH_TOKEN)
     }

@@ -2,10 +2,13 @@ package org.getscol.gscol.auth.data.repository
 
 import org.getscol.gscol.auth.data.AuthTokenProvider
 import org.getscol.gscol.auth.data.api_service.AuthApiService
+import org.getscol.gscol.auth.domain.model.ForgotPasswordResponse
 import org.getscol.gscol.auth.domain.model.RegistrationResponse
+import org.getscol.gscol.auth.domain.model.ResendOtpResponse
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
+import org.getscol.gscol.core.domain.asUnit
 
 class AuthRepositoryImpl(
     private val authApiService: AuthApiService,
@@ -46,4 +49,50 @@ class AuthRepositoryImpl(
             is Result.Error -> Result.Error(result.error)
         }
     }
+
+    override suspend fun verifyOtp(otp: String): Result<Unit, DataError.Remote> {
+        return when (val result = authApiService.verifyOtp(otp)) {
+            is Result.Success -> {
+                // Save access and refresh tokens after successful OTP verification
+                authTokenProvider.saveTokens(
+                    accessToken = result.data.data.accessToken,
+                    refreshToken = result.data.data.refreshToken
+                )
+                Result.Success(Unit)
+            }
+
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote> {
+        return when (val result = authApiService.resendOtp()) {
+            is Result.Success -> {
+                // Update the otpAccessToken with the new one
+                authTokenProvider.saveAccessToken(
+                    accessToken = result.data.data?.otpAccessToken
+                )
+                Result.Success(result.data)
+            }
+
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun forgotPassword(phone: String, newPassword: String): Result<ForgotPasswordResponse, DataError.Remote> {
+        return when (val result = authApiService.forgotPassword(phone, newPassword)) {
+            is Result.Success -> {
+                // Save otpAccessToken for OTP verification
+                authTokenProvider.saveAccessToken(accessToken = result.data.data?.otpAccessToken)
+                Result.Success(result.data)
+            }
+
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun resetPassword(newPassword: String): Result<Unit, DataError.Remote> {
+        return authApiService.resetPassword(newPassword).asUnit()
+    }
+
 }

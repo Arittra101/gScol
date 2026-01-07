@@ -88,6 +88,12 @@ kotlin {
             api(libs.datastore)
             api(libs.datastore.preferences)
 
+            // For Compose Multiplatform 1.9.1 and above
+            implementation("org.jetbrains.compose.ui:ui-backhandler:1.9.1")
+
+            // Or match your compose version
+            implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -15,64 +15,78 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.core.components.AppTextField
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
-import scol.composeapp.generated.resources.enter_pass_text
+import scol.composeapp.generated.resources.dont_have_account
+import scol.composeapp.generated.resources.enter_pass
 import scol.composeapp.generated.resources.enter_phone_text
+import scol.composeapp.generated.resources.forget_password
 import scol.composeapp.generated.resources.login_text
 import scol.composeapp.generated.resources.scol_hat_logo
+import scol.composeapp.generated.resources.signup_text
+import scol.composeapp.generated.resources.skip_text
 import scol.composeapp.generated.resources.welcome_text
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreenRoot(
     viewModel: LoginViewModel = koinViewModel(),
-    onNavigateToRegistration: () -> Unit = {}
+    navigator: Navigator
 ) {
     val state by viewModel.state.collectAsState()
-    LoginScreen(
-        state = state,
-        onAction = viewModel::onAction,
-        onNavigateToRegistration = onNavigateToRegistration
-    )
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEffect.collect { effect ->
+            when (effect) {
+                LoginUiEffect.LoginSuccess -> {
+                    navigator.navigateToOtherScreen(route = Route.Desire)
+                }
+                is LoginUiEffect.ShowToast -> {
+//                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+                LoginUiEffect.NavigateBack -> {
+//                    navController.popBackStack()
+                }
+            }
+        }
+    }
+
+    LoginScreen(state = state, onAction = viewModel::onAction, navigator = navigator)
+    BackHandler { navigator.navigateAuthScreenBack(Route.Login) }
 }
 
 @Composable
 fun LoginScreen(
     state: LoginState,
     onAction: (LoginAction) -> Unit,
-    onNavigateToRegistration: () -> Unit = {}
+    navigator: Navigator
 ) {
-    var passwordVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -86,7 +100,7 @@ fun LoginScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(130.dp))
             Image(
                 painter = painterResource(resource = Res.drawable.scol_hat_logo),
                 contentDescription = "Logo",
@@ -99,141 +113,49 @@ fun LoginScreen(
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
             )
-            Spacer(modifier = Modifier.height(40.dp))
-
-            // Google login - commented out for future use
-            /*
-            Button(
-                onClick = { /* Handle Google login */ },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-                ),
-                shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(16.dp)
-            ) {
-                Image(
-                    painter = painterResource(resource = Res.drawable.google_logo),
-                    contentDescription = "Google Logo",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    "Continue with Google",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        "OR",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            */
+            Spacer(modifier = Modifier.height(56.dp))
 
             // Phone number field
-            OutlinedTextField(
+            AppTextField(
                 value = state.phoneNumber,
-                onValueChange = { onAction(LoginAction.OnPhoneNumberChange(it)) },
-                label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            stringResource(Res.string.enter_phone_text),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
+                onValueChange = {
+                    onAction(LoginAction.OnPhoneNumberChange(it))
                 },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                    unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                ),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                isError = state.phoneError != null,
-                supportingText = state.phoneError?.let {
-                    {
-                        Text(
-                            it,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
+                label = stringResource(Res.string.enter_phone_text),
+                keyboardType = KeyboardType.Phone,
+                errorText = state.phoneError,
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Password field
-            OutlinedTextField(
+            AppTextField(
                 value = state.password,
-                onValueChange = { onAction(LoginAction.OnPasswordChange(it)) },
-                label = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            stringResource(Res.string.enter_pass_text),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
+                onValueChange = {
+                    onAction(LoginAction.OnPasswordChange(it))
                 },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                    unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-                ),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                trailingIcon = {
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
-                        )
-                    }
-                },
-                isError = state.passwordError != null,
-                supportingText = state.passwordError?.let {
-                    {
-                        Text(
-                            it,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
+                label = stringResource(Res.string.enter_pass),
+                isPassword = true,
+                keyboardType = KeyboardType.Password,
+                errorText = state.passwordError,
             )
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+            // Forgot Password link
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    stringResource(Res.string.forget_password),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Black,
+                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.ResetPassword) }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Error message
             if (state.errorMessage != null) {
@@ -250,9 +172,9 @@ fun LoginScreen(
                 onClick = { onAction(LoginAction.OnLoginClick) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error.copy(alpha = 1.2f),
+                    containerColor = Color(0xFF8B3838),
                 ),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
                 contentPadding = PaddingValues(16.dp),
                 enabled = !state.isLoading
             ) {
@@ -280,27 +202,20 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    "Don't have an account? ",
+                    stringResource(Res.string.dont_have_account),
+                    modifier = Modifier.padding(end = 2.dp),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
                 )
                 Text(
-                    "Register",
+                    stringResource(Res.string.signup_text),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.clickable {
-                        onNavigateToRegistration()
-                    }
+                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.SignUp) }
                 )
             }
-            
-            Spacer(modifier = Modifier.height(70.dp))
-            Text(
-                "By continuing, you agree to our system",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
-            )
+
         }
         Box(
             modifier = Modifier
@@ -316,7 +231,7 @@ fun LoginScreen(
                 )
             ) {
                 Text(
-                    "Skip",
+                    stringResource(Res.string.skip_text),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error,
                 )

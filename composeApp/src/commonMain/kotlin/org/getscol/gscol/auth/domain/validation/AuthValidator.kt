@@ -16,7 +16,7 @@ object AuthValidator {
         val trimmed = phoneNumber.trim()
         return when {
             trimmed.isEmpty() -> if (allowEmpty) null else "Phone number is required"
-            trimmed.length < 10 -> "Phone number must be at least 10 digits"
+            trimmed.length < 11 -> "Phone number must be at least 11 digits"
             !trimmed.all { it.isDigit() || it == '+' || it == '-' || it == ' ' } -> 
                 "Phone number contains invalid characters"
             else -> null
@@ -29,10 +29,26 @@ object AuthValidator {
      * @param allowEmpty If true, empty passwords won't return an error
      * @return Error message if invalid, null if valid
      */
-    fun validatePassword(password: String, allowEmpty: Boolean = false): String? {
+    fun validatePassword(
+        password: String,
+        allowEmpty: Boolean = false,
+        confirmPassword: String? = null,
+    ): String? {
+        if (password.isEmpty()) {
+            return if (allowEmpty) null else "Password is required"
+        }
         return when {
-            password.isEmpty() -> if (allowEmpty) null else "Password is required"
-            password.length < 6 -> "Password must be at least 6 characters"
+            confirmPassword != null && password != confirmPassword -> "Passwords do not match"
+            !password.any { it.isUpperCase() } ->
+                "Password must contain at least one uppercase letter"
+            !password.any { it.isLowerCase() } ->
+                "Password must contain at least one lowercase letter"
+            !password.any { it.isDigit() } ->
+                "Password must contain at least one digit"
+            !password.any { !it.isLetterOrDigit() } ->
+                "Password must contain at least one special character"
+            password.length < 8 ->
+                "Password must be at least 8 characters long"
             else -> null
         }
     }

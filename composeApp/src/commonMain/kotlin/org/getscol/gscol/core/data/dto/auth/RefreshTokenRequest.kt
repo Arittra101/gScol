@@ -1,4 +1,4 @@
-package org.getscol.gscol.core.data.auth
+package org.getscol.gscol.core.data.dto.auth
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

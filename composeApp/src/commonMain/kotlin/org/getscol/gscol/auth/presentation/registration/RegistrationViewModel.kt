@@ -2,14 +2,18 @@ package org.getscol.gscol.auth.presentation.registration
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.auth.domain.validation.AuthValidator
-import org.getscol.gscol.core.domain.DataError
+import org.getscol.gscol.auth.presentation.registration.components.RegistrationUiEffect
+import org.getscol.gscol.auth.utils.toUiMessage
 import org.getscol.gscol.core.domain.Result
 
 class RegistrationViewModel(
@@ -18,6 +22,10 @@ class RegistrationViewModel(
 
     private val _state = MutableStateFlow(RegistrationState())
     val state: StateFlow<RegistrationState> = _state.asStateFlow()
+
+    private val _uiEffectState = MutableSharedFlow<RegistrationUiEffect>()
+    val uiEffectState: SharedFlow<RegistrationUiEffect> = _uiEffectState.asSharedFlow()
+
 
     fun onAction(action: RegistrationAction) {
         when (action) {
@@ -36,6 +44,15 @@ class RegistrationViewModel(
                 validateFullName(action.fullName)
             }
 
+            is RegistrationAction.OnConfirmPassWordChange -> {
+                _state.update { it.copy(confirmPassword = action.confirmPassword) }
+                validateConfirmPassword(state.value.password, action.confirmPassword)
+            }
+
+            is RegistrationAction.OnTermsAcceptedChange -> {
+                _state.update { it.copy(isTermsAccepted = action.accepted) }
+            }
+
             RegistrationAction.OnRegisterClick -> {
                 register()
             }
@@ -47,48 +64,36 @@ class RegistrationViewModel(
     }
 
     private fun register() {
-        // Clear previous errors
-        _state.update {
-            it.copy(
-                errorMessage = null,
-                phoneError = null,
-                passwordError = null,
-                fullNameError = null
-            )
+        _state.update { it.copy(errorMessage = null) }
+
+        if (!isFormValid()) {
+            _state.update { it.copy(errorMessage = "Please fill up all the required fields!") }
+            return
+        }
+        if (!state.value.isTermsAccepted) {
+            _state.update {
+                it.copy(errorMessage = "Please accept Terms & Privacy Policy")
+            }
+            return
         }
 
-        // Validate inputs
-        val phoneNumber = _state.value.phoneNumber.trim()
-        val password = _state.value.password
-        val fullName = _state.value.fullName.trim()
-
-        var hasError = false
-
-        // Validate full name
-        AuthValidator.validateFullName(fullName, allowEmpty = false)?.let { error ->
-            _state.update { it.copy(fullNameError = error) }
-            hasError = true
+        if(AuthValidator.validatePasswordConfirmation(_state.value.password, _state.value.confirmPassword)!=null){
+            _state.update { it.copy(errorMessage = "Password Don't Match") }
+            return
         }
 
-        // Validate phone number
-        AuthValidator.validatePhoneNumber(phoneNumber, allowEmpty = false)?.let { error ->
-            _state.update { it.copy(phoneError = error) }
-            hasError = true
-        }
-
-        // Validate password
-        AuthValidator.validatePassword(password, allowEmpty = false)?.let { error ->
-            _state.update { it.copy(passwordError = error) }
-            hasError = true
-        }
-
-        if (hasError) return
-
+        val state = _state.value
         // Perform registration
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            when (val result = authRepository.register(phoneNumber, password, fullName)) {
+            when (
+                val result = authRepository.register(
+                    state.phoneNumber,
+                    state.password,
+                    state.fullName,
+                )
+            ) {
                 is Result.Success -> {
                     _state.update {
                         it.copy(
@@ -97,31 +102,14 @@ class RegistrationViewModel(
                             errorMessage = null
                         )
                     }
+                    _uiEffectState.emit(RegistrationUiEffect.RegistrationSuccess)
                 }
 
                 is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        DataError.Remote.REQUEST_TIMEOUT ->
-                            "Request timeout. Please try again."
-
-                        DataError.Remote.NO_INTERNET ->
-                            "No internet connection. Please check your network."
-
-                        DataError.Remote.SERVER ->
-                            "Server error. Please try again later."
-
-                        DataError.Remote.SERIALIZATION ->
-                            "Invalid response from server."
-
-                        DataError.Remote.TOO_MANY_REQUESTS ->
-                            "Too many requests. Please try again later."
-
-                        else -> "Registration failed. Please try again."
-                    }
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = errorMessage
+                            errorMessage = result.error.toUiMessage()
                         )
                     }
                 }
@@ -142,5 +130,35 @@ class RegistrationViewModel(
     private fun validatePassword(password: String) {
         val error = AuthValidator.validatePassword(password, allowEmpty = true)
         _state.update { it.copy(passwordError = error) }
+    }
+
+    private fun validateConfirmPassword(password: String, confirmPassword: String) {
+        val error = AuthValidator.validatePasswordConfirmation(password, confirmPassword)
+        _state.update { it.copy(confirmPasswordError = error) }
+    }
+
+    private fun isFormValid(): Boolean {
+        val state = _state.value
+        val fullNameError =
+            AuthValidator.validateFullName(state.fullName.trim(), allowEmpty = false)
+
+        val phoneError =
+            AuthValidator.validatePhoneNumber(state.phoneNumber.trim(), allowEmpty = false)
+
+        val passwordError =
+            AuthValidator.validatePassword(state.password, allowEmpty = false)
+
+        val confirmPasswordError =
+            AuthValidator.validatePasswordConfirmation(
+                state.password,
+                state.confirmPassword
+            )
+
+        return listOf(
+            fullNameError,
+            phoneError,
+            passwordError,
+            confirmPasswordError
+        ).all { it == null }
     }
 }

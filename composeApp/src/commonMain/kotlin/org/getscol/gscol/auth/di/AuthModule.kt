@@ -5,8 +5,11 @@ import org.getscol.gscol.auth.data.api_service.AuthApiService
 import org.getscol.gscol.auth.domain.repository.AuthRepository
 import org.getscol.gscol.auth.data.repository.AuthRepositoryImpl
 import org.getscol.gscol.auth.data.api_service.AuthApiServiceImpl
+import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordViewModel
 import org.getscol.gscol.auth.presentation.login.LoginViewModel
+import org.getscol.gscol.auth.presentation.otp.OtpVerificationViewModel
 import org.getscol.gscol.auth.presentation.registration.RegistrationViewModel
+import org.getscol.gscol.auth.presentation.resetpassword.ResetPasswordViewmodel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -24,4 +27,7 @@ val authModule = module {
     // ViewModels
     viewModelOf(::LoginViewModel)
     viewModelOf(::RegistrationViewModel)
+    viewModelOf(::OtpVerificationViewModel)
+    viewModelOf(::ForgotPasswordViewModel)
+    viewModelOf(::ResetPasswordViewmodel)
 }

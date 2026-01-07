@@ -19,8 +19,8 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.getscol.gscol.auth.data.AuthTokenProvider
-import org.getscol.gscol.core.data.auth.AuthTokenResponse
-import org.getscol.gscol.core.data.auth.RefreshTokenRequest
+import org.getscol.gscol.core.data.dto.auth.AuthTokenResponse
+import org.getscol.gscol.core.data.dto.auth.RefreshTokenRequest
 import org.getscol.gscol.core.utils.AppLogger
 import org.getscol.gscol.navigation.LogoutEventManager
 import org.getscol.gscol.navigation.NavigationAction
@@ -55,10 +55,18 @@ object HttpClientFactory {
                     loadTokens {
                         val accessToken = tokenProvider.getAccessToken().orEmpty()
                         val refreshToken = tokenProvider.getRefreshToken()
-                        BearerTokens(accessToken = accessToken, refreshToken = refreshToken)
+                        if (accessToken.isBlank()) {
+                            AppLogger.d("No access token available")
+                            return@loadTokens null
+                        }
+                        AppLogger.d("access token ${accessToken}")
+                        AppLogger.d("refreshToken  ${refreshToken}")
+                        BearerTokens(accessToken = accessToken,  refreshToken = refreshToken.orEmpty())
                     }
                     refreshTokens {
+                        AppLogger.d("go for refreshTokens")
                         val oldRefreshToken = tokenProvider.getRefreshToken()
+                        AppLogger.d("go for refreshTokens")
                         if (oldRefreshToken.isNullOrBlank()) {
                             tokenProvider.clearTokens()
                             LogoutEventManager.sendLogoutEvent(NavigationAction.NavigateToLogInScreen)

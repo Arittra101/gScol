@@ -23,9 +23,24 @@ sealed interface Route {
     object Login : Route
 
     @Serializable
-    object Registration : Route
+    object SignUp : Route
+
+    @Serializable
+    object OtpVerification : Route
+
+    @Serializable
+    object ForgotPassword : Route
+
+    @Serializable
+    object ResetPassword : Route
+
+    @Serializable
+    object Desire : Route
 
 //    @Serializable
 //    data class SettingsRoute(val userId: Int) : Route
 
+
+    @Serializable
+    object Splash : Route
 }

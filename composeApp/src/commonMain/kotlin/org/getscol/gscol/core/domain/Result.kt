@@ -1,6 +1,6 @@
 package org.getscol.gscol.core.domain
 
-import org.getscol.gscol.core.data.auth.AuthTokenResponse
+import org.getscol.gscol.core.data.dto.auth.AuthTokenResponse
 import org.getscol.gscol.core.domain.Error as Err
 
 sealed interface Result<out D, out E : Err> {
@@ -44,3 +44,5 @@ inline fun <T, E : Err> Result<T, E>.onError(onAction: () -> Unit): Result<T, E>
         is Result.Success -> this
     }
 }
+
+fun <E : Err> Result<*, E>.asUnit(): Result<Unit, E> = map { }  /*{ } == { Unit }*/
