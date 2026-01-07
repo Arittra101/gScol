@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ForgotPasswordRequest(
-    @SerialName("phone") val phone: String
+    @SerialName("phone") val phone: String?=null,
+    @SerialName("newPassword") val newPassword: String?=null,
 )

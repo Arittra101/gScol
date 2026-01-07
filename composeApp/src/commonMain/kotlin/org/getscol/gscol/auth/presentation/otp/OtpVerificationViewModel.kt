@@ -49,7 +49,7 @@ class OtpVerificationViewModel(
         resendTimerJob?.cancel()
         resendTimerJob = viewModelScope.launch {
             var secondsRemaining = _state.value.resendAvailableSeconds
-            if(secondsRemaining == 0) secondsRemaining = 7
+            if(secondsRemaining == 0) secondsRemaining = 20
             while (secondsRemaining > 0) {
                 delay(1000)
                 secondsRemaining--
@@ -68,7 +68,7 @@ class OtpVerificationViewModel(
         expirationTimerJob?.cancel()
         expirationTimerJob = viewModelScope.launch {
             var secondsRemaining = _state.value.tokenExpirationSeconds
-            if(secondsRemaining == 0) secondsRemaining = 13
+            if(secondsRemaining == 0) secondsRemaining = 30
             while (secondsRemaining > 0) {
                 delay(1000)
                 secondsRemaining--

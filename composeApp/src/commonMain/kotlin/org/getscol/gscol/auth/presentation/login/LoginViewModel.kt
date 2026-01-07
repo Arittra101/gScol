@@ -23,7 +23,7 @@ class LoginViewModel(
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state.asStateFlow()
 
-    private val _uiEffect = MutableSharedFlow<LoginUiEffect>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _uiEffect = MutableSharedFlow<LoginUiEffect>(replay = 0)
     val uiEffect: SharedFlow<LoginUiEffect> = _uiEffect.asSharedFlow()
 
     fun onAction(action: LoginAction) {

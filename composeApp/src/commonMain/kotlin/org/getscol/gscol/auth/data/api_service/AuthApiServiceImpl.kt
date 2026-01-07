@@ -72,11 +72,11 @@ class AuthApiServiceImpl(
         return safeApiCall { httpClient.get("auth/resend-otp") {} }
     }
 
-    override suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote> {
+    override suspend fun forgotPassword(phone: String,newPassword: String): Result<ForgotPasswordResponse, DataError.Remote> {
         return safeApiCall {
             httpClient.post("auth/forgot-password") {
                 contentType(ContentType.Application.Json)
-                setBody(ForgotPasswordRequest(phone = phone))
+                setBody(ForgotPasswordRequest(phone = phone, newPassword))
                 markAsNoAuth()
             }
         }

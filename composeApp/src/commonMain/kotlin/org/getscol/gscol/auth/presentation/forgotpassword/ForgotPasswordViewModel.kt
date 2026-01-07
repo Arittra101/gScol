@@ -37,7 +37,7 @@ class ForgotPasswordViewModel(
     }
 
     private fun sendOtp() {
-        // Clear previous errors
+    /*    // Clear previous errors
         _state.update { it.copy(errorMessage = null, phoneError = null) }
 
         // Validate phone number
@@ -70,6 +70,6 @@ class ForgotPasswordViewModel(
                     }
                 }
             }
-        }
+        }*/
     }
 }

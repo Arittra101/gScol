@@ -79,13 +79,11 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote> {
-        return when (val result = authApiService.forgotPassword(phone)) {
+    override suspend fun forgotPassword(phone: String, newPassword: String): Result<ForgotPasswordResponse, DataError.Remote> {
+        return when (val result = authApiService.forgotPassword(phone, newPassword)) {
             is Result.Success -> {
                 // Save otpAccessToken for OTP verification
-                authTokenProvider.saveAccessToken(
-                    accessToken = result.data.data.otpAccessToken
-                )
+                authTokenProvider.saveAccessToken(accessToken = result.data.data?.otpAccessToken)
                 Result.Success(result.data)
             }
 

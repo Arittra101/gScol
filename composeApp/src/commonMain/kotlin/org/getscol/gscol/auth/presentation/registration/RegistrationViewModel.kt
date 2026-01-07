@@ -76,6 +76,12 @@ class RegistrationViewModel(
             }
             return
         }
+
+        if(AuthValidator.validatePasswordConfirmation(_state.value.password, _state.value.confirmPassword)!=null){
+            _state.update { it.copy(errorMessage = "Password Don't Match") }
+            return
+        }
+
         val state = _state.value
         // Perform registration
         viewModelScope.launch {

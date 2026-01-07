@@ -49,29 +49,10 @@ fun ScolNavHost(
             RegistrationScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.ForgotPassword> {
-            ForgotPasswordScreenRoot(
-                onNavigateToOtpVerification = {
-                    navController.navigate(Route.OtpVerification) {
-                        popUpTo(Route.ForgotPassword) { inclusive = true }
-                    }
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
+            ForgotPasswordScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.OtpVerification> {
-            OtpVerificationScreenRoot(
-                onVerificationSuccess = {
-                    // Navigate to home screen after successful verification
-                    navController.navigate(Route.HomeRoute) {
-                        popUpTo(Route.OtpVerification) { inclusive = true }
-                    }
-                },
-                onNavigateBack = {
-                    navController.popBackStack()
-                }
-            )
+            OtpVerificationScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.ResetPassword> {
             ResetPasswordRoute(navigator = navigator)

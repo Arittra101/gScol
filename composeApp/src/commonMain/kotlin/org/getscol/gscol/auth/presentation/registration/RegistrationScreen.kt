@@ -114,9 +114,7 @@ fun RegistrationScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            onAction(RegistrationAction.OnNavigateToLogin)
-                        },
+                        onClick = { navigator.navigateAuthScreenBack(Route.SignUp) },
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,

@@ -1,6 +1,9 @@
 package org.getscol.gscol.auth.presentation.resetpassword
 
 data class ResetPasswordUiState(
+    val phoneNumber : String = "",
+    val phoneError: String? = null,
+
     val password: String = "",
     val confirmPassword: String = "",
 

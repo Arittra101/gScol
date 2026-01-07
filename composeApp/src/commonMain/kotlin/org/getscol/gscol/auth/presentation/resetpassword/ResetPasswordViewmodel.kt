@@ -23,7 +23,7 @@ class ResetPasswordViewmodel(
     private val _state = MutableStateFlow(ResetPasswordUiState())
     val state: StateFlow<ResetPasswordUiState> = _state.asStateFlow()
 
-    private val _uiEffect = MutableSharedFlow<ResetPasswordUiEffect>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _uiEffect = MutableSharedFlow<ResetPasswordUiEffect>(replay = 0)
     val uiEffect: SharedFlow<ResetPasswordUiEffect> = _uiEffect.asSharedFlow()
 
 
@@ -31,19 +31,18 @@ class ResetPasswordViewmodel(
         when (action) {
 
             is ResetPasswordAction.OnPasswordChange -> {
-                val passwordError = AuthValidator.validatePassword(_state.value.password, allowEmpty = false)
                 _state.update { it.copy(password = action.password) }
-                _state.update { it.copy(passwordError = passwordError) }
+                validatePassword(action.password)
+            }
+
+            is ResetPasswordAction.OnPhoneNumberChange -> {
+                _state.update { it.copy(phoneNumber = action.phoneNumber) }
+                validatePhoneNumber(_state.value.phoneNumber)
             }
 
             is ResetPasswordAction.OnConfirmPasswordChange -> {
-                val passwordError = AuthValidator.validatePassword(
-                    _state.value.password,
-                    allowEmpty = false,
-                    confirmPassword = _state.value.password
-                )
-                _state.update { it.copy(password = action.password) }
-                _state.update { it.copy(confirmPasswordError = passwordError) }
+                _state.update { it.copy(confirmPassword = action.confirmPassword) }
+                validateConfirmPassword(state.value.password, action.confirmPassword)
             }
 
             is ResetPasswordAction.OnClickSubmit -> {
@@ -61,10 +60,16 @@ class ResetPasswordViewmodel(
             return
         }
 
+
+        if(AuthValidator.validatePasswordConfirmation(_state.value.password, _state.value.confirmPassword)!=null){
+            _state.update { it.copy(errorMessage = "Password Don't Match") }
+            return
+        }
+
         val state = _state.value
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            val result = authRepository.resetPassword(state.password)
+            val result = authRepository.forgotPassword(state.phoneNumber,state.password)
             when(result) {
                 is Result.Success -> {
                     _state.update { it.copy(isLoading = false, errorMessage = null) }
@@ -74,6 +79,21 @@ class ResetPasswordViewmodel(
                 is Result.Error -> { _state.update { it.copy(isLoading = false, errorMessage = result.error.toUiMessage()) } }
             }
         }
+    }
+
+    private fun validatePhoneNumber(phoneNumber: String) {
+        val error = AuthValidator.validatePhoneNumber(phoneNumber, allowEmpty = true)
+        _state.update { it.copy(phoneError = error) }
+    }
+
+    private fun validatePassword(password: String) {
+        val error = AuthValidator.validatePassword(password, allowEmpty = true)
+        _state.update { it.copy(passwordError = error) }
+    }
+
+    private fun validateConfirmPassword(password: String, confirmPassword: String) {
+        val error = AuthValidator.validatePasswordConfirmation(password, confirmPassword)
+        _state.update { it.copy(confirmPasswordError = error) }
     }
 
     private fun isFormValid(): Boolean {

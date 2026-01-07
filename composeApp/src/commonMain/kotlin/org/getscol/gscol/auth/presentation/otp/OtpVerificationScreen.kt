@@ -28,7 +28,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -46,25 +45,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun OtpVerificationScreenRoot(
     viewModel: OtpVerificationViewModel = koinViewModel(),
-    onVerificationSuccess: () -> Unit,
-    onNavigateBack: () -> Unit = {}
+    navigator: Navigator
 ) {
     val state by viewModel.state.collectAsState()
 
     // Handle successful verification
     if (state.isVerificationSuccessful) {
-        onVerificationSuccess()
+        navigator.navigateToOtherScreen(route = Route.Desire)
     }
 
     OtpVerificationScreen(
         state = state,
         onAction = viewModel::onAction,
-        onNavigateBack = onNavigateBack
+        navigator = navigator
     )
 }
 
@@ -73,7 +73,7 @@ fun OtpVerificationScreenRoot(
 fun OtpVerificationScreen(
     state: OtpVerificationState,
     onAction: (OtpVerificationAction) -> Unit,
-    onNavigateBack: () -> Unit = {}
+    navigator: Navigator
 ) {
 
     Scaffold(
@@ -88,7 +88,7 @@ fun OtpVerificationScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = { navigator.navigateAuthScreenBack(Route.OtpVerification) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"

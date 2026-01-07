@@ -6,6 +6,7 @@
     <string name="enter_phone_text">Enter your phone number</string>
     <string name="enter_pass_text">Enter your password</string>
     <string name="enter_pass">Enter password</string>
+    <string name="enter_confirm_pass">Enter Confirm password</string>
     <string name="forget_password">Forget password?</string>
     <string name="login_text">Log in</string>
     <string name="dont_have_account">don't have an account?</string>

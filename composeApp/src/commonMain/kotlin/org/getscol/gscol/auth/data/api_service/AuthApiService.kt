@@ -25,6 +25,6 @@ interface AuthApiService {
 
     suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote>
 
-    suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote>
+    suspend fun forgotPassword(phone: String,newPassword: String): Result<ForgotPasswordResponse, DataError.Remote>
     suspend fun resetPassword(newPassword: String): Result<AuthPassResetResponseDto, DataError.Remote>
 }

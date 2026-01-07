@@ -21,13 +21,6 @@ class Navigator(private val navController: NavController) {
         OTP_VERIFICATION
     }
 
-    private var _loginCachedRoute: Route? = null
-    val loginCachedRoute: Route? get() = _loginCachedRoute
-
-    fun setLoginCachedRoute(route: Route) {
-        _loginCachedRoute = route
-    }
-
     private val authRoute = mutableListOf<Route>()
 
      fun navigateToTopLevel(destination: TopLevelDestination) {
@@ -46,8 +39,8 @@ class Navigator(private val navController: NavController) {
     }
 
     /* for reset password support & login screen support */
-     fun navigateToOtherScreen(route: Route?, clearCachedRoute: Boolean? = null, dropScreen: Boolean? = null) {
-         val targetRoute = route ?: _loginCachedRoute
+     fun navigateToOtherScreen(route: Route?, homeScreen: Boolean? = null, dropScreen: Boolean? = null) {
+         val targetRoute = route
          if (targetRoute == null) return
 
          navController.navigate(targetRoute) {
@@ -55,13 +48,12 @@ class Navigator(private val navController: NavController) {
                  val currentScreen = navController.currentBackStackEntry?.destination?.id ?: return@navigate
                  popUpTo(currentScreen) { inclusive = true }
              }
-             else if (_loginCachedRoute != null) {
-                 authRoute.firstOrNull()?.let { popUpTo(it) { inclusive = true } }
+             else {
+                 authRoute.firstOrNull()?.let { popUpTo(Route.HomeRoute) { inclusive = false } }
                  authRoute.clear()
              }
         }
 
-         if (clearCachedRoute == null) _loginCachedRoute = null
      }
 
     fun navigateToAuthScreen(loginRoute: Route) {

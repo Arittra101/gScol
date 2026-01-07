@@ -36,10 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.core.components.AppTextField
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
+import scol.composeapp.generated.resources.enter_confirm_pass
 import scol.composeapp.generated.resources.enter_pass
+import scol.composeapp.generated.resources.enter_phone_text
 
 @Composable
 fun ResetPasswordRoute(
@@ -53,13 +56,13 @@ fun ResetPasswordRoute(
         viewModel.uiEffect.collect { effect ->
             when (effect) {
                 ResetPasswordUiEffect.PasswordResetSuccess -> {
-
+                    println("ResetPasswordRoute again")
+                    navigator.navigateToAuthScreen(Route.OtpVerification)
                 }
 
                 is ResetPasswordUiEffect.ShowToast -> {
-                   /* Toast
-                        .makeText(context, effect.message, Toast.LENGTH_SHORT)
-                        .show()*/
+                    /* Toast.makeText(context, effect.message, Toast.LENGTH_SHORT)
+                         .show()*/
                 }
 
                 ResetPasswordUiEffect.NavigateBack -> {
@@ -92,7 +95,7 @@ fun ResetPasswordScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.navigateBack() }) {
+                    IconButton(onClick = { navigator.navigateAuthScreenBack(Route.SignUp) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
@@ -109,12 +112,12 @@ fun ResetPasswordScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(padding)
+                .padding(16.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top=140.dp),
+                    .padding(top = 140.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -137,6 +140,20 @@ fun ResetPasswordScreen(
 
                 Spacer(modifier = Modifier.height(44.dp))
 
+                // Phone number field
+                AppTextField(
+                    value = state.phoneNumber,
+                    onValueChange = {
+                        onAction(ResetPasswordAction.OnPhoneNumberChange(it))
+                    },
+                    label = stringResource(Res.string.enter_phone_text),
+                    keyboardType = KeyboardType.Phone,
+                    errorText = state.phoneError,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 // password field
                 AppTextField(
                     value = state.password,
@@ -145,23 +162,26 @@ fun ResetPasswordScreen(
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
                     errorText = state.passwordError,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // confirm password field
                 AppTextField(
-                    value = state.password,
+                    value = state.confirmPassword,
                     onValueChange = { onAction(ResetPasswordAction.OnConfirmPasswordChange(it)) },
-                    label = stringResource(Res.string.enter_pass),
+                    label = stringResource(Res.string.enter_confirm_pass),
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
                     errorText = state.confirmPasswordError,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
-                Spacer(modifier =
-                    if(state.errorMessage!=null) Modifier.height(20.dp)
-                    else Modifier.height(0.dp)
+                Spacer(
+                    modifier =
+                        if (state.errorMessage != null) Modifier.height(20.dp)
+                        else Modifier.height(0.dp)
                 )
 
                 // Error message
@@ -183,7 +203,8 @@ fun ResetPasswordScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .padding(horizontal = 38.dp),
+                        .padding(horizontal = 16.dp),
+
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF8B3838),
                         disabledContainerColor = Color(0xFF8B3838).copy(alpha = 0.5f)

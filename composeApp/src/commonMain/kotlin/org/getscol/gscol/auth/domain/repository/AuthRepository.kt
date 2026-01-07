@@ -11,6 +11,6 @@ interface AuthRepository {
     suspend fun login(phoneNumber: String, password: String): Result<Unit, DataError.Remote>
     suspend fun verifyOtp(otp: String): Result<Unit, DataError.Remote>
     suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote>
-    suspend fun forgotPassword(phone: String): Result<ForgotPasswordResponse, DataError.Remote>
+    suspend fun forgotPassword(phone: String, newPassword: String): Result<ForgotPasswordResponse, DataError.Remote>
     suspend fun resetPassword(newPassword: String): Result<Unit, DataError.Remote>
 }

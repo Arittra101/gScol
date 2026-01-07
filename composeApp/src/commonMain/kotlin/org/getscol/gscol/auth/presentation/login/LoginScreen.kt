@@ -52,7 +52,6 @@ import scol.composeapp.generated.resources.scol_hat_logo
 import scol.composeapp.generated.resources.signup_text
 import scol.composeapp.generated.resources.skip_text
 import scol.composeapp.generated.resources.welcome_text
-import androidx.compose.ui.backhandler.BackHandler
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -66,7 +65,7 @@ fun LoginScreenRoot(
         viewModel.uiEffect.collect { effect ->
             when (effect) {
                 LoginUiEffect.LoginSuccess -> {
-                    navigator.navigateToOtherScreen(route = Route.Desire, clearCachedRoute = true, dropScreen = true)
+                    navigator.navigateToOtherScreen(route = Route.Desire)
                 }
                 is LoginUiEffect.ShowToast -> {
 //                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
@@ -152,7 +151,7 @@ fun LoginScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Black,
-                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.ForgotPassword) }
+                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.ResetPassword) }
                 )
             }
 

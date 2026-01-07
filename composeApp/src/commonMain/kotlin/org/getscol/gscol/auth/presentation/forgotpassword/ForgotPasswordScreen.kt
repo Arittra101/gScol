@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.components.AppTextField
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import scol.composeapp.generated.resources.Res
@@ -55,20 +57,19 @@ import scol.composeapp.generated.resources.submit_text
 @Composable
 fun ForgotPasswordScreenRoot(
     viewModel: ForgotPasswordViewModel = koinViewModel(),
-    onNavigateToOtpVerification: () -> Unit,
-    onNavigateBack: () -> Unit = {}
+    navigator: Navigator
 ) {
     val state by viewModel.state.collectAsState()
 
     // Handle successful OTP send
     state.forgotPasswordData?.let {
-        onNavigateToOtpVerification()
+        navigator.navigateToAuthScreen(Route.OtpVerification)
     }
 
     ForgotPasswordScreen(
         state = state,
         onAction = viewModel::onAction,
-        onNavigateBack = onNavigateBack
+        navigator
     )
 }
 
@@ -77,7 +78,7 @@ fun ForgotPasswordScreenRoot(
 fun ForgotPasswordScreen(
     state: ForgotPasswordState,
     onAction: (ForgotPasswordAction) -> Unit,
-    onNavigateBack: () -> Unit = {}
+    navigator : Navigator
 ) {
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
@@ -100,7 +101,7 @@ fun ForgotPasswordScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {navigator.navigateAuthScreenBack(Route.ForgotPassword)}) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
