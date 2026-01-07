@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     id("com.codingfeline.buildkonfig")
+
 }
 
 // Load local.properties
@@ -93,6 +94,9 @@ kotlin {
 
             // Or match your compose version
             implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
+            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+            implementation("io.coil-kt.coil3:coil-svg:3.0.4")
+
 
         }
         commonTest.dependencies {

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import org.getscol.gscol.navigation.TopLevelDestination
 
 @Composable
@@ -41,10 +43,18 @@ fun ScolBottomBar(
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier.padding(vertical = 10.dp)
                     ) {
-                        Icon(
-                            destination.icon,
+                       /* Icon(
+                            destination.getIcon(),
                             contentDescription = null,
                             tint = if (isSelected) Color(0xFFB71C1C) else Color(0xFF506680)
+                        )*/
+                        AsyncImage(
+                            model = destination.getIconUri(),
+                            contentDescription = destination.label,
+                            modifier = Modifier.size(24.dp),
+                            colorFilter = ColorFilter.tint(
+                                if (isSelected) Color(0xFFB71C1C) else Color(0xFF506680)
+                            )
                         )
                         Spacer(modifier = Modifier.height(1.dp))
                         Text(
