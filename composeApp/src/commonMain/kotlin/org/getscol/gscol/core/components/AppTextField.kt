@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 @Composable
 fun AppTextField(
     value: String,
@@ -47,9 +46,9 @@ fun AppTextField(
         label = {
             Text(
                 text = label,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = labelAlign,
-                fontWeight = FontWeight.Bold,
+//                modifier = Modifier.fillMaxWidth(),
+//                textAlign = labelAlign,
+//                fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 color = Color.Gray
             )
@@ -58,8 +57,10 @@ fun AppTextField(
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
-            unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.3f),
+            focusedBorderColor = MaterialTheme.colorScheme.secondary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f),
+            focusedLabelColor = MaterialTheme.colorScheme.secondary,
+            unfocusedLabelColor = Color.Gray,
         ),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         visualTransformation = if (isPassword && !passwordVisible) {

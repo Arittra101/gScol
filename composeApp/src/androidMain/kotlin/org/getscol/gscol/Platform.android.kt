@@ -8,7 +8,7 @@ import androidx.compose.animation.fadeOut
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
-    override val transitionAnimationTime: Int = 700
+    override val transitionAnimationTime: Int = 300
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()

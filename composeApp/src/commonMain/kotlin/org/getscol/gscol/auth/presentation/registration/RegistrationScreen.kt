@@ -60,7 +60,6 @@ import scol.composeapp.generated.resources.enter_phone_text
 import scol.composeapp.generated.resources.login_text
 import scol.composeapp.generated.resources.register_today
 import scol.composeapp.generated.resources.signup_text
-import androidx.compose.ui.backhandler.BackHandler
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -71,10 +70,9 @@ fun RegistrationScreenRoot(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.uiEffectState.collect { effect ->
-            when (effect) {
+        viewModel.uiEffectState.collect { effect -> when (effect) {
                 is RegistrationUiEffect.RegistrationSuccess -> {
-                    navigator.navigateToOtherScreen(route = Route.OtpVerification)
+                    navigator.navigateToAuthScreen(Route.OtpVerification)
                 }
                 is RegistrationUiEffect.ShowToast -> {
 //                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
@@ -104,8 +102,7 @@ fun RegistrationScreen(
                 title = {
                     Text(
                         stringResource(Res.string.create_account),
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(end = 20.dp),
+                        modifier = Modifier.fillMaxWidth().padding(end = 20.dp),
                         color = Color.Black,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
@@ -135,7 +132,7 @@ fun RegistrationScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
@@ -263,7 +260,7 @@ fun RegistrationScreen(
                         modifier = Modifier.clickable { navigator.navigateAuthScreenBack(Route.SignUp) }
                     )
                 }
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(30.dp))
                 TermsAndPrivacyCheckBox(
                     isTermsAccepted = state.isTermsAccepted,
                     onCheckedChange = {

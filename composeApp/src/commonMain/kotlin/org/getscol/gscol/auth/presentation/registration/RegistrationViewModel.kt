@@ -23,7 +23,7 @@ class RegistrationViewModel(
     private val _state = MutableStateFlow(RegistrationState())
     val state: StateFlow<RegistrationState> = _state.asStateFlow()
 
-    private val _uiEffectState = MutableSharedFlow<RegistrationUiEffect>()
+    private val _uiEffectState = MutableSharedFlow<RegistrationUiEffect>(replay = 0)
     val uiEffectState: SharedFlow<RegistrationUiEffect> = _uiEffectState.asSharedFlow()
 
 

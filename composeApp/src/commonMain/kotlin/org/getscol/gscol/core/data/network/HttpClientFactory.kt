@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -50,6 +51,22 @@ object HttpClientFactory {
                 level = LogLevel.ALL
             }
 
+            // Install custom plugin to add fresh tokens on each request
+            install(createClientPlugin("DynamicTokenPlugin") {
+                onRequest { request, _ ->
+                    if (!request.isMarkedAsNoAuth()) {
+                        val freshToken = tokenProvider.getAccessToken()
+                        if (!freshToken.isNullOrBlank()) {
+                            request.headers.remove("Authorization")
+                            request.headers.append("Authorization", "Bearer $freshToken")
+                            AppLogger.d("Added fresh token to request: ${request.url}")
+                        } else {
+                            AppLogger.d("No access token available for request")
+                        }
+                    }
+                }
+            })
+
             install(Auth) {
                 bearer {
                     loadTokens {
@@ -61,12 +78,13 @@ object HttpClientFactory {
                         }
                         AppLogger.d("access token ${accessToken}")
                         AppLogger.d("refreshToken  ${refreshToken}")
-                        BearerTokens(accessToken = accessToken,  refreshToken = refreshToken.orEmpty())
+                        BearerTokens(accessToken = accessToken, refreshToken = refreshToken.orEmpty())
                     }
+
                     refreshTokens {
                         AppLogger.d("go for refreshTokens")
                         val oldRefreshToken = tokenProvider.getRefreshToken()
-                        AppLogger.d("go for refreshTokens")
+
                         if (oldRefreshToken.isNullOrBlank()) {
                             tokenProvider.clearTokens()
                             LogoutEventManager.sendLogoutEvent(NavigationAction.NavigateToLogInScreen)
@@ -102,9 +120,11 @@ object HttpClientFactory {
                             null
                         }
                     }
+
                     sendWithoutRequest { request ->
                         // Don't send bearer token for requests marked as no-auth
-                        !request.isMarkedAsNoAuth()
+                        // Return false because our custom plugin handles token addition
+                        false
                     }
                 }
             }
