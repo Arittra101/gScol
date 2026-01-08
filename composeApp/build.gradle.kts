@@ -89,14 +89,11 @@ kotlin {
             api(libs.datastore)
             api(libs.datastore.preferences)
 
-            // For Compose Multiplatform 1.9.1 and above
-            implementation("org.jetbrains.compose.ui:ui-backhandler:1.9.1")
+            // back handler For Compose Multiplatform 1.9.1 and above
+            implementation(libs.ui.backhandler)
 
-            // Or match your compose version
-            implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
-            implementation("io.coil-kt.coil3:coil-compose:3.0.4")
-            implementation("io.coil-kt.coil3:coil-svg:3.0.4")
-
+            // coil
+            implementation(libs.coil.svg)
 
         }
         commonTest.dependencies {
