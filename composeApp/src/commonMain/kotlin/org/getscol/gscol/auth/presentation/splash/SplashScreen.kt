@@ -1,4 +1,4 @@
-package org.getscol.gscol.splash
+package org.getscol.gscol.auth.presentation.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

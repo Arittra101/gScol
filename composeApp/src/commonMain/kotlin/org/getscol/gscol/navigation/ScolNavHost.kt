@@ -5,15 +5,18 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import org.getscol.gscol.App
-import org.getscol.gscol.App2
 import org.getscol.gscol.DesireScreen
+import org.getscol.gscol.auth.presentation.application.ApplicationScreen
+import org.getscol.gscol.auth.presentation.compare.CompareScreen
+import org.getscol.gscol.auth.presentation.consultant.ConsultantScreen
 import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
+import org.getscol.gscol.auth.presentation.profile.ProfileScreen
 import org.getscol.gscol.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.auth.presentation.resetpassword.ResetPasswordRoute
+import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.Helper.composableNoAnimation
-import org.getscol.gscol.splash.SplashScreen
 
 @Composable
 fun ScolNavHost(
@@ -39,16 +42,16 @@ fun ScolNavHost(
             App(navigator)
         }
         composableNoAnimation<Route.CompareRoute> {
-            App2()
+            CompareScreen()
         }
         composableNoAnimation<Route.Application> {
-            App(navigator)
+            ApplicationScreen()
         }
         composableNoAnimation<Route.Profile> {
-            App2()
+            ProfileScreen()
         }
         composableNoAnimation<Route.Consultant> {
-            App(navigator)
+            ConsultantScreen()
         }
         composableNoAnimation<Route.Desire> {
             DesireScreen()
