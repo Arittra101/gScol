@@ -1,6 +1,8 @@
 package org.getscol.gscol
 
 import android.os.Build
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -8,12 +10,16 @@ import androidx.compose.animation.fadeOut
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
-    override val transitionAnimationTime: Int = 300
+    override val transitionAnimationTime: Int = 200
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
 val transitionAnimationTime = getPlatform().transitionAnimationTime
 
+/*actual fun platformEnterTransition() = EnterTransition.None
+actual fun platformExitTransition() = ExitTransition.None
+actual fun platformPopEnterTransition() = EnterTransition.None
+actual fun platformPopExitTransition() = ExitTransition.None*/
 
 actual fun platformEnterTransition() = fadeIn(
     animationSpec = tween(durationMillis = transitionAnimationTime, easing = FastOutSlowInEasing)

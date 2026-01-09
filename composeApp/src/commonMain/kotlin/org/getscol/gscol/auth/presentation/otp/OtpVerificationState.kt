@@ -1,7 +1,7 @@
 package org.getscol.gscol.auth.presentation.otp
 
 data class OtpVerificationState(
-    val otp: String = "",
+    var otp: String = "",
     val isLoading: Boolean = false,
     val isVerifying: Boolean = false,
     val isResending: Boolean = false,

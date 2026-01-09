@@ -52,7 +52,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun OtpVerificationScreenRoot(
     viewModel: OtpVerificationViewModel = koinViewModel(),
-    navigator: Navigator
+    navigator: Navigator,
+    otpNumber: String? = null
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -60,11 +61,13 @@ fun OtpVerificationScreenRoot(
     if (state.isVerificationSuccessful) {
         navigator.navigateToOtherScreen(route = Route.Desire)
     }
+    state.otp = otpNumber.orEmpty()
 
     OtpVerificationScreen(
         state = state,
         onAction = viewModel::onAction,
-        navigator = navigator
+        navigator = navigator,
+        otpNumber = otpNumber
     )
 }
 
@@ -73,7 +76,8 @@ fun OtpVerificationScreenRoot(
 fun OtpVerificationScreen(
     state: OtpVerificationState,
     onAction: (OtpVerificationAction) -> Unit,
-    navigator: Navigator
+    navigator: Navigator,
+    otpNumber: String? = null
 ) {
 
     Scaffold(
@@ -88,7 +92,7 @@ fun OtpVerificationScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.navigateAuthScreenBack(Route.OtpVerification) }) {
+                    IconButton(onClick = { navigator.navigateAuthScreenBack(Route.OtpVerification()) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"

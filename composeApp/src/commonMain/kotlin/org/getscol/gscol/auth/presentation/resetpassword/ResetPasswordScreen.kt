@@ -57,7 +57,8 @@ fun ResetPasswordRoute(
             when (effect) {
                 ResetPasswordUiEffect.PasswordResetSuccess -> {
                     println("ResetPasswordRoute again")
-                    navigator.navigateToAuthScreen(Route.OtpVerification)
+                    val devOtp = viewModel.state.value.devOtp
+                    navigator.navigateToAuthScreen(Route.OtpVerification(devOtp))
                 }
 
                 is ResetPasswordUiEffect.ShowToast -> {
@@ -88,7 +89,7 @@ fun ResetPasswordScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Forgot Password",
+                        text = "Reset Password",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Left,
                         fontWeight = FontWeight.SemiBold

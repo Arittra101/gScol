@@ -72,7 +72,7 @@ class ResetPasswordViewmodel(
             val result = authRepository.forgotPassword(state.phoneNumber,state.password)
             when(result) {
                 is Result.Success -> {
-                    _state.update { it.copy(isLoading = false, errorMessage = null) }
+                    _state.update { it.copy(isLoading = false, errorMessage = null, devOtp = result.data.data?.devOtp) }
                     _uiEffect.emit(ResetPasswordUiEffect.ShowToast("Password reset successfully!"))
                     _uiEffect.emit(ResetPasswordUiEffect.PasswordResetSuccess)
                 }

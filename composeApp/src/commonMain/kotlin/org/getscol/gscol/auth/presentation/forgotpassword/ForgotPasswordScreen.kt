@@ -63,7 +63,7 @@ fun ForgotPasswordScreenRoot(
 
     // Handle successful OTP send
     state.forgotPasswordData?.let {
-        navigator.navigateToAuthScreen(Route.OtpVerification)
+        navigator.navigateToAuthScreen(Route.OtpVerification())
     }
 
     ForgotPasswordScreen(

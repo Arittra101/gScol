@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import org.getscol.gscol.auth.presentation.registration.components.RegistrationUiEffect
 import org.getscol.gscol.auth.presentation.registration.components.TermsAndPrivacyCheckBox
 import org.getscol.gscol.core.components.AppTextField
@@ -72,7 +73,8 @@ fun RegistrationScreenRoot(
     LaunchedEffect(Unit) {
         viewModel.uiEffectState.collect { effect -> when (effect) {
                 is RegistrationUiEffect.RegistrationSuccess -> {
-                    navigator.navigateToAuthScreen(Route.OtpVerification)
+                    val devOtp = viewModel.state.value.registrationData?.devOtp
+                    navigator.navigateToAuthScreen(Route.OtpVerification(devOtp))
                 }
                 is RegistrationUiEffect.ShowToast -> {
 //                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
@@ -106,7 +108,7 @@ fun RegistrationScreen(
                         color = Color.Black,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Left
                     )
                 },
                 navigationIcon = {

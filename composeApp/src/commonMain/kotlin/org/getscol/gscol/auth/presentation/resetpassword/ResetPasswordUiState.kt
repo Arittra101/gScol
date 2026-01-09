@@ -15,4 +15,6 @@ data class ResetPasswordUiState(
 
     val errorMessage: String? = null,
     val isLoading: Boolean = false,
+
+    val devOtp: String? = null
 )

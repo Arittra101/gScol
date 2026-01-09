@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.toRoute
 import org.getscol.gscol.App
 import org.getscol.gscol.DesireScreen
 import org.getscol.gscol.auth.presentation.application.ApplicationScreen
@@ -65,8 +66,9 @@ fun ScolNavHost(
         composableNoAnimation<Route.ForgotPassword> {
             ForgotPasswordScreenRoot(navigator = navigator)
         }
-        composableNoAnimation<Route.OtpVerification> {
-            OtpVerificationScreenRoot(navigator = navigator)
+        composableNoAnimation<Route.OtpVerification> {backStackEntry->
+            val args = backStackEntry.toRoute<Route.OtpVerification>()
+            OtpVerificationScreenRoot(navigator = navigator, otpNumber = args.otp.orEmpty())
         }
         composableNoAnimation<Route.ResetPassword> {
             ResetPasswordRoute(navigator = navigator)
