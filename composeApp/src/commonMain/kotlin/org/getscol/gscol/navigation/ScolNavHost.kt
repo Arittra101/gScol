@@ -10,14 +10,14 @@ import org.getscol.gscol.DesireScreen
 import org.getscol.gscol.auth.presentation.application.ApplicationScreen
 import org.getscol.gscol.auth.presentation.compare.CompareScreen
 import org.getscol.gscol.auth.presentation.consultant.ConsultantScreen
-import org.getscol.gscol.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
-import org.getscol.gscol.auth.presentation.login.LoginScreenRoot
-import org.getscol.gscol.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.auth.presentation.profile.ProfileScreen
-import org.getscol.gscol.auth.presentation.registration.RegistrationScreenRoot
-import org.getscol.gscol.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.Helper.composableNoAnimation
+import org.getscol.gscol.feature.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
+import org.getscol.gscol.feature.auth.presentation.login.LoginScreenRoot
+import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
+import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
+import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
 
 @Composable
 fun ScolNavHost(

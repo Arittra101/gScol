@@ -19,8 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import org.getscol.gscol.auth.data.AuthTokenProvider
+import org.getscol.gscol.feature.auth.data.AuthTokenProvider
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.ScolTheme
@@ -51,12 +50,12 @@ fun App(navigator: Navigator? = null) {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-          /*  Button(
-                onClick = { showContent = !showContent },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-            ) {
-                Text("Click me App1!")
-            }*/
+            /*  Button(
+                  onClick = { showContent = !showContent },
+                  colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+              ) {
+                  Text("Click me App1!")
+              }*/
             Button(
                 onClick = { navigator?.navigateToAuthScreen(Route.Login) },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
