@@ -19,10 +19,10 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.getscol.gscol.auth.data.AuthTokenProvider
 import org.getscol.gscol.core.data.dto.auth.AuthTokenResponse
 import org.getscol.gscol.core.data.dto.auth.RefreshTokenRequest
 import org.getscol.gscol.core.utils.AppLogger
+import org.getscol.gscol.feature.auth.data.AuthTokenProvider
 import org.getscol.gscol.navigation.LogoutEventManager
 import org.getscol.gscol.navigation.NavigationAction
 
@@ -78,7 +78,10 @@ object HttpClientFactory {
                         }
                         AppLogger.d("access token ${accessToken}")
                         AppLogger.d("refreshToken  ${refreshToken}")
-                        BearerTokens(accessToken = accessToken, refreshToken = refreshToken.orEmpty())
+                        BearerTokens(
+                            accessToken = accessToken,
+                            refreshToken = refreshToken.orEmpty()
+                        )
                     }
 
                     refreshTokens {
