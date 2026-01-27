@@ -20,7 +20,6 @@ import org.getscol.gscol.theme.ScolTheme
 
 class MainActivity : ComponentActivity() {
 
-
     private val _logoutEvent = MutableStateFlow<NavigationAction?>(null)
     private val logoutEvent: StateFlow<NavigationAction?> = _logoutEvent.asStateFlow()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +44,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-//@Preview
-//@Composable
-//fun AppAndroidPreview() {
-//    App()
-//}

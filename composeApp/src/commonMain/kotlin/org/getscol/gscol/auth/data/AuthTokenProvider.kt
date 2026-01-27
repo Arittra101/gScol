@@ -1,15 +1,18 @@
 package org.getscol.gscol.auth.data
 
+import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.data.storage.LocalStorage
 import org.getscol.gscol.core.data.storage.StorageKeys
 import org.getscol.gscol.core.utils.AppLogger
 
 class AuthTokenProvider(
-    private val localStorage: LocalStorage
+    private val localStorage: LocalStorage,
+    private val session: Session
 ) {
     suspend fun saveAccessToken(accessToken: String?) {
         if (accessToken == null) return
         localStorage.setString(StorageKeys.ACCESS_TOKEN, accessToken)
+        session.setUserLoggedIn(true)
     }
 
     suspend fun saveRefreshToken(refreshToken: String?) {
@@ -34,5 +37,10 @@ class AuthTokenProvider(
         AppLogger.d("clearTokens token ")
         localStorage.remove(StorageKeys.ACCESS_TOKEN)
         localStorage.remove(StorageKeys.REFRESH_TOKEN)
+        session.setUserLoggedIn(false)
+    }
+
+    suspend fun isUserLogin(): Boolean {
+        return localStorage.getString(StorageKeys.ACCESS_TOKEN) != null
     }
 }

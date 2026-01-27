@@ -1,12 +1,16 @@
 package org.getscol.gscol.home.data.dto
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.getscol.gscol.core.data.dto.BaseDto
 
+@Serializable
 data class HomeResponseDto(
     @SerialName("data") val data: CourseListDto? = null
 ) : BaseDto()
 
+
+@Serializable
 data class CourseListDto(
     @SerialName("userState") val userState: String? = null,
     @SerialName("listType") val listType: String? = null,
@@ -16,6 +20,7 @@ data class CourseListDto(
     @SerialName("ineligible") val ineligible: CourseGroupDto? = null
 )
 
+@Serializable
 data class PaginationDto(
     @SerialName("page") val page: Int? = null,
     @SerialName("limit") val limit: Int? = null,
@@ -24,10 +29,12 @@ data class PaginationDto(
     @SerialName("hasNext") val hasNext: Boolean? = null
 )
 
+@Serializable
 data class CourseGroupDto(
     @SerialName("courses") val courses: List<CourseDto>? = null
 )
 
+@Serializable
 data class CourseDto(
     @SerialName("universityId") val universityId: String? = null,
     @SerialName("courseId") val courseId: String? = null,

@@ -62,6 +62,13 @@ class DataStoreLocalStorage(
         }.first()
     }
 
+    override fun getFlowBoolean(key: String): Flow<Boolean> {
+        AppLogger.d("Boolean get: $key")
+        return dataStore.data.map { preferences ->
+            preferences[booleanPreferencesKey(key)] ?: false
+        }
+    }
+
     // Long operations
     override suspend fun setLong(key: String, value: Long) {
         dataStore.edit { preferences ->

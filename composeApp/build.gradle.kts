@@ -95,6 +95,9 @@ kotlin {
             // coil
             implementation(libs.coil.svg)
 
+            //paging 3 support with cash app
+            implementation(libs.paging.common)
+            implementation(libs.paging.compose.common)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

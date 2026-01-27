@@ -18,6 +18,9 @@ kotlinxSerializationJson = "1.7.3"
 koin = "4.1.1"
 ktor = "3.3.2"
 coil3 = "3.3.0"
+pagingCommon = "3.3.0-alpha02-0.5.1"
+pagingComposeCommon = "3.3.0-alpha02-0.5.1"
+pagingRuntime = "3.3.0-alpha02-0.5.1"
 timber = "5.0.1"
 datastore = "1.2.0"
 uiBackhandler = "1.9.3"
@@ -38,6 +41,9 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3" }
 compose-material-icons = { module = "org.jetbrains.compose.material:material-icons-extended" }
+paging-common = { module = "app.cash.paging:paging-common", version.ref = "pagingCommon" }
+paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "pagingComposeCommon" }
+paging-runtime = { module = "app.cash.paging:paging-runtime", version.ref = "pagingRuntime" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }

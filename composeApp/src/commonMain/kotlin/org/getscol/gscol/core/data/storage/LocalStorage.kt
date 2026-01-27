@@ -15,6 +15,7 @@ interface LocalStorage {
     suspend fun setBoolean(key: String, value: Boolean)
     suspend fun getBoolean(key: String): Boolean?
 
+    fun getFlowBoolean(key: String): Flow<Boolean>
     // Long operations
     suspend fun setLong(key: String, value: Long)
     suspend fun getLong(key: String): Long?
