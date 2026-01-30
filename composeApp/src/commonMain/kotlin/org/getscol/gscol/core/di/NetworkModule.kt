@@ -3,6 +3,8 @@ package org.getscol.gscol.core.di
 import com.getscol.gscol.BuildKonfig
 import io.ktor.client.HttpClient
 import org.getscol.gscol.core.data.network.HttpClientFactory
+import org.getscol.gscol.core.data.network.MockHttpFactory
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /**
@@ -10,8 +12,13 @@ import org.koin.dsl.module
  */
 val networkModule = module {
     single<HttpClient> {
-        HttpClientFactory.createHttpClient(engine = get(), get(), BuildKonfig.BASE_URL)
+        HttpClientFactory.createHttpClient(
+            engine = get(),
+            get(),
+            BuildKonfig.BASE_URL
+        )
     }
+    single<HttpClient>(named("mock")) { MockHttpFactory.provideMockHttpClient() }
 }
 
 
