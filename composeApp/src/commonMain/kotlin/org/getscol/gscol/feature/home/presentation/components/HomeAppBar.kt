@@ -2,6 +2,7 @@ package org.getscol.gscol.feature.home.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,13 +31,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.feature.home.presentation.HomeAction
+import org.getscol.gscol.navigation.Navigator
 import org.jetbrains.compose.resources.painterResource
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.route
 import scol.composeapp.generated.resources.scol_text_logo_2
 
 @Composable
-fun HomeAppBar() {
+fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
     Box(
         modifier = Modifier.fillMaxWidth()
             .background(color = Color(0xFFF2F2F2).copy(alpha = 0.5f))
@@ -55,7 +58,9 @@ fun HomeAppBar() {
                     contentDescription = "Logo",
                     tint = Color.Unspecified,
                     modifier = Modifier.width(50.dp)
-                        .padding(bottom = 2.dp)
+                        .padding(bottom = 2.dp).clickable{
+                            action(HomeAction.Change)
+                        },
                 )
                 HomeSearchBar(
                     value = "",
@@ -96,7 +101,7 @@ fun HomeAppBar() {
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
-            EligibilityButton()
+            EligibilityButton(navigator)
             Spacer(modifier = Modifier.height(20.dp))
         }
     }

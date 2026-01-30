@@ -40,7 +40,7 @@ fun ScolNavHost(
         }
 
         composableNoAnimation<Route.HomeRoute> {
-            HomeScreenRoot(navigator)
+            HomeScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.CompareRoute> {
             CompareScreen()

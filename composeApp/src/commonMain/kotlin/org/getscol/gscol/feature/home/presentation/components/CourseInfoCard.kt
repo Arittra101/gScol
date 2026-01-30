@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import org.getscol.gscol.feature.home.presentation.HomeAction
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.duration_icon
 import scol.composeapp.generated.resources.intake_icon
@@ -44,6 +45,7 @@ import scol.composeapp.generated.resources.tution_fee_icon
 
 @Composable
 fun CourseInfoCard(
+    courseId : String,
     courseName: String,
     city: String,
     country: String,
@@ -58,19 +60,15 @@ fun CourseInfoCard(
     ieltsBand: String,
     ieltsSingleBand: String,
     isFavorite: Boolean,
-    onFavoriteClick: () -> Unit,
-    onApplyClick: () -> Unit
+    action: (HomeAction) -> Unit,
 ) {
     val favoriteIcon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
     Surface(
-        modifier = Modifier.fillMaxWidth()
-            .padding(top = 20.dp),
-        color = Color.White,
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column {
             Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(12.dp),
+                modifier = Modifier.fillMaxWidth().padding(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -128,11 +126,11 @@ fun CourseInfoCard(
                 }
 
                 IconButton(
-                    onClick = onFavoriteClick,
+                    onClick = { action(HomeAction.AddToWishlist(courseId = courseId, isWishListed = isFavorite)) },
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(16.dp)
                         .size(24.dp)
-                        .background(Color.Transparent, CircleShape)
+                        .background(if(!isFavorite)Color.Transparent else Color.Red, CircleShape)
                 ) {
                     Icon(
                         favoriteIcon,
@@ -217,7 +215,7 @@ fun CourseInfoCard(
                 }
 
                 Button(
-                    onClick = onApplyClick,
+                    onClick = {  },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF8B0000).copy(alpha = 0.15f)
                     ),

@@ -1,7 +1,7 @@
-package org.getscol.gscol.home.data.mapper
+package org.getscol.gscol.feature.home.data.mapper
 
-import org.getscol.gscol.home.data.dto.CourseDto
-import org.getscol.gscol.home.domain.model.Course
+import org.getscol.gscol.feature.home.data.dto.CourseDto
+import org.getscol.gscol.feature.home.domain.model.Course
 
 fun CourseDto.toCourse(): Course {
     return Course(

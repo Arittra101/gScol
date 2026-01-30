@@ -2,69 +2,197 @@ package org.getscol.gscol.feature.home.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
+import org.koin.compose.viewmodel.koinViewModel
+
 
 @Composable
 fun HomeScreenRoot(
+    viewmode: HomeViewmodel = koinViewModel(),
     navigator: Navigator
 ) {
-    HomeScreen()
+
+    val action = viewmode::onAction
+    // Instead of the function reference...
+  /*  val action: (HomeAction) -> Unit = { data ->
+        viewmodel.onAction(data)
+    }*/
+
+    HomeScreen(viewmode,navigator,action)
 }
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewModel: HomeViewmodel,
+    navigator: Navigator,
+    action: (HomeAction) -> Unit
+) {
+    val courses = viewModel.courses.collectAsLazyPagingItems()
+
     Scaffold(
-        topBar = {
-            HomeAppBar()
-        },
+        topBar = { HomeAppBar(navigator = navigator,action) },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.fillMaxSize()
-                .padding(innerPadding)
-                .background(Color(0xFFCCCCCC)),
 
-            ) {
-            LazyColumn(
-                modifier = Modifier
-                    .navigationBarsPadding(),
-                contentPadding = PaddingValues(bottom = 52.dp),
-            ) {
-                items(10) {
-                    CourseInfoCard(
-                        courseName = "MSc International Business Management",
-                        city = "Westdown",
-                        country = "UK",
-                        universityName = "University of Winchester",
-                        universityLogo = "https://as2.ftcdn.net/v2/jpg/02/82/57/53/1000_F_282575364_W1Mz7QqrvkdLN18XcIO3vomBBc0B8FYV.jpg",
-                        backgroundImage = "https://images.unsplash.com/photo-1562774053-701939374585",
-                        intake = "JAN 2026",
-                        tuitionFees = "$58,000",
-                        duration = "1 year",
-                        scholarship = "Upto $5000",
-                        initialDeposit = "$20,000",
-                        ieltsBand = "6.5",
-                        ieltsSingleBand = "5.5",
-                        isFavorite = false,
-                        onFavoriteClick = {},
-                        onApplyClick = {}
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = innerPadding.calculateTopPadding())
+                .background(Color(0xFFCCCCCC))
+        ) {
+
+            // ✅ INITIAL LOAD (refresh)
+            when (val refreshState = courses.loadState.refresh) {
+                is LoadState.Loading -> {
+                    FullScreenLoader()
+                }
+
+                is LoadState.Error -> {
+                    FullScreenError(
+                        message = refreshState.error.message ?: "Failed to load",
+                        onRetry = { courses.retry() }
                     )
+                }
+
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.navigationBarsPadding(),
+                        contentPadding = PaddingValues(
+                           bottom = innerPadding.calculateTopPadding()
+                        )
+                    ) {
+
+                        items(count = courses.itemCount) { index ->
+                            courses[index]?.let {
+                                CourseInfoCard(
+                                    courseId = it.courseId,
+                                    courseName = it.courseName,
+                                    city = it.city,
+                                    country = it.country,
+                                    universityName = it.universityName,
+                                    universityLogo = it.imageUrl,
+                                    backgroundImage = it.imageUrl,
+                                    intake = it.intake,
+                                    tuitionFees = it.tuitionFee.toString(),
+                                    duration = it.duration,
+                                    scholarship = it.scholarship.toString(),
+                                    initialDeposit = "12333",
+                                    ieltsBand = it.ieltsOverallRequired,
+                                    ieltsSingleBand = it.ieltsBandRequired,
+                                    isFavorite = it.isWishlisted,
+                                    action = action
+                                )
+                            }
+                        }
+
+                        // ✅ PAGINATION (append)
+                        when (courses.loadState.append) {
+                            is LoadState.Loading -> {
+                                item {
+                                    PaginationLoader()
+                                }
+                            }
+
+                            is LoadState.Error -> {
+                                item {
+                                    PaginationError(
+                                        onRetry = { courses.retry() }
+                                    )
+                                }
+                            }
+
+                            else -> Unit
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+@Composable
+fun PaginationLoader() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun FullScreenLoader() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+
+@Composable
+fun FullScreenError(
+    message: String,
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = message)
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(onClick = onRetry) {
+                Text("Retry")
+            }
+        }
+    }
+}
+
+
+@Composable
+fun PaginationError(
+    onRetry: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Button(onClick = onRetry) {
+            Text("Retry")
+        }
+    }
+}
+
+
