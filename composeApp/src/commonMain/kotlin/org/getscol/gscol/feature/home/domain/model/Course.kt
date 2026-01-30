@@ -1,4 +1,4 @@
-package org.getscol.gscol.home.domain.model
+package org.getscol.gscol.feature.home.domain.model
 
 data class Course(
     val universityId: String,

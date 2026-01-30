@@ -16,11 +16,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun EligibilityButton() {
+@Preview
+fun EligibilityButton(navigator: Navigator) {
     Button(
-        onClick = {},
+        onClick = {
+            navigator.navigateToAuthScreen(Route.Login)
+        },
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(

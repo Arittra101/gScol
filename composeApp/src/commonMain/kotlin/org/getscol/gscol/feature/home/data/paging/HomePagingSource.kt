@@ -1,16 +1,16 @@
-package org.getscol.gscol.home.data.paging
+package org.getscol.gscol.feature.home.data.paging
 
 import androidx.paging.PagingState
 import app.cash.paging.PagingSource
-import org.getscol.gscol.auth.data.AuthTokenProvider
+import kotlinx.coroutines.delay
 import org.getscol.gscol.core.domain.Result
-import org.getscol.gscol.home.data.api_service.HomeApiService
-import org.getscol.gscol.home.data.mapper.toCourses
-import org.getscol.gscol.home.domain.model.Course
+import org.getscol.gscol.feature.home.data.api_service.HomeApiService
+import org.getscol.gscol.feature.home.data.mapper.toCourses
+import org.getscol.gscol.feature.home.domain.model.Course
 
 class HomePagingSource(
     private val homeApiService: HomeApiService,
-    private val authProvider: AuthTokenProvider
+    private val isUserLogin: Boolean
 ) : PagingSource<Int, Course>() {
 
     override fun getRefreshKey(state: PagingState<Int, Course>): Int? {
@@ -21,17 +21,20 @@ class HomePagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Course> {
         return try {
-            val isUserLogin = authProvider.getAccessToken() != null
-            val page = params.key ?: 0
+            val page = params.key ?: 1
+            delay(2000)
             val result = homeApiService.getHomeData(page, params.loadSize, isUserLogin)
-
             when (result) {
                 is Result.Success -> {
-                    val courses= result.data.data?.allCourses.orEmpty()
+                    val courses = if (!isUserLogin) result.data.data?.allCourses.orEmpty()
+                        else result.data.data?.eligible?.courses.orEmpty()
+
+                    val hasNext = result.data.data?.pagination?.hasNext ?: false
+
                     LoadResult.Page(
                         data = courses.toCourses(),
-                        prevKey = if (page == 0) null else page - 1,
-                        nextKey = if (courses.isEmpty()) null else page + 1
+                        prevKey = if (page == 1) null else page - 1,
+                        nextKey = if (hasNext) page+1 else null
                     )
                 }
 

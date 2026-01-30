@@ -38,6 +38,20 @@ class Navigator(private val navController: NavController) {
         }
     }
 
+    fun navigateToTopLevel(route: Route) {
+        navController.navigate(route) {
+            popUpTo(Route.Login) {
+                inclusive = true
+            }
+            // Avoid multiple copies
+            launchSingleTop = true
+
+            // Restore state when reselection
+            restoreState = true
+
+        }
+    }
+
     /* for reset password support & login screen support */
      fun navigateToOtherScreen(route: Route?, homeScreen: Boolean? = null, dropScreen: Boolean? = null) {
          val targetRoute = route
@@ -72,7 +86,7 @@ class Navigator(private val navController: NavController) {
 
     fun navigateTo(action: NavigationAction) {
         when (action) {
-            NavigationAction.NavigateToHomeScreen -> navigateToTopLevel(TopLevelDestination.HOME)
+//            NavigationAction.NavigateToHomeScreen -> navigateToTopLevel(TopLevelDestination.HOME)
             NavigationAction.NavigateToCompareScreen -> navigateToTopLevel(TopLevelDestination.COMPARE)
             NavigationAction.NavigateToLogInScreen -> navigateToAuthScreen(Route.Login)
             NavigationAction.NavigateToOtpVerificationScreen -> navigateToOtherScreen(Route.OtpVerification())

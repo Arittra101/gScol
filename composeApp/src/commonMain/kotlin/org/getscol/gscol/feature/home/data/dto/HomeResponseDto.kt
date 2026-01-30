@@ -1,4 +1,4 @@
-package org.getscol.gscol.home.data.dto
+package org.getscol.gscol.feature.home.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
