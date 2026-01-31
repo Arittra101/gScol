@@ -21,9 +21,11 @@ import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.eligibility_icon
 
 @Composable
-fun EligibilityButton() {
+fun EligibilityButton(
+    onClick: () -> Unit = {},
+) {
     Button(
-        onClick = {},
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(

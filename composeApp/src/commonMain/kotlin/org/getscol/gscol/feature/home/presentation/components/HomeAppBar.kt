@@ -37,7 +37,13 @@ import scol.composeapp.generated.resources.route
 import scol.composeapp.generated.resources.scol_text_logo_2
 
 @Composable
-fun HomeAppBar() {
+fun HomeAppBar(
+    searchQuery: String = "",
+    onSearchQueryChange: (String) -> Unit = {},
+    onTraceClick: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {},
+    onEligibilityClick: () -> Unit = {},
+) {
     val colors = appColors()
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -60,10 +66,9 @@ fun HomeAppBar() {
                         .padding(bottom = 2.dp)
                 )
                 HomeSearchBar(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier
-                        .weight(1f)
+                    value = searchQuery,
+                    onValueChange = onSearchQueryChange,
+                    modifier = Modifier.weight(1f)
                 )
                 BadgedBox(
                     badge = {
@@ -73,10 +78,10 @@ fun HomeAppBar() {
                         )
                     }
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onTraceClick) {
                         Icon(
                             painterResource(Res.drawable.route),
-                            contentDescription = "Favorites"
+                            contentDescription = "Trace"
                         )
                     }
                 }
@@ -89,7 +94,7 @@ fun HomeAppBar() {
                         )
                     }
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onNotificationsClick) {
                         Icon(
                             Icons.Default.NotificationsNone,
                             contentDescription = "Notifications"
@@ -98,7 +103,7 @@ fun HomeAppBar() {
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
-            EligibilityButton()
+            EligibilityButton(onClick = onEligibilityClick)
             Spacer(modifier = Modifier.height(20.dp))
         }
     }
