@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -26,9 +27,9 @@ fun InfoChip(
     iconPath: DrawableResource,
     title: String,
     text: String,
-    backgroundColor: Color = Color(0xFF8B0000),
-    textColor: Color = Color.White,
-    borderColor: Color = Color(0xFF8B0000),
+    backgroundColor: Color = appColors().customPrimary,
+    textColor: Color = appColors().customPrimaryContainer,
+    borderColor: Color = appColors().customPrimary,
     shouldFade: Boolean = false,
 ) {
     Surface(

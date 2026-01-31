@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import org.getscol.gscol.navigation.TopLevelDestination
+import org.getscol.gscol.theme.appColors
 
 @Composable
 fun ScolBottomBar(
@@ -49,9 +50,9 @@ fun ScolBottomBar(
     }
 
     val unselectedColor = if (isDarkMode) {
-        Color(0xFFADB5BD) // Lighter gray for dark mode
+        appColors().customSecondaryText // Lighter gray for dark mode
     } else {
-        Color(0xFF506680) // Original color for light mode
+        appColors().customSecondaryText // Original color for light mode
     }
 
     Box(modifier = modifier) {
@@ -96,14 +97,14 @@ fun ScolBottomBar(
                                 contentDescription = destination.label,
                                 modifier = Modifier.size(24.dp),
                                 colorFilter = ColorFilter.tint(
-                                    if (isSelected) Color(0xFFB71C1C) else unselectedColor
+                                    if (isSelected) appColors().customPrimary else unselectedColor
                                 )
                             )
                             Spacer(modifier = Modifier.height(1.dp))
                             Text(
                                 text = destination.label,
                                 fontSize = 11.sp,
-                                color = if (isSelected) Color(0xFFB71C1C) else unselectedColor
+                                color = if (isSelected) appColors().customPrimary else unselectedColor
                             )
                         }
                     },
@@ -111,8 +112,8 @@ fun ScolBottomBar(
                     alwaysShowLabel = true,
                     colors = NavigationBarItemDefaults.colors(
                         indicatorColor = Color.Transparent,
-                        selectedIconColor = Color(0xFFB71C1C),
-                        selectedTextColor = Color(0xFFB71C1C),
+                        selectedIconColor = appColors().customPrimary,
+                        selectedTextColor = appColors().customPrimary,
                         unselectedIconColor = unselectedColor,
                         unselectedTextColor = unselectedColor
                     )

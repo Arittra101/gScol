@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.theme.appColors
 
 @Composable
 fun HomeScreenRoot(
@@ -36,7 +37,7 @@ fun HomeScreen() {
         Box(
             modifier = Modifier.fillMaxSize()
                 .padding(innerPadding)
-                .background(Color(0xFFCCCCCC)),
+                .background(appColors().customBackground),
 
             ) {
             LazyColumn(

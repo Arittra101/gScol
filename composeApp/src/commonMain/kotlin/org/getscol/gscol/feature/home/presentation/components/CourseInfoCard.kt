@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import org.getscol.gscol.theme.appColors
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.duration_icon
 import scol.composeapp.generated.resources.intake_icon
@@ -65,7 +66,7 @@ fun CourseInfoCard(
     Surface(
         modifier = Modifier.fillMaxWidth()
             .padding(top = 20.dp),
-        color = Color.White,
+        color = appColors().customPrimaryContainer,
     ) {
         Column {
             Row(
@@ -76,8 +77,8 @@ fun CourseInfoCard(
             ) {
                 Box(
                     modifier = Modifier.size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFE6E6FA)),
+                        .background(appColors().customBackground)
+                        .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
@@ -90,7 +91,7 @@ fun CourseInfoCard(
                         text = courseName,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0D171B),
+                        color = appColors().customPrimaryText,
                         maxLines = 1,
                         autoSize = TextAutoSize.StepBased(
                             minFontSize = 8.sp, maxFontSize = 15.sp, stepSize = 1.sp
@@ -101,7 +102,7 @@ fun CourseInfoCard(
                     Text(
                         text = "$city | $universityName | $country",
                         fontSize = 14.sp,
-                        color = Color(0xFF4C809A),
+                        color = appColors().customSecondaryText,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
                         autoSize = TextAutoSize.StepBased(
@@ -117,7 +118,7 @@ fun CourseInfoCard(
                 // Placeholder for actual image - use AsyncImage or coil in real app
                 Box(
                     modifier = Modifier.fillMaxSize()
-                        .background(Color(0xFFCCCCCC))
+                        .background(appColors().customBackground)
                 ) {
                     AsyncImage(
                         model = backgroundImage,
@@ -163,8 +164,8 @@ fun CourseInfoCard(
                     iconPath = Res.drawable.duration_icon,
                     title = "Duration",
                     text = duration,
-                    backgroundColor = Color.White,
-                    textColor = Color(0xFF8B0000),
+                    backgroundColor = appColors().customPrimaryContainer,
+                    textColor = appColors().customPrimary,
                     shouldFade = true,
                 )
             }
@@ -180,8 +181,8 @@ fun CourseInfoCard(
                     iconPath = Res.drawable.intake_icon,
                     title = "Scholarship",
                     text = scholarship,
-                    backgroundColor = Color.White,
-                    textColor = Color(0xFF8B0000),
+                    backgroundColor = appColors().customPrimaryContainer,
+                    textColor = appColors().customPrimary,
                     shouldFade = true,
                 )
                 InfoChip(
@@ -193,7 +194,8 @@ fun CourseInfoCard(
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
+                color = appColors().customBackground,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -206,32 +208,33 @@ fun CourseInfoCard(
                     Text(
                         text = "IELTS Score required: ",
                         fontSize = 12.sp,
-                        color = Color(0xFF8B0000)
+                        color = appColors().customPrimary,
                     )
                     Text(
                         text = "$ieltsSingleBand/$ieltsBand",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF8B0000)
+                        color = appColors().customPrimary,
                     )
                 }
 
                 Button(
                     onClick = onApplyClick,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF8B0000).copy(alpha = 0.15f)
+                        containerColor = appColors().customPrimary.copy(alpha = 0.15f)
                     ),
                     shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text = "Apply Now",
-                        color = Color(0xFF8B0000),
+                        color = appColors().customPrimary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

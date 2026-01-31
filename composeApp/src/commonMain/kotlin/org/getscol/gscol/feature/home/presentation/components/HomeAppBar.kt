@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.painterResource
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.route
@@ -39,7 +40,7 @@ import scol.composeapp.generated.resources.scol_text_logo_2
 fun HomeAppBar() {
     Box(
         modifier = Modifier.fillMaxWidth()
-            .background(color = Color(0xFFF2F2F2).copy(alpha = 0.5f))
+            .background(color = appColors().customSecondaryContainer)
             .padding(horizontal = 20.dp)
             .statusBarsPadding()
     ) {
@@ -66,7 +67,7 @@ fun HomeAppBar() {
                 BadgedBox(
                     badge = {
                         Badge(
-                            containerColor = Color(0xFFDC143C),
+                            containerColor = appColors().customPrimary,
                             modifier = Modifier.size(8.dp)
                         )
                     }
@@ -82,7 +83,7 @@ fun HomeAppBar() {
                 BadgedBox(
                     badge = {
                         Badge(
-                            containerColor = Color(0xFFDC143C),
+                            containerColor = appColors().customPrimary,
                             modifier = Modifier.size(8.dp)
                         )
                     }
@@ -113,12 +114,12 @@ fun HomeSearchBar(
             .height(36.dp)
             .padding(start = 12.dp)
             .background(
-                color = Color.White,
+                color = appColors().customPrimaryContainer,
                 shape = RoundedCornerShape(50.dp)
             )
             .border(
                 width = 1.dp,
-                color = Color.Gray.copy(alpha = 0.5f),
+                color = appColors().customInfo,
                 shape = RoundedCornerShape(50.dp)
             )
             .padding(horizontal = 12.dp),
@@ -127,7 +128,7 @@ fun HomeSearchBar(
         Icon(
             Icons.Default.Search,
             contentDescription = null,
-            tint = Color.Gray,
+            tint = appColors().customInfo,
             modifier = Modifier.size(18.dp)
         )
 
@@ -139,7 +140,7 @@ fun HomeSearchBar(
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
                 fontSize = 12.sp,
-                color = Color.Black
+                color = appColors().customPrimaryText
             ),
             modifier = Modifier
                 .weight(1f),
@@ -148,7 +149,7 @@ fun HomeSearchBar(
                     Text(
                         "Search country, course, intake",
                         fontSize = 11.sp,
-                        color = Color.Gray
+                        color = appColors().customInfo
                     )
                 }
                 innerTextField()
