@@ -38,9 +38,10 @@ import scol.composeapp.generated.resources.scol_text_logo_2
 
 @Composable
 fun HomeAppBar() {
+    val colors = appColors()
     Box(
         modifier = Modifier.fillMaxWidth()
-            .background(color = appColors().customSecondaryContainer)
+            .background(color = colors.customSecondaryContainer)
             .padding(horizontal = 20.dp)
             .statusBarsPadding()
     ) {
@@ -67,7 +68,7 @@ fun HomeAppBar() {
                 BadgedBox(
                     badge = {
                         Badge(
-                            containerColor = appColors().customPrimary,
+                            containerColor = colors.customPrimary,
                             modifier = Modifier.size(8.dp)
                         )
                     }
@@ -83,7 +84,7 @@ fun HomeAppBar() {
                 BadgedBox(
                     badge = {
                         Badge(
-                            containerColor = appColors().customPrimary,
+                            containerColor = colors.customPrimary,
                             modifier = Modifier.size(8.dp)
                         )
                     }
@@ -109,17 +110,18 @@ fun HomeSearchBar(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = appColors()
     Row(
         modifier = modifier
             .height(36.dp)
             .padding(start = 12.dp)
             .background(
-                color = appColors().customPrimaryContainer,
+                color = colors.customPrimaryContainer,
                 shape = RoundedCornerShape(50.dp)
             )
             .border(
                 width = 1.dp,
-                color = appColors().customInfo,
+                color = colors.customInfo,
                 shape = RoundedCornerShape(50.dp)
             )
             .padding(horizontal = 12.dp),
@@ -128,7 +130,7 @@ fun HomeSearchBar(
         Icon(
             Icons.Default.Search,
             contentDescription = null,
-            tint = appColors().customInfo,
+            tint = colors.customInfo,
             modifier = Modifier.size(18.dp)
         )
 
@@ -140,7 +142,7 @@ fun HomeSearchBar(
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
                 fontSize = 12.sp,
-                color = appColors().customPrimaryText
+                color = colors.customPrimaryText
             ),
             modifier = Modifier
                 .weight(1f),
@@ -149,7 +151,7 @@ fun HomeSearchBar(
                     Text(
                         "Search country, course, intake",
                         fontSize = 11.sp,
-                        color = appColors().customInfo
+                        color = colors.customInfo
                     )
                 }
                 innerTextField()

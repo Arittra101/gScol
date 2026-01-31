@@ -27,36 +27,33 @@ fun InfoChip(
     iconPath: DrawableResource,
     title: String,
     text: String,
-    backgroundColor: Color = appColors().customPrimary,
-    textColor: Color = appColors().customPrimaryContainer,
-    borderColor: Color = appColors().customPrimary,
+    backgroundColor: Color? = null,
+    textColor: Color? = null,
+    borderColor: Color? = null,
     shouldFade: Boolean = false,
 ) {
+    val colors = appColors()
+    val effectiveBackgroundColor = backgroundColor ?: colors.customPrimary
+    val effectiveTextColor = textColor ?: colors.customPrimaryContainer
+    val effectiveBorderColor = borderColor ?: colors.customPrimary
+
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = backgroundColor,
+        color = effectiveBackgroundColor,
         modifier = Modifier
             .drawBehind {
                 val strokeWidth = 2.dp.toPx()
-
                 val brush =
                     if (shouldFade) {
-                        // Faded border (right side fade)
                         Brush.horizontalGradient(
                             colors = listOf(
-                                borderColor,
-                                borderColor,
-                                borderColor,
-                                borderColor,
-                                borderColor,
-                                borderColor,
-                                borderColor.copy(alpha = 0.05f),
-                                borderColor.copy(alpha = 0f)
+                                effectiveBorderColor,
+                                effectiveBorderColor,
+                                effectiveBorderColor.copy(alpha = 0f)
                             )
                         )
                     } else {
-                        // Solid normal border
-                        Brush.linearGradient(listOf(borderColor, borderColor))
+                        Brush.linearGradient(listOf(effectiveBorderColor, effectiveBorderColor))
                     }
 
                 drawRoundRect(
@@ -70,13 +67,13 @@ fun InfoChip(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp),
+                .padding(horizontal = 8.dp, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(iconPath),
                 contentDescription = null,
-                tint = textColor,
+                tint = effectiveTextColor,
                 modifier = Modifier
                     .padding(end = 2.dp)
                     .size(14.dp)
@@ -84,13 +81,13 @@ fun InfoChip(
             Text(
                 text = "$title: ",
                 fontSize = 10.sp,
-                color = textColor,
+                color = effectiveTextColor,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = text,
                 fontSize = 11.sp,
-                color = textColor,
+                color = effectiveTextColor,
                 fontWeight = FontWeight.Bold
             )
         }

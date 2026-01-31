@@ -62,11 +62,12 @@ fun CourseInfoCard(
     onFavoriteClick: () -> Unit,
     onApplyClick: () -> Unit
 ) {
+    val colors = appColors()
     val favoriteIcon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
     Surface(
         modifier = Modifier.fillMaxWidth()
             .padding(top = 20.dp),
-        color = appColors().customPrimaryContainer,
+        color = colors.customPrimaryContainer,
     ) {
         Column {
             Row(
@@ -77,7 +78,7 @@ fun CourseInfoCard(
             ) {
                 Box(
                     modifier = Modifier.size(48.dp)
-                        .background(appColors().customBackground)
+                        .background(colors.customBackground)
                         .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
@@ -91,7 +92,7 @@ fun CourseInfoCard(
                         text = courseName,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = appColors().customPrimaryText,
+                        color = colors.customPrimaryText,
                         maxLines = 1,
                         autoSize = TextAutoSize.StepBased(
                             minFontSize = 8.sp, maxFontSize = 15.sp, stepSize = 1.sp
@@ -102,7 +103,7 @@ fun CourseInfoCard(
                     Text(
                         text = "$city | $universityName | $country",
                         fontSize = 14.sp,
-                        color = appColors().customSecondaryText,
+                        color = colors.customSecondaryText,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
                         autoSize = TextAutoSize.StepBased(
@@ -118,7 +119,7 @@ fun CourseInfoCard(
                 // Placeholder for actual image - use AsyncImage or coil in real app
                 Box(
                     modifier = Modifier.fillMaxSize()
-                        .background(appColors().customBackground)
+                        .background(colors.customBackground)
                 ) {
                     AsyncImage(
                         model = backgroundImage,
@@ -146,7 +147,7 @@ fun CourseInfoCard(
             FlowRow(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 maxItemsInEachRow = 3
             ) {
@@ -164,8 +165,8 @@ fun CourseInfoCard(
                     iconPath = Res.drawable.duration_icon,
                     title = "Duration",
                     text = duration,
-                    backgroundColor = appColors().customPrimaryContainer,
-                    textColor = appColors().customPrimary,
+                    backgroundColor = colors.customPrimaryContainer,
+                    textColor = colors.customPrimary,
                     shouldFade = true,
                 )
             }
@@ -181,8 +182,8 @@ fun CourseInfoCard(
                     iconPath = Res.drawable.intake_icon,
                     title = "Scholarship",
                     text = scholarship,
-                    backgroundColor = appColors().customPrimaryContainer,
-                    textColor = appColors().customPrimary,
+                    backgroundColor = colors.customPrimaryContainer,
+                    textColor = colors.customPrimary,
                     shouldFade = true,
                 )
                 InfoChip(
@@ -195,7 +196,7 @@ fun CourseInfoCard(
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                color = appColors().customBackground,
+                color = colors.customBackground,
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -208,27 +209,27 @@ fun CourseInfoCard(
                     Text(
                         text = "IELTS Score required: ",
                         fontSize = 12.sp,
-                        color = appColors().customPrimary,
+                        color = colors.customPrimary,
                     )
                     Text(
                         text = "$ieltsSingleBand/$ieltsBand",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = appColors().customPrimary,
+                        color = colors.customPrimary,
                     )
                 }
 
                 Button(
                     onClick = onApplyClick,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = appColors().customPrimary.copy(alpha = 0.15f)
+                        containerColor = colors.customPrimary.copy(alpha = 0.15f)
                     ),
                     shape = RoundedCornerShape(4.dp),
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text = "Apply Now",
-                        color = appColors().customPrimary,
+                        color = colors.customPrimary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
