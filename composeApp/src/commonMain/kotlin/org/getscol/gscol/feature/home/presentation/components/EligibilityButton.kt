@@ -15,13 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.getscol.gscol.theme.appColors
-import org.jetbrains.compose.resources.painterResource
-import scol.composeapp.generated.resources.Res
-import scol.composeapp.generated.resources.eligibility_icon
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
+import org.getscol.gscol.theme.appColors
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import scol.composeapp.generated.resources.Res
+import scol.composeapp.generated.resources.eligibility_icon
 
 @Composable
 @Preview

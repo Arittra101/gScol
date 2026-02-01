@@ -60,7 +60,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                     contentDescription = "Logo",
                     tint = Color.Unspecified,
                     modifier = Modifier.width(50.dp)
-                        .padding(bottom = 2.dp).clickable{
+                        .padding(bottom = 2.dp).clickable {
                             action(HomeAction.Change)
                         },
                 )

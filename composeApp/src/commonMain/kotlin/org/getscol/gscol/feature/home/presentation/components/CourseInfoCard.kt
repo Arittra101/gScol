@@ -46,7 +46,7 @@ import scol.composeapp.generated.resources.tution_fee_icon
 
 @Composable
 fun CourseInfoCard(
-    courseId : String,
+    courseId: String,
     courseName: String,
     city: String,
     country: String,
@@ -130,11 +130,18 @@ fun CourseInfoCard(
                 }
 
                 IconButton(
-                    onClick = { action(HomeAction.AddToWishlist(courseId = courseId, isWishListed = isFavorite)) },
+                    onClick = {
+                        action(
+                            HomeAction.AddToWishlist(
+                                courseId = courseId,
+                                isWishListed = isFavorite
+                            )
+                        )
+                    },
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(16.dp)
                         .size(24.dp)
-                        .background(if(!isFavorite)Color.Transparent else Color.Red, CircleShape)
+                        .background(if (!isFavorite) Color.Transparent else Color.Red, CircleShape)
                 ) {
                     Icon(
                         favoriteIcon,
@@ -220,7 +227,7 @@ fun CourseInfoCard(
                 }
 
                 Button(
-                    onClick = {  },
+                    onClick = { },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.customPrimary.copy(alpha = 0.15f)
                     ),

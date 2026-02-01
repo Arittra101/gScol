@@ -38,11 +38,11 @@ fun HomeScreenRoot(
 
     val action = viewmode::onAction
     // Instead of the function reference...
-  /*  val action: (HomeAction) -> Unit = { data ->
-        viewmodel.onAction(data)
-    }*/
+    /*  val action: (HomeAction) -> Unit = { data ->
+          viewmodel.onAction(data)
+      }*/
 
-    HomeScreen(viewmode,navigator,action)
+    HomeScreen(viewmode, navigator, action)
 }
 
 @Composable
@@ -54,7 +54,7 @@ fun HomeScreen(
     val courses = viewModel.courses.collectAsLazyPagingItems()
 
     Scaffold(
-        topBar = { HomeAppBar(navigator = navigator,action) },
+        topBar = { HomeAppBar(navigator = navigator, action) },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
 
