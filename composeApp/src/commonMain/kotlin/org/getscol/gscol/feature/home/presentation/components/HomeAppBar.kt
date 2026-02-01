@@ -67,8 +67,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                 HomeSearchBar(
                     value = "",
                     onValueChange = { },
-                    modifier = Modifier
-                        .weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
                 BadgedBox(
                     badge = {

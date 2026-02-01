@@ -27,7 +27,7 @@ import scol.composeapp.generated.resources.eligibility_icon
 @Preview
 fun EligibilityButton(navigator: Navigator) {
     Button(
-        onClick = {},
+        onClick = {navigator.navigateToAuthScreen(Route.Login)},
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(

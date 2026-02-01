@@ -20,15 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
-import org.koin.compose.viewmodel.koinViewModel
-
 import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -69,9 +66,7 @@ fun HomeScreen(
         ) {
 
             when (val refreshState = courses.loadState.refresh) {
-                is LoadState.Loading -> {
-                    FullScreenLoader()
-                }
+                is LoadState.Loading -> { FullScreenLoader() }
 
                 is LoadState.Error -> {
                     FullScreenError(
@@ -113,19 +108,11 @@ fun HomeScreen(
 
                         when (courses.loadState.append) {
                             is LoadState.Loading -> {
-                                item {
-                                    PaginationLoader()
-                                }
+                                item { PaginationLoader() }
                             }
-
                             is LoadState.Error -> {
-                                item {
-                                    PaginationError(
-                                        onRetry = { courses.retry() }
-                                    )
-                                }
+                                item { PaginationError(onRetry = { courses.retry() }) }
                             }
-
                             else -> Unit
                         }
                     }
@@ -142,9 +129,7 @@ fun PaginationLoader() {
             .fillMaxWidth()
             .padding(16.dp),
         contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
+    ) { CircularProgressIndicator() }
 }
 
 @Composable
@@ -152,9 +137,7 @@ fun FullScreenLoader() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
+    ) { CircularProgressIndicator() }
 }
 
 
@@ -167,9 +150,7 @@ fun FullScreenError(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = message)
             Spacer(modifier = Modifier.height(12.dp))
             Button(onClick = onRetry) {
@@ -185,14 +166,8 @@ fun PaginationError(
     onRetry: () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
         contentAlignment = Alignment.Center
-    ) {
-        Button(onClick = onRetry) {
-            Text("Retry")
-        }
-    }
+    ) { Button(onClick = onRetry) { Text("Retry") } }
 }
 
