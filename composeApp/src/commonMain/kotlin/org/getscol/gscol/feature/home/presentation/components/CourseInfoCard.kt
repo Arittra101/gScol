@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import org.getscol.gscol.theme.appColors
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.theme.appColors
 import scol.composeapp.generated.resources.Res
@@ -93,12 +92,12 @@ fun CourseInfoCard(
                         fontWeight = FontWeight.Bold,
                         color = colors.customPrimaryText,
                         maxLines = 1,
+                        lineHeight = 24.sp,
                         autoSize = TextAutoSize.StepBased(
                             minFontSize = 8.sp, maxFontSize = 15.sp, stepSize = 1.sp
                         ),
                         overflow = TextOverflow.Ellipsis,
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "$city | $universityName | $country",
                         fontSize = 14.sp,
@@ -146,7 +145,7 @@ fun CourseInfoCard(
             FlowRow(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement =Arrangement.spacedBy(15.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 maxItemsInEachRow = 3
             ) {
@@ -173,7 +172,7 @@ fun CourseInfoCard(
             FlowRow(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 maxItemsInEachRow = 2
             ) {

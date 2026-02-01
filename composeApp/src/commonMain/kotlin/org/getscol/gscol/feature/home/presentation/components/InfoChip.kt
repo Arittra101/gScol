@@ -3,6 +3,7 @@ package org.getscol.gscol.feature.home.presentation.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.theme.appColors
@@ -40,7 +42,7 @@ fun InfoChip(
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = effectiveBackgroundColor,
-        modifier = Modifier
+        modifier = Modifier.widthIn(max = 220.dp)
             .drawBehind {
                 val strokeWidth = 2.dp.toPx()
                 val brush =
@@ -66,8 +68,7 @@ fun InfoChip(
 
     ) {
         Row(
-            modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 2.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -82,7 +83,9 @@ fun InfoChip(
                 text = "$title: ",
                 fontSize = 10.sp,
                 color = effectiveTextColor,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = text,
