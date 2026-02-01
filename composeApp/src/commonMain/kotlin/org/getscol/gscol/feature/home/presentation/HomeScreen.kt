@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.collectAsLazyPagingItems
@@ -29,6 +28,7 @@ import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
 import org.koin.compose.viewmodel.koinViewModel
 
+import org.getscol.gscol.theme.appColors
 
 @Composable
 fun HomeScreenRoot(
@@ -59,12 +59,11 @@ fun HomeScreen(
     ) { innerPadding ->
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
-                .background(Color(0xFFCCCCCC))
-        ) {
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding)
+                .background(appColors().customBackground),
 
+            ) {
             // ✅ INITIAL LOAD (refresh)
             when (val refreshState = courses.loadState.refresh) {
                 is LoadState.Loading -> {
@@ -82,7 +81,7 @@ fun HomeScreen(
                     LazyColumn(
                         modifier = Modifier.navigationBarsPadding(),
                         contentPadding = PaddingValues(
-                           bottom = innerPadding.calculateTopPadding()
+                            bottom = innerPadding.calculateTopPadding()
                         )
                     ) {
 

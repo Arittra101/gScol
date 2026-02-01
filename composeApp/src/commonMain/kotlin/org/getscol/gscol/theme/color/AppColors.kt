@@ -1,6 +1,11 @@
 package org.getscol.gscol.theme.color
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
+
+val LocalAppColors = compositionLocalOf<AppColors> {
+    error("No AppColors provided. Make sure your composables are inside ScolTheme.")
+}
 
 data class AppColors(
     val primary: Color,
@@ -29,6 +34,9 @@ data class AppColors(
     val customSecondary: Color,
     val customPrimaryText: Color,
     val customSecondaryText: Color,
+    val customBackground: Color,
+    val customPrimaryContainer: Color,
+    val customSecondaryContainer: Color,
     val customError: Color,
     val customErrorText: Color,
     val customSuccess: Color,
