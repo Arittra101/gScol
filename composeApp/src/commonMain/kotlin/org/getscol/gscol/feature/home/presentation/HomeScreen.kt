@@ -27,6 +27,8 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
+import org.koin.compose.viewmodel.koinViewModel
+
 import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
 
