@@ -62,10 +62,14 @@ fun LoginScreenRoot(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
+
+
         viewModel.uiEffect.collect { effect ->
             when (effect) {
                 LoginUiEffect.LoginSuccess -> {
-                    navigator.navigateToOtherScreen(route = Route.Desire)
+
+                    //navigator.navigateToOtherScreen(route = Route.Desire)
+                    navigator.navigateToTopLevel(Route.HomeRoute)
                 }
                 is LoginUiEffect.ShowToast -> {
 //                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()

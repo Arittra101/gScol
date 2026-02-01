@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.painterResource
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.route
@@ -40,9 +41,10 @@ import scol.composeapp.generated.resources.scol_text_logo_2
 
 @Composable
 fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
+    val colors = appColors()
     Box(
         modifier = Modifier.fillMaxWidth()
-            .background(color = Color(0xFFF2F2F2).copy(alpha = 0.5f))
+            .background(color = colors.customSecondaryContainer)
             .padding(horizontal = 20.dp)
             .statusBarsPadding()
     ) {
@@ -71,7 +73,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                 BadgedBox(
                     badge = {
                         Badge(
-                            containerColor = Color(0xFFDC143C),
+                            containerColor = colors.customPrimary,
                             modifier = Modifier.size(8.dp)
                         )
                     }
@@ -79,7 +81,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                     IconButton(onClick = {}) {
                         Icon(
                             painterResource(Res.drawable.route),
-                            contentDescription = "Favorites"
+                            contentDescription = "Trace"
                         )
                     }
                 }
@@ -87,7 +89,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                 BadgedBox(
                     badge = {
                         Badge(
-                            containerColor = Color(0xFFDC143C),
+                            containerColor = colors.customPrimary,
                             modifier = Modifier.size(8.dp)
                         )
                     }
@@ -113,17 +115,18 @@ fun HomeSearchBar(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = appColors()
     Row(
         modifier = modifier
             .height(36.dp)
             .padding(start = 12.dp)
             .background(
-                color = Color.White,
+                color = colors.customPrimaryContainer,
                 shape = RoundedCornerShape(50.dp)
             )
             .border(
                 width = 1.dp,
-                color = Color.Gray.copy(alpha = 0.5f),
+                color = colors.customInfo,
                 shape = RoundedCornerShape(50.dp)
             )
             .padding(horizontal = 12.dp),
@@ -132,7 +135,7 @@ fun HomeSearchBar(
         Icon(
             Icons.Default.Search,
             contentDescription = null,
-            tint = Color.Gray,
+            tint = colors.customInfo,
             modifier = Modifier.size(18.dp)
         )
 
@@ -144,7 +147,7 @@ fun HomeSearchBar(
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
                 fontSize = 12.sp,
-                color = Color.Black
+                color = colors.customPrimaryText
             ),
             modifier = Modifier
                 .weight(1f),
@@ -153,7 +156,7 @@ fun HomeSearchBar(
                     Text(
                         "Search country, course, intake",
                         fontSize = 11.sp,
-                        color = Color.Gray
+                        color = colors.customInfo
                     )
                 }
                 innerTextField()

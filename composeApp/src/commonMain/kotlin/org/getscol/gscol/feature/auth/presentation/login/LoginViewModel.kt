@@ -10,13 +10,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.auth.domain.repository.AuthRepository
 import org.getscol.gscol.feature.auth.domain.validation.AuthValidator
 import org.getscol.gscol.feature.auth.utils.toUiMessage
 
 class LoginViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val session: Session
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -38,8 +40,16 @@ class LoginViewModel(
             }
 
             is LoginAction.OnLoginClick -> {
-                login()
+//                login()
+                setLoginState()
             }
+
+        }
+    }
+    fun setLoginState(){
+        viewModelScope.launch {
+            session.setUserLoggedIn(false)
+            _uiEffect.emit(LoginUiEffect.LoginSuccess)
         }
     }
 

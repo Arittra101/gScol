@@ -3,7 +3,7 @@ package org.getscol.gscol.theme.color
 import androidx.compose.ui.graphics.Color
 
 fun appLightColors(): AppColors = AppColors(
-    primary = Color(0xFF0057D9),
+    primary = Color(0xFF992929),
     onPrimary = Color(0xFFFFFFFF),
     primaryContainer = Color(0xFFD9D9D6),
     onPrimaryContainer = Color(0xFF001A43),
@@ -25,16 +25,19 @@ fun appLightColors(): AppColors = AppColors(
     onSurface = Color(0xFF1A1C1E),
     outline = Color(0xFF757780),
     // Custom
-    customPrimary = Color(0xFF0057D9),
+    customPrimary = Color(0xFF992929),
     customSecondary = Color(0xFF556380),
-    customPrimaryText = Color(0xFFFFFFFF),
-    customSecondaryText = Color(0xFFFFFFFF),
+    customPrimaryText = Color(0xFF0D171B),
+    customSecondaryText = Color(0xFF4C809A),
+    customBackground = Color(0xFFF0F0F0),
+    customPrimaryContainer  = Color(0xFFFFFFFF),
+    customSecondaryContainer = Color(0xFFF9F8F8),
     customError = Color(0xFFBA1A1A),
     customErrorText = Color(0xFFFFFFFF),
     customSuccess = Color(0xFF2E7D32),
     customSuccessText = Color(0xFFFFFFFF),
     customWarning = Color(0xFFF57C00),
-    customInfo = Color(0xFF0288D1)
+    customInfo = Color(0xFF999999)
 )
 
 

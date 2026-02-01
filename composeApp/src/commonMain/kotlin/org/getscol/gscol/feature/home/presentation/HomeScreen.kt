@@ -27,6 +27,7 @@ import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -38,9 +39,9 @@ fun HomeScreenRoot(
 
     val action = viewmode::onAction
     // Instead of the function reference...
-  /*  val action: (HomeAction) -> Unit = { data ->
-        viewmodel.onAction(data)
-    }*/
+    /*  val action: (HomeAction) -> Unit = { data ->
+          viewmodel.onAction(data)
+      }*/
 
     HomeScreen(viewmode,navigator,action)
 }
@@ -62,10 +63,9 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
-                .background(Color(0xFFCCCCCC))
+                .background(appColors().customBackground)
         ) {
 
-            // ✅ INITIAL LOAD (refresh)
             when (val refreshState = courses.loadState.refresh) {
                 is LoadState.Loading -> {
                     FullScreenLoader()
@@ -82,7 +82,7 @@ fun HomeScreen(
                     LazyColumn(
                         modifier = Modifier.navigationBarsPadding(),
                         contentPadding = PaddingValues(
-                           bottom = innerPadding.calculateTopPadding()
+                            bottom = innerPadding.calculateTopPadding()
                         )
                     ) {
 
@@ -109,7 +109,6 @@ fun HomeScreen(
                             }
                         }
 
-                        // ✅ PAGINATION (append)
                         when (courses.loadState.append) {
                             is LoadState.Loading -> {
                                 item {
@@ -194,5 +193,4 @@ fun PaginationError(
         }
     }
 }
-
 

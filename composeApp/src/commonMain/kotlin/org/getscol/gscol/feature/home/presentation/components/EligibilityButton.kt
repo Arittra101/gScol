@@ -2,10 +2,9 @@ package org.getscol.gscol.feature.home.presentation.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -19,30 +18,33 @@ import androidx.compose.ui.unit.sp
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.getscol.gscol.theme.appColors
+import org.jetbrains.compose.resources.painterResource
+import scol.composeapp.generated.resources.Res
+import scol.composeapp.generated.resources.eligibility_icon
 
 @Composable
 @Preview
 fun EligibilityButton(navigator: Navigator) {
     Button(
-        onClick = {
-            navigator.navigateToAuthScreen(Route.Login)
-        },
+        onClick = {},
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFFFE4E1)
+            containerColor = appColors().customPrimary.copy(alpha = 0.15f)
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
         Icon(
-            Icons.Default.Checklist,
+            painter = painterResource(Res.drawable.eligibility_icon),
             contentDescription = null,
-            tint = Color(0xFF8B0000)
+            modifier = Modifier.size(24.dp),
+            tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
             text = "Check Your Eligibility",
-            color = Color(0xFF8B0000),
+            color = appColors().customPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold
         )
