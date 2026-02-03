@@ -12,7 +12,6 @@ import org.getscol.gscol.feature.home.domain.repository.HomeRepository
 
 class HomeRepositoryImpl(
     private val homeApiService: HomeApiService,
-    private val authProvider: AuthTokenProvider
 ) : HomeRepository {
 
     override suspend fun getHomeCoursesStream(isLoggedIn: Boolean): Flow<PagingData<Course>> {
@@ -20,7 +19,7 @@ class HomeRepositoryImpl(
             config = PagingConfig(
                 pageSize = 8,
                 enablePlaceholders = false,
-                prefetchDistance = 3
+                prefetchDistance = 4
             ),
             pagingSourceFactory = { HomePagingSource(homeApiService, isLoggedIn) }
         ).flow

@@ -13,20 +13,18 @@ data class HomeResponseDto(
 @Serializable
 data class CourseListDto(
     @SerialName("userState") val userState: String? = null,
+    @SerialName("academicFormStatus") val academicFormStatus: String? = null,
     @SerialName("listType") val listType: String? = null,
     @SerialName("pagination") val pagination: PaginationDto? = null,
-    @SerialName("all_courses") val allCourses: List<CourseDto>? = null,
-    @SerialName("eligible") val eligible: CourseGroupDto? = null,
-    @SerialName("ineligible") val ineligible: CourseGroupDto? = null
+    @SerialName("courses") val courses: List<CourseDto>? = null,
 )
 
 @Serializable
 data class PaginationDto(
-    @SerialName("page") val page: Int? = null,
+    @SerialName("cursor") val cursor: String? = null,
+    @SerialName("hasNext") val hasNext: Boolean? = null,
     @SerialName("limit") val limit: Int? = null,
-    @SerialName("totalItems") val totalItems: Int? = null,
-    @SerialName("totalPages") val totalPages: Int? = null,
-    @SerialName("hasNext") val hasNext: Boolean? = null
+    @SerialName("page") val page: Int? = null,
 )
 
 @Serializable
@@ -36,20 +34,43 @@ data class CourseGroupDto(
 
 @Serializable
 data class CourseDto(
-    @SerialName("universityId") val universityId: String? = null,
     @SerialName("courseId") val courseId: String? = null,
-    @SerialName("city") val city: String? = null,
     @SerialName("courseName") val courseName: String? = null,
-    @SerialName("universityName") val universityName: String? = null,
-    @SerialName("country") val country: String? = null,
-    @SerialName("imageUrl") val imageUrl: String? = null,
-    @SerialName("intake") val intake: String? = null,
+    @SerialName("university") val university: UniversityDto? = null,
+    @SerialName("imgUrl") val imgUrl: String? = null,
+    @SerialName("intake") val intake: IntakeDto? = null,
     @SerialName("tuitionFee") val tuitionFee: Int? = null,
     @SerialName("currency") val currency: String? = null,
-    @SerialName("duration") val duration: String? = null,
-    @SerialName("scholarship") val scholarship: Int? = null,
-    @SerialName("deposit") val deposit: Int? = null,
-    @SerialName("ieltsBandRequired") val ieltsBandRequired: String? = null,
-    @SerialName("ieltsOverallRequired") val ieltsOverallRequired: String? = null,
+    @SerialName("durationMonths") val durationMonths: Int? = null,
+    @SerialName("initialDeposit") val initialDeposit: Int? = null,
+    @SerialName("applicationFee") val applicationFee: Int? = null,
+    @SerialName("isScholarshipAvailable") val isScholarshipAvailable: Boolean? = null,
+    @SerialName("engRequirements") val engRequirements: List<EngRequirementDto>? = null,
     @SerialName("isWishlisted") val isWishlisted: Boolean? = null
+)
+
+
+@Serializable
+data class UniversityDto(
+    @SerialName("id") val id: String? = null,
+    @SerialName("name") val name: String? = null,
+    @SerialName("country") val country: String? = null,
+    @SerialName("state") val state: String? = null,
+    @SerialName("city") val city: String? = null,
+    @SerialName("logoUrl") val logoUrl: String? = null,
+    @SerialName("imgUrl") val imgUrl: String? = null
+)
+
+
+@Serializable
+data class IntakeDto(
+    @SerialName("name") val name: String? = null,
+    @SerialName("year") val year: Int? = null
+)
+
+@Serializable
+data class EngRequirementDto(
+    @SerialName("testName") val testName: String? = null,
+    @SerialName("overall") val overall: Double? = null,
+    @SerialName("section") val section: Double? = null
 )

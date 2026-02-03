@@ -7,16 +7,17 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.getscol.gscol.feature.home.data.api_service.homeJson
 import org.getscol.gscol.feature.home.data.api_service.homeJsonLoggedIn
+import org.getscol.gscol.feature.home.domain.model.CourseRequest
 
 object MockHttpFactory {
     fun provideMockHttpClient(): HttpClient =
         HttpClient(MockEngine) {
-            // Add ContentNegotiation plugin for proper JSON deserialization
             install(ContentNegotiation) {
                 json(Json {
                     ignoreUnknownKeys = true
@@ -27,16 +28,31 @@ object MockHttpFactory {
 
             engine {
                 addHandler { request ->
-                    val page = request.url.parameters["page"]?.toInt() ?: 1
-//                    val hasAuthHeader = request.headers["Authorization"]?.startsWith("Bearer") == true
-                    val hasAuthHeader = request.url.parameters["isLogin"]?.toBoolean() ?: false
+                    //val page = request.url.parameters["page"]?.toInt() ?: 1
+                    val isLogin = request.url.parameters["isLogin"]?.toBoolean() ?: false
 
-                    val json = if (hasAuthHeader) {
+                    val cursor = try {
+                        val bodyText = when (val body = request.body) {
+                            is TextContent -> body.text
+                            else -> ""
+                        }
+                        if (bodyText.isNotEmpty()) {
+                            Json.decodeFromString<CourseRequest>(bodyText).pagination.cursor
+                        } else {
+                            null
+                        }
+                    } catch (e: Exception) {
+                        println("error=> ${e.message}")
+                        null
+                    }
+
+
+                    val json = if (isLogin) {
                         println("Call homeJsonLoggedIn")
-                        homeJsonLoggedIn(page)
+                        homeJsonLoggedIn(cursor)
                     } else {
-                        println("Call homeJson")  // FIXED: was printing "homeJsonLoggedIn"
-                        homeJson(page)
+                        println("Call homeJson")
+                        homeJson(cursor)
                     }
 
                     respond(
