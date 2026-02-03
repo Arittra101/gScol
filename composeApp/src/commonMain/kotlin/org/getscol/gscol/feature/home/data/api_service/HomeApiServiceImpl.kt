@@ -30,7 +30,6 @@ class HomeApiServiceImpl(private val httpClient: HttpClient) : HomeApiService {
 
 fun homeJson(cursor: String? = null): String {
     // Generate different cursors based on current cursor
-    print("Its homejson")
     val currentPage = when (cursor) {
         null -> 1
         "eyJyYW5rU2NvcmUiOjk1MDAuLi4" -> 2
