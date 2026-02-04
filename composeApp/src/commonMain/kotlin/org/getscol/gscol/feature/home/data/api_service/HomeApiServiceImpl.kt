@@ -18,8 +18,7 @@ class HomeApiServiceImpl(private val httpClient: HttpClient) : HomeApiService {
         return safeApiCall {
             httpClient.post("/home") {
                 contentType(ContentType.Application.Json)
-                parameter("isLogin", isLogin)
-
+               /* parameter("isLogin", isLogin)*/
                 setBody(courseRequest)
                 if (!isLogin) markAsNoAuth()
             }

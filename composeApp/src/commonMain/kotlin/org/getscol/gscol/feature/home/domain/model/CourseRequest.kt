@@ -11,6 +11,6 @@ data class CourseRequest(
 
 @Serializable
 data class PaginationRequest(
-    val cursor: String? = null,
-    val limit: Int = 6
+    @SerialName("cursor") val cursor: String? = null,
+    @SerialName("limit") val limit: Int? = null
 )

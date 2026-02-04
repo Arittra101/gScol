@@ -17,9 +17,9 @@ class HomeRepositoryImpl(
     override suspend fun getHomeCoursesStream(isLoggedIn: Boolean): Flow<PagingData<Course>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 8,
+                pageSize = 4,
                 enablePlaceholders = false,
-                prefetchDistance = 4
+                prefetchDistance = 10
             ),
             pagingSourceFactory = { HomePagingSource(homeApiService, isLoggedIn) }
         ).flow

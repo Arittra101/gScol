@@ -2,7 +2,6 @@ package org.getscol.gscol.feature.home.data.paging
 
 import androidx.paging.PagingState
 import app.cash.paging.PagingSource
-import kotlinx.coroutines.delay
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.home.data.api_service.HomeApiService
 import org.getscol.gscol.feature.home.data.mapper.toCourses
@@ -21,9 +20,8 @@ class HomePagingSource(
     override suspend fun load(params: LoadParams<String>): LoadResult<String, Course> {
         return try {
             val cursor = params.key
-            delay(2000)
             val courseRequest = CourseRequest(
-                pagination = PaginationRequest(cursor = cursor),
+                pagination = PaginationRequest(cursor = cursor, limit = 20),
                 listType = isEligible
             )
 
@@ -36,7 +34,7 @@ class HomePagingSource(
                     LoadResult.Page(
                         data = courses.toCourses(),
                         prevKey = null,
-                        nextKey = if(cursor == nextCursor) null else cursor
+                        nextKey = if(cursor == nextCursor) null else nextCursor
                     )
                 }
 

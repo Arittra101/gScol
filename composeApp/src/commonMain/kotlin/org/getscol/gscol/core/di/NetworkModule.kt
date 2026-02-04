@@ -18,7 +18,7 @@ val networkModule = module {
             BuildKonfig.BASE_URL
         )
     }
-    single<HttpClient>(named("mock")) { MockHttpFactory.provideMockHttpClient() }
+  //  single<HttpClient>(named("mock")) { MockHttpFactory.provideMockHttpClient() }
 }
 
 

@@ -13,8 +13,10 @@ import org.koin.dsl.module
 
 
 val homeModule = module {
-//    singleOf(::HomeApiServiceImpl).bind<HomeApiService>()
-    single<HomeApiService> { HomeApiServiceImpl(get(named("mock"))) }
+
+ /*   single<HomeApiService> { HomeApiServiceImpl(get(named("mock"))) }  for mock client*/
+
+    singleOf(::HomeApiServiceImpl).bind<HomeApiService>()
     singleOf(::HomeRepositoryImpl).bind<HomeRepository>()
     viewModelOf(::HomeViewmodel)
 }
