@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.collectAsLazyPagingItems
+import org.getscol.gscol.core.Helper.toDollar
+import org.getscol.gscol.core.Helper.toShortDate
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
@@ -93,8 +95,8 @@ fun HomeScreen(
                                     universityName = it.universityName,
                                     universityLogo = it.imageUrl,
                                     backgroundImage = it.imageUrl,
-                                    intake = it.intake,
-                                    tuitionFees = it.tuitionFee.toString(),
+                                    intake = it.intake.toShortDate(),
+                                    tuitionFees = it.tuitionFee.toString().toDollar(),
                                     duration = it.duration,
                                     scholarship = it.scholarship.toString(),
                                     initialDeposit = "12333",
