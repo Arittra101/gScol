@@ -39,9 +39,10 @@ class AuthRepositoryImpl(
         return when (val result = authApiService.login(phoneNumber, password)) {
             is Result.Success -> {
                 // Save tokens to storage
+                val resultData = result.data.data
                 authTokenProvider.saveTokens(
-                    accessToken = result.data.accessToken,
-                    refreshToken = result.data.refreshToken
+                    accessToken = resultData.accessToken,
+                    refreshToken = resultData.refreshToken
                 )
                 Result.Success(Unit)
             }

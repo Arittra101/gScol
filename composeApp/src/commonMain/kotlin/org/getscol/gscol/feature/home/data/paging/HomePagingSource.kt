@@ -31,6 +31,7 @@ class HomePagingSource(
 
                     val courses = result.data.data?.courses.orEmpty()
                     val nextCursor = result.data.data?.pagination?.cursor
+                    println("UserState===> ${result.data.data?.userState}")
                     LoadResult.Page(
                         data = courses.toCourses(),
                         prevKey = null,

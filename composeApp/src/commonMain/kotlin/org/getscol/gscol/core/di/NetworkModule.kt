@@ -1,10 +1,9 @@
 package org.getscol.gscol.core.di
 
+//import org.getscol.gscol.core.data.network.MockHttpFactory
 import com.getscol.gscol.BuildKonfig
 import io.ktor.client.HttpClient
 import org.getscol.gscol.core.data.network.HttpClientFactory
-import org.getscol.gscol.core.data.network.MockHttpFactory
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /**

@@ -84,7 +84,7 @@ kotlin {
             //ktor
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
-            implementation("io.ktor:ktor-client-mock:3.4.0")
+            //implementation("io.ktor:ktor-client-mock:3.4.0")
 
             //datastore
             api(libs.datastore)

@@ -9,6 +9,7 @@ interface Session {
     }
     val isUserLoggedIn: Flow<Boolean>
     suspend fun setUserLoggedIn(value: Boolean)
+    suspend fun resetUserPref()
 }
 
 
