@@ -79,6 +79,11 @@ class Navigator(private val navController: NavController) {
         navController.popBackStack()
     }
 
+    /** Push a route onto the back stack (e.g. Search from Home). */
+    fun navigateToRoute(route: Route) {
+        navController.navigate(route)
+    }
+
     fun navigateAuthScreenBack(route: Route){
         authRoute.remove(route)
         navController.popBackStack()
