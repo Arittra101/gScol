@@ -46,15 +46,15 @@ class HomeViewmodel(private val homeRepository: HomeRepository, private val sess
 
     fun setLoginState(){
         viewModelScope.launch {
-            session.setUserLoggedIn(true)
+            session.setUserLoggedIn(false)
         }
     }
 
     fun onAction(action: HomeAction) {
         when(action){
-            is HomeAction.Change -> {
+         /*   is HomeAction.Change -> {
                 setLoginState()
-            }
+            }*/
             is HomeAction.AddToWishlist -> {
                 favoriteUpdates.update { current ->
                     current + ((action.courseId to !action.isWishListed))
@@ -66,6 +66,6 @@ class HomeViewmodel(private val homeRepository: HomeRepository, private val sess
 }
 
 sealed interface HomeAction{
-    data object Change: HomeAction
+//    data object Change: HomeAction
     data class AddToWishlist(val courseId: String, val isWishListed: Boolean): HomeAction
 }

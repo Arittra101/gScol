@@ -12,7 +12,6 @@ class AuthTokenProvider(
     suspend fun saveAccessToken(accessToken: String?) {
         if (accessToken == null) return
         localStorage.setString(StorageKeys.ACCESS_TOKEN, accessToken)
-        session.setUserLoggedIn(true)
     }
 
     suspend fun saveRefreshToken(refreshToken: String?) {
@@ -21,8 +20,10 @@ class AuthTokenProvider(
     }
 
     suspend fun saveTokens(accessToken: String?, refreshToken: String?) {
+        if(accessToken == null) return
         saveAccessToken(accessToken)
         saveRefreshToken(refreshToken)
+        session.setUserLoggedIn(true)
     }
 
     suspend fun getAccessToken(): String? {
@@ -38,9 +39,5 @@ class AuthTokenProvider(
         localStorage.remove(StorageKeys.ACCESS_TOKEN)
         localStorage.remove(StorageKeys.REFRESH_TOKEN)
         session.setUserLoggedIn(false)
-    }
-
-    suspend fun isUserLogin(): Boolean {
-        return localStorage.getString(StorageKeys.ACCESS_TOKEN) != null
     }
 }

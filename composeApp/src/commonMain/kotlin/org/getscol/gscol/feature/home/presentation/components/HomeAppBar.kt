@@ -61,7 +61,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                     tint = Color.Unspecified,
                     modifier = Modifier.width(50.dp)
                         .padding(bottom = 2.dp).clickable{
-                            action(HomeAction.Change)
+                         /*   action(HomeAction.Change)*/
                         },
                 )
                 HomeSearchBar(

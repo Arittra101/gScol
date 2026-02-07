@@ -145,7 +145,7 @@ fun CourseInfoCard(
             FlowRow(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement =Arrangement.spacedBy(15.dp),
+                horizontalArrangement =Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 maxItemsInEachRow = 3
             ) {
@@ -172,7 +172,7 @@ fun CourseInfoCard(
             FlowRow(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 maxItemsInEachRow = 2
             ) {

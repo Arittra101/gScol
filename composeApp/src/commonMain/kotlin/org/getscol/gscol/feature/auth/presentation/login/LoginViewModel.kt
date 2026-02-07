@@ -18,7 +18,6 @@ import org.getscol.gscol.feature.auth.utils.toUiMessage
 
 class LoginViewModel(
     private val authRepository: AuthRepository,
-    private val session: Session
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -40,18 +39,17 @@ class LoginViewModel(
             }
 
             is LoginAction.OnLoginClick -> {
-//                login()
-                setLoginState()
+                login()
             }
 
         }
     }
-    fun setLoginState(){
+/*    fun setLoginState(){
         viewModelScope.launch {
             session.setUserLoggedIn(false)
             _uiEffect.emit(LoginUiEffect.LoginSuccess)
         }
-    }
+    }*/
 
     private fun login() {
         _state.update { it.copy(errorMessage = null) }
@@ -79,7 +77,6 @@ class LoginViewModel(
                             errorMessage = null
                         )
                     }
-
                     _uiEffect.emit(LoginUiEffect.LoginSuccess)
                 }
 
