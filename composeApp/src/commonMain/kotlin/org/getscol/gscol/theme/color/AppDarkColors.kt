@@ -38,7 +38,8 @@ fun appDarkColors(): AppColors = AppColors(
     customSuccess = Color(0xFF52C41A),
     customSuccessText = Color(0xFF0C1406),
     customWarning = Color(0xFFFFB74D),
-    customInfo = Color(0xFF999999)
+    customInfo = Color(0xFF999999),
+    customSurface = Color(0xFFF8F6F6)
 )
 
 

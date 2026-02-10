@@ -37,7 +37,8 @@ fun appLightColors(): AppColors = AppColors(
     customSuccess = Color(0xFF2E7D32),
     customSuccessText = Color(0xFFFFFFFF),
     customWarning = Color(0xFFF57C00),
-    customInfo = Color(0xFF999999)
+    customInfo = Color(0xFF999999),
+    customSurface = Color(0xFFF8F6F6)
 )
 
 
