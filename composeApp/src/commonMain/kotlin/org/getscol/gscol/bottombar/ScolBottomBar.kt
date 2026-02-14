@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -55,7 +57,7 @@ fun ScolBottomBar(
         appColors().customSecondaryText // Original color for light mode
     }
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
         // Blurred background layer with border
         Box(
             modifier = Modifier
@@ -71,11 +73,12 @@ fun ScolBottomBar(
                         strokeWidth = 1f
                     )
                 }
+                .windowInsetsPadding(WindowInsets.navigationBars)
         )
 
         // Sharp content layer on top
         NavigationBar(
-            windowInsets = WindowInsets(0, 0, 0, 20),
+            windowInsets = WindowInsets(0, 0, 0, 0),
             containerColor = Color.Transparent,
             contentColor = unselectedColor
         ) {
