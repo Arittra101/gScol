@@ -13,7 +13,7 @@ data class OtpVerificationResponse(
 
 @Serializable
 data class OtpVerificationData(
-    @SerialName("userId") val userId: String,
+    @SerialName("userId") val userId: String? = null,
     @SerialName("accessToken") val accessToken: String,
     @SerialName("refreshToken") val refreshToken: String
 )

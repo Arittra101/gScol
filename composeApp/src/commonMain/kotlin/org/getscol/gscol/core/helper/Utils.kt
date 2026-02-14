@@ -1,4 +1,4 @@
-package org.getscol.gscol.core.Helper
+package org.getscol.gscol.core.helper
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable

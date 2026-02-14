@@ -37,6 +37,9 @@ sealed interface Route {
     @Serializable
     object Desire : Route
 
+    @Serializable
+    object AcademicForm : Route
+
 //    @Serializable
 //    data class SettingsRoute(val userId: Int) : Route
 

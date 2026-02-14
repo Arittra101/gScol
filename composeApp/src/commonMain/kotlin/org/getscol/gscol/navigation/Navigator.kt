@@ -53,7 +53,7 @@ class Navigator(private val navController: NavController) {
     }
 
     /* for reset password support & login screen support */
-     fun navigateToOtherScreen(route: Route?, homeScreen: Boolean? = null, dropScreen: Boolean? = null) {
+     fun navigateToOtherScreen(route: Route?, dropScreen: Boolean? = null) {
          val targetRoute = route
          if (targetRoute == null) return
 

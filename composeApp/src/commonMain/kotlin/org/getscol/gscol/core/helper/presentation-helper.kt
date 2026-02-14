@@ -1,72 +1,70 @@
-package org.getscol.gscol.core.utils
+package org.getscol.gscol.core.helper
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 
 inline fun Modifier.conditional(
     isTopLevelScreen: Boolean,
-    isZeroBottomPadding: Boolean = false,
     ifTrue: Modifier.() -> Modifier,
     ifZeroBottomBarTrue: Modifier.() -> Modifier,
     ifFalse: Modifier.() -> Modifier = { this }
 ): Modifier {
     return if (isTopLevelScreen) {
         then(ifTrue(Modifier))
-    } /*else if (!isZeroBottomPadding) {
-        then(ifXMLTrue(Modifier))
-    } */else if (isZeroBottomPadding) {
+    }else if (!isTopLevelScreen) {
         then(ifZeroBottomBarTrue(Modifier))
     } else {
         then(ifFalse(Modifier))
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HsTopBar(
+fun ScolDefaultTopBar(
     title: String,
+    titleColor: Color = Color.Black,
+    isIOSAlignment: Boolean? = false,
+    fontSize: TextUnit = 18.sp,
     showBackButton: Boolean = true,
-    backgroundColor: Color = MaterialTheme.colorScheme.primary,
-    contentColor: Color =  MaterialTheme.colorScheme.secondary,
-    onBackPress: (() -> Unit)? = null
+    onBackPress: (() -> Unit)? = null,
 ) {
-    val backDispatcher =null
 
     TopAppBar(
         title = {
-            Text(text = title, color = contentColor)
+            Text(
+                title,
+                modifier = Modifier.fillMaxWidth().padding(end = 20.dp),
+                color = titleColor,
+                fontSize = fontSize,
+                fontWeight = FontWeight.Bold,
+                textAlign = if (isIOSAlignment == true) TextAlign.Center else TextAlign.Left
+            )
         },
         navigationIcon = {
             if (showBackButton) {
-                IconButton(onClick = {
-                    onBackPress?.invoke() ?: backDispatcher
-                }) {
+                IconButton(onClick = { onBackPress?.invoke() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = contentColor
+                        contentDescription = "Back"
                     )
                 }
             }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = backgroundColor,
-            titleContentColor = contentColor
-        ),
-        modifier = Modifier.shadow(elevation = 8.dp)
+        }
     )
 }

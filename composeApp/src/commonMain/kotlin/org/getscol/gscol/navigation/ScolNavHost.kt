@@ -11,7 +11,8 @@ import org.getscol.gscol.auth.presentation.compare.CompareScreen
 import org.getscol.gscol.auth.presentation.consultant.ConsultantScreen
 import org.getscol.gscol.auth.presentation.profile.ProfileScreen
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
-import org.getscol.gscol.core.Helper.composableNoAnimation
+import org.getscol.gscol.core.helper.composableNoAnimation
+import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
 import org.getscol.gscol.feature.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.feature.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
@@ -72,6 +73,9 @@ fun ScolNavHost(
         }
         composableNoAnimation<Route.ResetPassword> {
             ResetPasswordRoute(navigator = navigator)
+        }
+        composableNoAnimation<Route.AcademicForm> {
+            AcademicFormRoute(navigator)
         }
     }
 }
