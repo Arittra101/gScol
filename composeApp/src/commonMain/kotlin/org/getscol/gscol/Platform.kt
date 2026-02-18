@@ -9,6 +9,7 @@ interface Platform {
 }
 
 expect fun getPlatform(): Platform
+expect fun currentYear(): Int
 expect fun platformEnterTransition(): EnterTransition
 expect fun platformExitTransition(): ExitTransition
 expect fun platformPopEnterTransition(): EnterTransition

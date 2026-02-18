@@ -1,12 +1,11 @@
 package org.getscol.gscol
 
 import android.os.Build
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import java.util.Calendar
 
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
@@ -14,6 +13,7 @@ class AndroidPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
+actual fun currentYear(): Int = Calendar.getInstance().get(Calendar.YEAR)
 val transitionAnimationTime = getPlatform().transitionAnimationTime
 
 /*actual fun platformEnterTransition() = EnterTransition.None
