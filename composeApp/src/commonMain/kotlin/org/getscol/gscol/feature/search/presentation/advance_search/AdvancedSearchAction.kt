@@ -6,7 +6,8 @@ sealed interface AdvancedSearchAction {
     data class CountrySelected(val option: DropdownOption?) : AdvancedSearchAction
     data class CitySelected(val option: DropdownOption?) : AdvancedSearchAction
     data class CourseSelected(val option: DropdownOption?) : AdvancedSearchAction
-    data class IntakeSelected(val option: DropdownOption?) : AdvancedSearchAction
+    data class IntakeYearSelected(val year: Int) : AdvancedSearchAction
+    data class IntakeMonthToggled(val month: Int) : AdvancedSearchAction
     data class TuitionRangeChange(val maxValue: Int) : AdvancedSearchAction
     data class DurationChange(val maxYears: Int) : AdvancedSearchAction
     data class ScholarshipFilterChange(val value: Boolean?) : AdvancedSearchAction

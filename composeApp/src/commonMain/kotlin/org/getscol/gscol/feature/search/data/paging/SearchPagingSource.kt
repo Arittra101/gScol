@@ -10,6 +10,7 @@ import org.getscol.gscol.feature.search.data.api_service.SearchApiService
 import org.getscol.gscol.feature.search.data.dto.AdvancedSearchFiltersDto
 import org.getscol.gscol.feature.search.data.dto.AdvancedSearchFlagsDto
 import org.getscol.gscol.feature.search.data.dto.AdvancedSearchRequestDto
+import org.getscol.gscol.feature.search.data.dto.IntakeFilterDto
 import org.getscol.gscol.feature.search.data.dto.AdvancedSearchRangesDto
 import org.getscol.gscol.feature.search.data.dto.MinMaxDto
 import org.getscol.gscol.feature.search.data.dto.SearchRequestDto
@@ -45,7 +46,6 @@ class SearchPagingSource(
                 searchApiService.advancedSearch(
                     AdvancedSearchRequestDto(
                         pagination = pagination,
-                        searchText = searchText,
                         listType = listType,
                         filters = advancedParams.filters?.toDto(),
                         ranges = advancedParams.ranges?.toDto(),
@@ -77,8 +77,7 @@ private fun AdvancedFilters.toDto(): AdvancedSearchFiltersDto =
         countryIds = countryIds,
         cityIds = cityIds,
         programmeIds = programmeIds,
-        intakeIds = intakeIds,
-        intakeYear = intakeYear
+        intake = intake?.let { IntakeFilterDto(year = it.year, fromMonth = it.fromMonth, toMonth = it.toMonth) }
     )
 
 private fun AdvancedRanges.toDto(): AdvancedSearchRangesDto =

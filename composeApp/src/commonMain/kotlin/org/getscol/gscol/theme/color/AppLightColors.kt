@@ -26,10 +26,10 @@ fun appLightColors(): AppColors = AppColors(
     outline = Color(0xFF757780),
     // Custom
     customPrimary = Color(0xFF992929),
-    customSecondary = Color(0xFF556380),
+    customSecondary = Color(0xFFE0DEDE),
     customPrimaryText = Color(0xFF0D171B),
     customSecondaryText = Color(0xFF4C809A),
-    customBackground = Color(0xFFF0F0F0),
+    customBackground = Color(0xFFFFFFFF),
     customPrimaryContainer  = Color(0xFFFFFFFF),
     customSecondaryContainer = Color(0xFFF9F8F8),
     customError = Color(0xFFBA1A1A),

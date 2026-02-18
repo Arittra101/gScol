@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.theme.appColors
+import org.getscol.gscol.theme.color.AppColors
 
 data class DropdownOption(
     val id: String,
@@ -43,6 +45,7 @@ fun AppDropdown(
     leadingIcon: ImageVector? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val colors = appColors()
 
     Box(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -50,12 +53,12 @@ fun AppDropdown(
                 .fillMaxWidth()
                 .clickable { expanded = true }
                 .background(
-                    color = MaterialTheme.colorScheme.surface,
+                    color = colors.customSecondary,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                    color = colors.outline.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(8.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -70,14 +73,14 @@ fun AppDropdown(
                     Icon(
                         imageVector = leadingIcon,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = colors.primary
                     )
                     Row(modifier = Modifier.padding(start = 12.dp)) {
                         Text(
                             text = selectedOption?.label ?: placeholder,
                             fontSize = 16.sp,
                             color = if (selectedOption != null)
-                                MaterialTheme.colorScheme.onSurface
+                                colors.onSurface
                             else
                                 Color.Gray
                         )
@@ -87,7 +90,7 @@ fun AppDropdown(
                         text = selectedOption?.label ?: placeholder,
                         fontSize = 16.sp,
                         color = if (selectedOption != null)
-                            MaterialTheme.colorScheme.onSurface
+                            colors.onSurface
                         else
                             Color.Gray
                     )

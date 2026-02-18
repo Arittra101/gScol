@@ -27,8 +27,8 @@ fun appDarkColors(): AppColors = AppColors(
     outline = Color(0xFF8D9099),
     // Custom
     customPrimary = Color(0xFF992929),
-    customSecondary = Color(0xFF9AA7C2),
-    customBackground = Color(0xFFF0F0F0),
+    customSecondary = Color(0xFFE0DEDE),
+    customBackground = Color(0xFFFFFFFF),
     customPrimaryContainer = Color(0xFFFFFFFF),
     customSecondaryContainer = Color(0xFFF9F8F8),
     customPrimaryText = Color(0xFF0D171B),

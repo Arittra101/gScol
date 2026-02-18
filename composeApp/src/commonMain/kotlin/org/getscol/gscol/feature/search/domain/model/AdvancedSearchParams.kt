@@ -15,8 +15,14 @@ data class AdvancedFilters(
     @SerialName("countryIds") val countryIds: List<String>? = null,
     @SerialName("cityIds") val cityIds: List<String>? = null,
     @SerialName("programmeIds") val programmeIds: List<String>? = null,
-    @SerialName("intakeIds") val intakeIds: List<String>? = null,
-    @SerialName("intakeYear") val intakeYear: Int? = null
+    @SerialName("intake") val intake: IntakeFilter? = null
+)
+
+@Serializable
+data class IntakeFilter(
+    @SerialName("year") val year: Int,
+    @SerialName("fromMonth") val fromMonth: Int,
+    @SerialName("toMonth") val toMonth: Int
 )
 
 @Serializable
