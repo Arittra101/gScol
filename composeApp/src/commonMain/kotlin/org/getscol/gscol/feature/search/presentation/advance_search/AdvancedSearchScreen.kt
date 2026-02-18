@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.serialization.json.Json
 import org.getscol.gscol.core.components.AppDropdown
 import org.getscol.gscol.core.components.DropdownOption
+import org.getscol.gscol.currentYear
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.appColors
@@ -167,10 +168,10 @@ fun AdvancedSearchScreen(
                 )
                 AppDropdown(
                     selectedOption = DropdownOption(
-                        state.selectedIntakeYear.toString(),
-                        state.selectedIntakeYear.toString()
+                        state.selectedIntakeYear.coerceIn(currentYear(), currentYear() + 5).toString(),
+                        state.selectedIntakeYear.coerceIn(currentYear(), currentYear() + 5).toString()
                     ),
-                    options = (2020..2030).map { DropdownOption(it.toString(), it.toString()) },
+                    options = (currentYear()..currentYear() + 5).map { DropdownOption(it.toString(), it.toString()) },
                     onOptionSelected = {
                         onAction(
                             AdvancedSearchAction.IntakeYearSelected(
@@ -198,7 +199,7 @@ fun AdvancedSearchScreen(
                     IntakeMonthChip(
                         label = label,
                         selected = month in state.selectedIntakeMonths,
-                        onClick = { onAction(AdvancedSearchAction.IntakeMonthToggled(month)) },
+                        onClick = { onAction(AdvancedSearchAction.IntakeMonthSelected(month)) },
                         colors = colors,
                         modifier = Modifier.weight(1f)
                     )
@@ -220,7 +221,7 @@ fun AdvancedSearchScreen(
                     IntakeMonthChip(
                         label = label,
                         selected = month in state.selectedIntakeMonths,
-                        onClick = { onAction(AdvancedSearchAction.IntakeMonthToggled(month)) },
+                        onClick = { onAction(AdvancedSearchAction.IntakeMonthSelected(month)) },
                         colors = colors,
                         modifier = Modifier.weight(1f)
                     )

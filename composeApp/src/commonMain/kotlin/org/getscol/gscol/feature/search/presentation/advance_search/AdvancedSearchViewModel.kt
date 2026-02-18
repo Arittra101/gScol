@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.components.DropdownOption
 import org.getscol.gscol.core.domain.Result
+import org.getscol.gscol.currentYear
 import org.getscol.gscol.feature.search.domain.model.AdvancedFilters
 import org.getscol.gscol.feature.search.domain.model.AdvancedFlags
-import org.getscol.gscol.feature.search.domain.model.IntakeFilter
 import org.getscol.gscol.feature.search.domain.model.AdvancedRanges
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
+import org.getscol.gscol.feature.search.domain.model.IntakeFilter
 import org.getscol.gscol.feature.search.domain.model.MinMax
 import org.getscol.gscol.feature.search.domain.repository.SearchRepository
 
@@ -33,6 +34,7 @@ class AdvancedSearchViewModel(
     val uiEffect = _uiEffect.asSharedFlow()
 
     init {
+        _state.update { it.copy(selectedIntakeYear = currentYear()) }
         viewModelScope.launch { loadFilters() }
     }
 
@@ -75,11 +77,15 @@ class AdvancedSearchViewModel(
             is AdvancedSearchAction.CitySelected -> _state.update { it.copy(selectedCity = action.option) }
             is AdvancedSearchAction.CourseSelected -> _state.update { it.copy(selectedCourse = action.option) }
             is AdvancedSearchAction.IntakeYearSelected -> _state.update { it.copy(selectedIntakeYear = action.year) }
-            is AdvancedSearchAction.IntakeMonthToggled -> _state.update { s ->
+            is AdvancedSearchAction.IntakeMonthSelected -> _state.update { s ->
                 val month = action.month.coerceIn(1, 12)
-                val newMonths = if (month in s.selectedIntakeMonths) s.selectedIntakeMonths - month
-                else s.selectedIntakeMonths + month
-                s.copy(selectedIntakeMonths = newMonths)
+                when {
+                    s.firstSelectedMonth == null -> s.copy(firstSelectedMonth = month, lastSelectedMonth = null)
+                    s.lastSelectedMonth == null -> s.copy(lastSelectedMonth = month)
+                    month < s.firstSelectedMonth -> s.copy(firstSelectedMonth = month, lastSelectedMonth = s.firstSelectedMonth)
+                    month > s.lastSelectedMonth -> s.copy(lastSelectedMonth = month)
+                    else -> s.copy(lastSelectedMonth = month)
+                }
             }
             is AdvancedSearchAction.TuitionRangeChange -> _state.update { it.copy(tuitionRangeMax = action.maxValue) }
             is AdvancedSearchAction.DurationChange -> _state.update { it.copy(durationMaxYears = action.maxYears) }
