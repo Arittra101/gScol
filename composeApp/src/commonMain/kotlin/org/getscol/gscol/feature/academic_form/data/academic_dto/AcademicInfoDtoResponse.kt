@@ -38,9 +38,11 @@ data class EnglishTestDto(
     @SerialName("testId") val testId: String? = null,
     @SerialName("testName") val testName: String? = null,
     @SerialName("overallScore") val overallScore: Double? = null,
+    @SerialName("editable") val editable: Boolean? = null,
     @SerialName("testDate") val testDate: String? = null,
     @SerialName("sections") val sections: List<TestSectionDto>? = null,
-    @SerialName("validation") val validation: EnglishTestValidationDto? = null
+    @SerialName("validation") val validation: EnglishTestValidationDto? = null,
+
 )
 
 @Serializable

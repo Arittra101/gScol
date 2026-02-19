@@ -68,3 +68,6 @@ fun String.toShortDate(): String {
 
     return "$shortMonth$shortYear"
 }
+
+fun Boolean?.orFalse() = this ?: false
+fun Double?.toStringOrEmpty(): String = this?.toString() ?: ""

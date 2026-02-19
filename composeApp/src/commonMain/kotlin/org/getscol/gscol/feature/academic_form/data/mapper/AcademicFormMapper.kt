@@ -1,8 +1,13 @@
 package org.getscol.gscol.feature.academic_form.data.mapper
 
+import org.getscol.gscol.core.helper.toStringOrEmpty
 import org.getscol.gscol.feature.academic_form.data.academic_dto.AcademicInfoDtoResponse
+import org.getscol.gscol.feature.academic_form.data.academic_dto.AcademicInfoRequest
+import org.getscol.gscol.feature.academic_form.data.academic_dto.AcademicResultRequest
 import org.getscol.gscol.feature.academic_form.data.academic_dto.DegreeDto
+import org.getscol.gscol.feature.academic_form.data.academic_dto.EnglishSectionRequest
 import org.getscol.gscol.feature.academic_form.data.academic_dto.EnglishTestDto
+import org.getscol.gscol.feature.academic_form.data.academic_dto.EnglishTestResultRequest
 import org.getscol.gscol.feature.academic_form.data.academic_dto.PreferenceDto
 import org.getscol.gscol.feature.academic_form.data.academic_dto.TestSectionDto
 import org.getscol.gscol.feature.academic_form.domain.model.AcademicProfile
@@ -10,6 +15,7 @@ import org.getscol.gscol.feature.academic_form.domain.model.Degree
 import org.getscol.gscol.feature.academic_form.domain.model.EnglishTest
 import org.getscol.gscol.feature.academic_form.domain.model.Preference
 import org.getscol.gscol.feature.academic_form.domain.model.TestSection
+import org.getscol.gscol.feature.academic_form.presentation.AcademicUiState
 
 
 fun AcademicInfoDtoResponse.toAcademicProfile(): AcademicProfile {
@@ -49,11 +55,15 @@ fun List<EnglishTestDto>.toEnglishTests(): List<EnglishTest> {
 }
 
 fun EnglishTestDto.toEnglishTest(): EnglishTest {
+    val resolvedEditable = editable ?: true // for initial case  editable = false fillup true
     return EnglishTest(
         testId = testId.orEmpty(),
         testName = testName.orEmpty(),
-        overallScore = overallScore,
-        sections = sections.orEmpty().toTestSections()
+        overallScore = overallScore.toStringOrEmpty(),
+        sections = sections.orEmpty().toTestSections(),
+        maxScore = validation?.maxScore,
+        editable = resolvedEditable,
+        readyForSubmit = !resolvedEditable
     )
 }
 
@@ -62,8 +72,40 @@ fun List<TestSectionDto>.toTestSections(): List<TestSection> {
         TestSection(
             id = it.id.orEmpty(),
             name = it.name.orEmpty(),
-            score = it.score?.toString() ?: ""
+            score = it.score.toStringOrEmpty()
         )
     }
 }
 
+
+fun AcademicUiState.toAcademicInfoRequest(): AcademicInfoRequest {
+
+    val academicResults = listOfNotNull(ssc, hsc, bsc, msc).map { degree ->
+        AcademicResultRequest(
+            degreeId = degree.degreeId,
+            gpa = degree.gpa?.toDoubleOrNull(),
+        )
+    }
+
+    val englishTestResults = testTypeList
+        .orEmpty()
+        .map { test ->
+            EnglishTestResultRequest(
+                testId = test.testId,
+                overallScore = test.overallScore?.toDoubleOrNull(),
+                sections = test.sections?.map { section ->
+                    EnglishSectionRequest(
+                        id = section.id,
+                        score = section.score?.toDoubleOrNull()
+                    )
+                }
+            )
+        }
+
+    return AcademicInfoRequest(
+        academicResults = academicResults,
+        englishTestResults = englishTestResults,
+        preferredCountryIds = listOfNotNull(selectedCountryPreference?.id),
+        preferredProgrammeIds = listOfNotNull(selectedProgrammePreference?.id)
+    )
+}

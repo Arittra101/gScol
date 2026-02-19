@@ -1,5 +1,10 @@
 package org.getscol.gscol.feature.academic_form.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +47,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.core.presentation.BaseScreen
-import org.getscol.gscol.core.presentation.ConfirmationBottomSheet
+import org.getscol.gscol.core.presentation.components.ConfirmationBottomSheet
+import org.getscol.gscol.core.presentation.components.ErrorMsgBottomSheet
 import org.getscol.gscol.navigation.Navigator
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -51,6 +57,7 @@ import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.academic_form
 import scol.composeapp.generated.resources.academic_form_bottom_sheet_msg
 
+const val UNSELECT_TEST_TYPE = "Unselect English Test"
 
 @Composable
 fun AcademicFormRoute(navigator: Navigator, viewModel: AcademicViewmodel = koinViewModel()) {
@@ -89,6 +96,9 @@ fun EligibilityScreen(
     var testTypeExpand by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    var showErrorMsgBottomSheet by remember { mutableStateOf(false) }
+    var bottomSheetErrorMsg by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -104,23 +114,40 @@ fun EligibilityScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // GPA Section - Row 1
+        // SSC and HSC Section
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             GpaInputField(
                 label = "SSC",
-                value = uiState.ssc?.gpa ?: "",
-                onValueChange = { onAction(AcademicFormAction.OnSscChange(it)) },
+                value = uiState.ssc?.gpa.orEmpty(),
+                onValueChange = { input ->
+                    val gpaValue = input.toDoubleOrNull()
+                    if (gpaValue == null || gpaValue <= 5.0f) {
+                        onAction(AcademicFormAction.OnSscChange(input))
+                    } else {
+                        showErrorMsgBottomSheet = true
+                        bottomSheetErrorMsg = "$input is an invalid SSC Gpa"
+                    }
+
+                },
                 modifier = Modifier.weight(1f),
-              /*  readOnly = uiState.ssc?.gpa != null*/
+                /*  readOnly = uiState.ssc?.gpa != null*/
             )
 
             GpaInputField(
                 label = "HSC",
-                value = uiState.hsc?.gpa ?: "",
-                onValueChange = { onAction(AcademicFormAction.OnHscChange(it)) },
+                value = uiState.hsc?.gpa.orEmpty(),
+                onValueChange = { input ->
+                    val gpaValue = input.toDoubleOrNull()
+                    if (gpaValue == null || gpaValue <= 5.0f) {
+                        onAction(AcademicFormAction.OnHscChange(input))
+                    } else {
+                        showErrorMsgBottomSheet = true
+                        bottomSheetErrorMsg = "$input Invalid HSC Gpa"
+                    }
+                },
                 modifier = Modifier.weight(1f),
                 /*readOnly = uiState.hsc?.gpa != null*/
             )
@@ -128,23 +155,42 @@ fun EligibilityScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // GPA Section - Row 2
+        // BSC and MSC Section
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             GpaInputField(
                 label = "Bachelor's",
-                value = uiState.bsc?.gpa ?: "",
-                onValueChange = { onAction(AcademicFormAction.OnBscChange(it))},
+                value = uiState.bsc?.gpa.orEmpty(),
+                onValueChange = { input ->
+                    val gpaValue = input.toFloatOrNull()
+                    if (gpaValue == null || gpaValue <= 4.0f) {
+                        onAction(AcademicFormAction.OnBscChange(input))
+                    } else {
+                        showErrorMsgBottomSheet = true
+                        bottomSheetErrorMsg = "$input Invalid Bsc CGPA"
+                    }
+
+                },
                 modifier = Modifier.weight(1f),
              /*   readOnly = uiState.bsc?.gpa != null*/
             )
 
             GpaInputField(
                 label = "Master's",
-                value = uiState.msc?.gpa ?: "",
-                onValueChange = { onAction(AcademicFormAction.OnMscChange(it))},
+                value = uiState.msc?.gpa.orEmpty(),
+                onValueChange = { input ->
+                    val gpaValue = input.toFloatOrNull()
+                    if (gpaValue == null || gpaValue <= 4.0f) {
+                        onAction(AcademicFormAction.OnMscChange(input))
+                    } else {
+                        showErrorMsgBottomSheet = true
+                        bottomSheetErrorMsg = "$input Invalid Msc CGPA"
+                    }
+
+                },
+                /*onValueChange = { onAction(AcademicFormAction.OnMscChange(it))},*/
                 modifier = Modifier.weight(1f),
 /*                readOnly = uiState.msc?.gpa != null*/
             )
@@ -172,117 +218,160 @@ fun EligibilityScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Text(
-            text = "Test Type",
-            fontSize = 16.sp,
-            color = Color.Black,
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        MaterialDropdown(
-            selectedValue = uiState.selectedTestType?.testName.orEmpty(),
-            placeholder = "Select Test Type",
-            options = uiState.testTypeList?.toListDropDownUiModel2() ?: emptyList(),
-            expanded = testTypeExpand,
-            onExpandedChange = { testTypeExpand= it },
-            onOptionSelected = {
-                onAction(AcademicFormAction.OnTestTypeChange(it.id))
-            }
-        )
-
-        if (uiState.selectedTestType != null) {
-            Spacer(modifier = Modifier.height(6.dp))
-
-            if(uiState.selectedTestType.testName == "PTE"){
-                GpaInputField(
-                    label = "Score",
-                    value = (uiState.selectedTestType.overallScore?: 0.0).toString(),
-                    onValueChange = {
-
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = uiState.selectedTestType.overallScore != null
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Part 1
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = "Test Type",
+                    fontSize = 16.sp,
+                    color = Color.Black,
                 )
-                Spacer(modifier = Modifier.height(17.dp))
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                MaterialDropdown(
+                    selectedValue = if (uiState.selectedTestType?.readyForSubmit == null) "Select Test Type"
+                                    else uiState.selectedTestType.testName.orEmpty(),
+                    placeholder = "Select Test Type",
+                    options = uiState.testTypeList?.toListDropDownUiModel2() ?: emptyList(),
+                    expanded = testTypeExpand,
+                    onExpandedChange = { testTypeExpand = it },
+                    onOptionSelected = {
+                        if (it.id.isNullOrEmpty()) {
+                            onAction(AcademicFormAction.OnUnselectTestType)
+                        } else {
+                            onAction(AcademicFormAction.OnTestTypeChange(it.id))
+                        }
+                    }
+                )
             }
 
-            else {
-                // English Test Scores - Row 1 there need a condition
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+            // overall score ~ not for pte and unselect
+            if ((uiState.selectedTestType?.testName != "PTE") && (uiState.selectedTestType?.testId != null)) {
+                Column(
+                    modifier = Modifier.weight(1f)
                 ) {
                     GpaInputField(
-                        label = "Speaking",
-                        value = (uiState.selectedTestType.sections?.getOrNull(2)?.score ?: ""),                        onValueChange = {
-                            val testSectionId = uiState.selectedTestType.sections?.getOrNull(2)?.id
-                            if (testSectionId != null) {
-                                onAction(
-                                    AcademicFormAction.OnTestScoreChange(testSectionId, it)
-                                )
+                        label = "Overall Score",
+                        value = uiState.selectedTestType.overallScore.orEmpty(),
+                        onValueChange = { input ->
+                            val inputValue = input.toDoubleOrNull()
+                            val maxScore = uiState.selectedTestType.maxScore?.toDouble()
+
+                            if (inputValue == null || (maxScore != null && inputValue <= maxScore)) {
+                                onAction(AcademicFormAction.OnOverallScoreChange(input))
+                            } else {
+                                showErrorMsgBottomSheet = true
+                                bottomSheetErrorMsg = "$input invalid overall Score for ${uiState.selectedTestType.testName}"
                             }
                         },
-                        modifier = Modifier.weight(1f),
-                      //  readOnly = uiState.selectedTestType.sections?.getOrNull(2)?.score != null
-                    )
-
-                    GpaInputField(
-                        label = "Listening",
-                        value = (uiState.selectedTestType.sections?.getOrNull(0)?.score ?: ""),
-                        onValueChange = {
-                            val testSectionId = uiState.selectedTestType.sections?.getOrNull(0)?.id
-                            if (testSectionId != null) {
-                                onAction(
-                                    AcademicFormAction.OnTestScoreChange(testSectionId, it)
-                                )
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                       // readOnly = uiState.selectedTestType.sections?.getOrNull(0) != null
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(17.dp))
-
-                // English Test Scores - Row 2
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    GpaInputField(
-                        label = "Reading",
-                        value = (uiState.selectedTestType.sections?.getOrNull(1)?.score ?: ""),
-                        onValueChange = {
-                            val testSectionId = uiState.selectedTestType.sections?.getOrNull(1)?.id
-                            if (testSectionId != null) {
-                                onAction(
-                                    AcademicFormAction.OnTestScoreChange(testSectionId, it)
-                                )
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-//                        readOnly = uiState.selectedTestType.sections?.getOrNull(1) != null
-                    )
-
-                    GpaInputField(
-                        label = "Writing",
-                        value = (uiState.selectedTestType.sections?.getOrNull(3)?.score ?: 0.0).toString(),
-                        onValueChange = {
-                            val testSectionId = uiState.selectedTestType.sections?.getOrNull(3)?.id
-                            if (testSectionId != null) {
-                                onAction(
-                                    AcademicFormAction.OnTestScoreChange(testSectionId, it)
-                                )
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
-                       // readOnly = uiState.selectedTestType.sections?.getOrNull(3) != null
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = false
                     )
                 }
             }
-
         }
+
+        AnimatedVisibility(
+            visible = uiState.selectedTestType != null,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            // Need to smart cast inside, so use local val
+            val selectedTestType = uiState.selectedTestType ?: return@AnimatedVisibility
+
+            Column {
+                Spacer(modifier = Modifier.height(6.dp))
+
+                AnimatedVisibility(
+                    visible = selectedTestType.testName == "PTE",
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Column {
+                        GpaInputField(
+                            label = "Score",  //supported for pte
+                            value = (selectedTestType.overallScore ?: 0.0).toString(),
+                            onValueChange = {
+                                //write condition for pte
+
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = selectedTestType.overallScore != null
+                        )
+                        Spacer(modifier = Modifier.height(17.dp))
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = (selectedTestType.testName != "PTE") && (selectedTestType.testName != UNSELECT_TEST_TYPE),
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(17.dp)) {
+                        // Row 1
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            GpaInputField(
+                                label = "Speaking",
+                                value = (selectedTestType.sections?.getOrNull(2)?.score ?: ""),
+                                onValueChange = {
+                                    selectedTestType.sections?.getOrNull(2)?.id?.let { id ->
+                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                            )
+                            GpaInputField(
+                                label = "Listening",
+                                value = (selectedTestType.sections?.getOrNull(0)?.score ?: ""),
+                                onValueChange = {
+                                    selectedTestType.sections?.getOrNull(0)?.id?.let { id ->
+                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+
+                        // Row 2
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            GpaInputField(
+                                label = "Reading",
+                                value = (selectedTestType.sections?.getOrNull(1)?.score ?: ""),
+                                onValueChange = {
+                                    selectedTestType.sections?.getOrNull(1)?.id?.let { id ->
+                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                            )
+                            GpaInputField(
+                                label = "Writing",
+                                value = (selectedTestType.sections?.getOrNull(3)?.score ?: 0.0).toString(),
+                                onValueChange = {
+                                    selectedTestType.sections?.getOrNull(3)?.id?.let { id ->
+                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(12.dp))
 
         // Country Dropdown - CONVERTED TO MATERIAL STYLE
@@ -300,7 +389,7 @@ fun EligibilityScreen(
             expanded = countryExpanded,
             onExpandedChange = { countryExpanded = it },
             onOptionSelected = {
-                onAction(AcademicFormAction.OnCountryPrefChange(it.itemName,it.id))
+                onAction(AcademicFormAction.OnCountryPrefChange(it.itemName.orEmpty(),it.id.orEmpty()))
             }
         )
 
@@ -321,7 +410,7 @@ fun EligibilityScreen(
             expanded = programExpanded,
             onExpandedChange = { programExpanded = it },
             onOptionSelected = {
-                onAction(AcademicFormAction.OnProgrammePrefChange(it.itemName,it.id))
+                onAction(AcademicFormAction.OnProgrammePrefChange(it.itemName.orEmpty(),it.id.orEmpty()))
             }
         )
 
@@ -332,6 +421,7 @@ fun EligibilityScreen(
             onClick = {
                 showBottomSheet = true
             },
+            enabled = uiState.enableSubmitButton,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
@@ -350,6 +440,7 @@ fun EligibilityScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
     }
+
     ConfirmationBottomSheet(
         showBottomSheet = showBottomSheet,
         onDismiss = { showBottomSheet = false },
@@ -359,9 +450,15 @@ fun EligibilityScreen(
         cancelButtonText = "Go Back",
         onConfirm = {
             // Handle submission logic
-            println("Confirmed!")
+           // println("Confirmed!")
+            onAction(AcademicFormAction.SubmitAcademicForm)
         }
     )
+
+    ErrorMsgBottomSheet(
+        showBottomSheet = showErrorMsgBottomSheet,
+        onDismiss = { showErrorMsgBottomSheet = false },
+        message = bottomSheetErrorMsg)
 }
 
 // NEW MATERIAL DROPDOWN COMPONENT
@@ -415,7 +512,7 @@ fun MaterialDropdown(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = option.itemName,
+                            text = option.itemName.orEmpty(),
                             fontSize = 16.sp,
                             color = Color.Black
                         )
@@ -449,7 +546,14 @@ fun GpaInputField(
 
         OutlinedTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = { newValue ->
+                // Regex: Allows digits, and optionally one '.' followed by more digits
+                // Matches: "12", "12.", "12.5"
+                if ((newValue.isEmpty() || newValue.matches(Regex("""^\d+\.?\d*$"""))
+                            && (keyboardType == KeyboardType.Decimal))) {
+                    onValueChange(newValue)
+                }
+            },
             readOnly = readOnly,
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),

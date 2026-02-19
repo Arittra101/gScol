@@ -1,4 +1,4 @@
-package org.getscol.gscol.core.presentation
+package org.getscol.gscol.core.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

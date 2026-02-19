@@ -17,6 +17,8 @@ data class AcademicUiState(
     val programmePreferenceList: List<Preference>? = null,
     val programmeCountryList: List<Preference>? = null,
     val showLoader: Boolean = true,
+    val formSubmitSuccess: Boolean  = false,
+    val enableSubmitButton: Boolean = false
 )
 
 fun List<Preference>.toListDropDownUiModel() = map { it.toDropDownUiModel() }
@@ -29,6 +31,6 @@ fun EnglishTest.toDropDownUiModel2() = DropDownUiModel(testId.orEmpty(), testNam
 
 
 data class DropDownUiModel(
-    val id: String,
-    val itemName: String
+    val id: String? = null,
+    val itemName: String? = null
 )

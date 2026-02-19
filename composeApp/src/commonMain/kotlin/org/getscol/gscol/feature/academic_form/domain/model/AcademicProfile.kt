@@ -11,7 +11,7 @@ data class AcademicProfile(
     }
 
     fun getSelectedEnglishTest(): EnglishTest? {
-        return englishTests?.find { it.overallScore != null }
+        return englishTests?.find { it.overallScore !=  "" }
     }
 
     fun getSelectedCountryPref(): Preference? {
@@ -26,14 +26,18 @@ data class AcademicProfile(
 data class Degree(
     val degreeId: String? = null,
     val name: String? = null,
-    val gpa: String? = null
+    val gpa: String? = null,
+    val editable: Boolean = true,
 )
 
 data class EnglishTest(
     val testId: String? = null,
     val testName: String? = null,
-    val overallScore: Double? = null,
-    val sections: List<TestSection>? = null
+    val overallScore: String? = null,
+    val sections: List<TestSection>? = null,
+    val maxScore: Int? = null,
+    val editable: Boolean? = null,
+    val readyForSubmit: Boolean? = null,
 )
 
 data class TestSection(

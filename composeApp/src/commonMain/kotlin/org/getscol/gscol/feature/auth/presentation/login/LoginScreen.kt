@@ -231,7 +231,9 @@ fun LoginScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.clickable(
-                    onClick = { /* Handle skip */ }
+                    onClick = { /* Handle skip */
+                    navigator.navigateAuthScreenBack(Route.Login)
+                }
                 )
             ) {
                 Text(

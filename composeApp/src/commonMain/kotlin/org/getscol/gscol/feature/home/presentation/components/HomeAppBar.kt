@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.painterResource
 import scol.composeapp.generated.resources.Res
@@ -62,6 +63,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                     modifier = Modifier.width(50.dp)
                         .padding(bottom = 2.dp).clickable{
                          /*   action(HomeAction.Change)*/
+                            navigator.navigateToOtherScreen(Route.AcademicForm)
                         },
                 )
                 HomeSearchBar(
