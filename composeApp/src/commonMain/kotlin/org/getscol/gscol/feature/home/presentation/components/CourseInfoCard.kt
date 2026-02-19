@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -142,24 +141,25 @@ fun CourseInfoCard(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            FlowRow(
+            Row(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement =Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                maxItemsInEachRow = 3
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 InfoChip(
+                    modifier = Modifier.weight(1f),
                     iconPath = Res.drawable.intake_icon,
                     title = "Intake",
                     text = intake,
                 )
                 InfoChip(
+                    modifier = Modifier.weight(1f),
                     iconPath = Res.drawable.tution_fee_icon,
                     title = "Tuition fees",
                     text = tuitionFees,
                 )
                 InfoChip(
+                    modifier = Modifier.weight(1f),
                     iconPath = Res.drawable.duration_icon,
                     title = "Duration",
                     text = duration,
@@ -169,14 +169,15 @@ fun CourseInfoCard(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            FlowRow(
+
+            Row(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                maxItemsInEachRow = 2
             ) {
+
                 InfoChip(
+                    modifier = Modifier.weight(1f),
                     iconPath = Res.drawable.intake_icon,
                     title = "Scholarship",
                     text = scholarship,
@@ -185,11 +186,13 @@ fun CourseInfoCard(
                     shouldFade = true,
                 )
                 InfoChip(
+                    modifier = Modifier.weight(1f),
                     iconPath = Res.drawable.tution_fee_icon,
                     title = "Initial Deposit",
                     text = initialDeposit,
                 )
             }
+
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth()
