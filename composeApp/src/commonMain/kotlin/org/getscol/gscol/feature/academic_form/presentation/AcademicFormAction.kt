@@ -8,7 +8,7 @@ sealed interface AcademicFormAction {
 
     data class OnTestTypeChange(val testId: String) : AcademicFormAction
     data class OnTestScoreChange(val testSectionId: String, val testScore: String): AcademicFormAction
-    data class OnOverallScoreChange(val overallScore: String): AcademicFormAction
+    data class OnOverallScoreChange(val overallScore: String, val isDuolingo: Boolean?=null): AcademicFormAction
 
     data class OnCountryPrefChange(val countryName: String, val countryId: String): AcademicFormAction
     data class OnProgrammePrefChange(val programmeName: String, val programmeId: String): AcademicFormAction

@@ -18,7 +18,8 @@ data class AcademicUiState(
     val programmeCountryList: List<Preference>? = null,
     val showLoader: Boolean = true,
     val formSubmitSuccess: Boolean  = false,
-    val enableSubmitButton: Boolean = false
+    val enableSubmitButton: Boolean = false,
+    val duolingoScore: String? = null,
 )
 
 fun List<Preference>.toListDropDownUiModel() = map { it.toDropDownUiModel() }

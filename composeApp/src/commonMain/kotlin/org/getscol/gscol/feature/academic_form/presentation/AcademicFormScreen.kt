@@ -58,6 +58,7 @@ import scol.composeapp.generated.resources.academic_form
 import scol.composeapp.generated.resources.academic_form_bottom_sheet_msg
 
 const val UNSELECT_TEST_TYPE = "Unselect English Test"
+const val DUOLINGO = "PTE"
 
 @Composable
 fun AcademicFormRoute(navigator: Navigator, viewModel: AcademicViewmodel = koinViewModel()) {
@@ -252,7 +253,7 @@ fun EligibilityScreen(
             }
 
             // overall score ~ not for pte and unselect
-            if ((uiState.selectedTestType?.testName != "PTE") && (uiState.selectedTestType?.testId != null)) {
+            if ((uiState.selectedTestType?.testName != DUOLINGO) && (uiState.selectedTestType?.testId != null)) {
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
@@ -289,7 +290,7 @@ fun EligibilityScreen(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 AnimatedVisibility(
-                    visible = selectedTestType.testName == "PTE",
+                    visible = selectedTestType.testName == DUOLINGO,
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
@@ -297,19 +298,30 @@ fun EligibilityScreen(
                         GpaInputField(
                             label = "Score",  //supported for pte
                             value = (selectedTestType.overallScore ?: 0.0).toString(),
-                            onValueChange = {
-                                //write condition for pte
+//                            onValueChange = {
+//                                //write condition for pte
+//
+//                            },
+                            onValueChange = { input ->
+                                val inputValue = input.toDoubleOrNull()
+                                val maxScore = uiState.selectedTestType.maxScore?.toDouble()
 
+                                if (inputValue == null || (maxScore != null && inputValue <= maxScore)) {
+                                    onAction(AcademicFormAction.OnOverallScoreChange(input,true))
+                                } else {
+                                    showErrorMsgBottomSheet = true
+                                    bottomSheetErrorMsg = "$input invalid score for ${uiState.selectedTestType.testName}"
+                                }
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            readOnly = selectedTestType.overallScore != null
+//                            readOnly = selectedTestType.overallScore != null
                         )
                         Spacer(modifier = Modifier.height(17.dp))
                     }
                 }
 
                 AnimatedVisibility(
-                    visible = (selectedTestType.testName != "PTE") && (selectedTestType.testName != UNSELECT_TEST_TYPE),
+                    visible = (selectedTestType.testName != DUOLINGO) && (selectedTestType.testName != UNSELECT_TEST_TYPE),
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
@@ -321,10 +333,22 @@ fun EligibilityScreen(
                         ) {
                             GpaInputField(
                                 label = "Speaking",
-                                value = (selectedTestType.sections?.getOrNull(2)?.score ?: ""),
-                                onValueChange = {
+                                value = (selectedTestType.sections?.getOrNull(2)?.score.orEmpty()),
+                               /* onValueChange = {
                                     selectedTestType.sections?.getOrNull(2)?.id?.let { id ->
                                         onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                    }
+                                },*/
+                                onValueChange = { input ->
+                                    val inputValue = input.toIntOrNull()
+                                    val maxScore = uiState.selectedTestType.maxScore
+                                    val sectionId = uiState.selectedTestType.sections?.getOrNull(2)?.id.orEmpty()
+
+                                    if (inputValue == null || (maxScore != null && inputValue <= maxScore)) {
+                                        onAction(AcademicFormAction.OnTestScoreChange(sectionId,input))
+                                    } else {
+                                        showErrorMsgBottomSheet = true
+                                        bottomSheetErrorMsg = "$input invalid Speaking Score for ${uiState.selectedTestType.testName}"
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
@@ -332,9 +356,16 @@ fun EligibilityScreen(
                             GpaInputField(
                                 label = "Listening",
                                 value = (selectedTestType.sections?.getOrNull(0)?.score ?: ""),
-                                onValueChange = {
-                                    selectedTestType.sections?.getOrNull(0)?.id?.let { id ->
-                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                onValueChange = { input ->
+                                    val inputValue = input.toIntOrNull()
+                                    val maxScore = uiState.selectedTestType.maxScore
+                                    val sectionId = uiState.selectedTestType.sections?.getOrNull(0)?.id.orEmpty()
+
+                                    if (inputValue == null || (maxScore != null && inputValue <= maxScore)) {
+                                        onAction(AcademicFormAction.OnTestScoreChange(sectionId,input))
+                                    } else {
+                                        showErrorMsgBottomSheet = true
+                                        bottomSheetErrorMsg = "$input invalid Listening Score for ${uiState.selectedTestType.testName}"
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
@@ -349,9 +380,21 @@ fun EligibilityScreen(
                             GpaInputField(
                                 label = "Reading",
                                 value = (selectedTestType.sections?.getOrNull(1)?.score ?: ""),
-                                onValueChange = {
+                               /* onValueChange = {
                                     selectedTestType.sections?.getOrNull(1)?.id?.let { id ->
                                         onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                    }
+                                },*/
+                                onValueChange = { input ->
+                                    val inputValue = input.toIntOrNull()
+                                    val maxScore = uiState.selectedTestType.maxScore
+                                    val sectionId = uiState.selectedTestType.sections?.getOrNull(1)?.id.orEmpty()
+
+                                    if (inputValue == null || (maxScore != null && inputValue <= maxScore)) {
+                                        onAction(AcademicFormAction.OnTestScoreChange(sectionId,input))
+                                    } else {
+                                        showErrorMsgBottomSheet = true
+                                        bottomSheetErrorMsg = "$input invalid Reading Score for ${uiState.selectedTestType.testName}"
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
@@ -359,9 +402,21 @@ fun EligibilityScreen(
                             GpaInputField(
                                 label = "Writing",
                                 value = (selectedTestType.sections?.getOrNull(3)?.score ?: 0.0).toString(),
-                                onValueChange = {
+                              /*  onValueChange = {
                                     selectedTestType.sections?.getOrNull(3)?.id?.let { id ->
                                         onAction(AcademicFormAction.OnTestScoreChange(id, it))
+                                    }
+                                },*/
+                                onValueChange = { input ->
+                                    val inputValue = input.toIntOrNull()
+                                    val maxScore = uiState.selectedTestType.maxScore
+                                    val sectionId = uiState.selectedTestType.sections?.getOrNull(3)?.id.orEmpty()
+
+                                    if (inputValue == null || (maxScore != null && inputValue <= maxScore)) {
+                                        onAction(AcademicFormAction.OnTestScoreChange(sectionId,input))
+                                    } else {
+                                        showErrorMsgBottomSheet = true
+                                        bottomSheetErrorMsg = "$input invalid Writing Score for ${uiState.selectedTestType.testName}"
                                     }
                                 },
                                 modifier = Modifier.weight(1f),

@@ -73,7 +73,7 @@ class AcademicViewmodel(
             }
 
             is AcademicFormAction.OnOverallScoreChange -> {
-                updateOverallScoreAndTestList(action.overallScore)
+                updateOverallScoreAndTestList(action.overallScore, action.isDuolingo)
             }
 
             is AcademicFormAction.OnCountryPrefChange -> {
@@ -212,15 +212,16 @@ class AcademicViewmodel(
         buttonState(isEnable)
     }
 
-    private fun updateOverallScoreAndTestList(overallScore: String, isDulingo: Boolean?=null) {
+    private fun updateOverallScoreAndTestList(overallScore: String, isDuolingo: Boolean?=null) {
 
         val current = academicUiState.value
         val selectedTestType = current.selectedTestType ?: return
 
 
-        if (isDulingo != null) {
+        if (isDuolingo != null) {
             val readyForSubmit = overallScore.isNotEmpty()
-            val updatedSelectedTestType = selectedTestType.copy(readyForSubmit = readyForSubmit)
+            val updatedSelectedTestType =
+                selectedTestType.copy(readyForSubmit = readyForSubmit, overallScore = overallScore)
             val updatedTestTypeList = current.testTypeList?.map { test ->
                 if (test.testId == updatedSelectedTestType.testId) {
                     updatedSelectedTestType
