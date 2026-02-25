@@ -28,7 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
@@ -113,8 +114,8 @@ fun HomeSearchBar(
 ) {
     val colors = appColors()
     val rowModifier = modifier
-        .height(36.dp)
-        .padding(start = 12.dp)
+        .height(36.sdp)
+        .padding(start = 12.sdp)
         .background(
             color = colors.customPrimaryContainer,
             shape = RoundedCornerShape(50.dp)
@@ -145,7 +146,7 @@ fun HomeSearchBar(
 
         Text(
             "Search country, course, intake",
-            fontSize = 11.sp,
+            fontSize = 10.ssp,
             color = colors.customInfo,
             modifier = Modifier.weight(1f)
         )

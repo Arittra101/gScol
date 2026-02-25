@@ -21,6 +21,7 @@ coil3 = "3.3.0"
 pagingCommon = "3.3.0-alpha02-0.5.1"
 pagingComposeCommon = "3.3.0-alpha02-0.5.1"
 pagingRuntime = "3.3.0-alpha02-0.5.1"
+sdpSspComposeMultiplatform = "1.0.7"
 timber = "5.0.1"
 datastore = "1.2.0"
 uiBackhandler = "1.9.3"
@@ -44,6 +45,7 @@ compose-material-icons = { module = "org.jetbrains.compose.material:material-ico
 paging-common = { module = "app.cash.paging:paging-common", version.ref = "pagingCommon" }
 paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "pagingComposeCommon" }
 paging-runtime = { module = "app.cash.paging:paging-runtime", version.ref = "pagingRuntime" }
+sdp-ssp-compose-multiplatform = { module = "network.chaintech:sdp-ssp-compose-multiplatform", version.ref = "sdpSspComposeMultiplatform" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }

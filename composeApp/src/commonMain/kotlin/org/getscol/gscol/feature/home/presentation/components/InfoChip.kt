@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import network.chaintech.sdpcomposemultiplatform.ssp
 import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -83,7 +83,7 @@ fun InfoChip(
             )
             Text(
                 text = "$title: ",
-                fontSize = 10.sp,
+                fontSize = 10.ssp,
                 color = effectiveTextColor,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -91,7 +91,7 @@ fun InfoChip(
             )
             Text(
                 text = text,
-                fontSize = 11.sp,
+                fontSize = 11.ssp,
                 color = effectiveTextColor,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,

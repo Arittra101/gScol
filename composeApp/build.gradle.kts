@@ -99,6 +99,9 @@ kotlin {
             //paging 3 support with cash app
             implementation(libs.paging.common)
             implementation(libs.paging.compose.common)
+
+            //ssp and sdp ~ scalable size Support
+            implementation(libs.sdp.ssp.compose.multiplatform)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

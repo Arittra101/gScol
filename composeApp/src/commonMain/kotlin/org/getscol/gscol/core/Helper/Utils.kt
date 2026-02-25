@@ -63,8 +63,6 @@ fun String.toShortDate(): String {
         "december"  -> "Dec"
         else        -> month.take(3).replaceFirstChar { it.uppercase() }
     }
-
     val shortYear = if (year.length >= 2) year.takeLast(2) else year
-
-    return "$shortMonth$shortYear"
+    return "$shortMonth $shortYear".uppercase()
 }

@@ -1,6 +1,7 @@
 package org.getscol.gscol
 
 import android.app.Application
+import network.chaintech.sdpcomposemultiplatform.SDPConfig
 import org.getscol.gscol.core.data.storage.initializeAndroidContext
 import org.getscol.gscol.core.di.initKoin
 import org.koin.android.ext.koin.androidContext
@@ -16,5 +17,7 @@ class ScolApplication : Application() {
         initKoin {
             androidContext(this@ScolApplication)
         }
+
+        SDPConfig.setScalingRatio(400.0)
     }
 }
