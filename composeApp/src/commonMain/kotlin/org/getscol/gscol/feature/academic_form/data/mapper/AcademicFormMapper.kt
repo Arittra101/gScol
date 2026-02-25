@@ -23,7 +23,8 @@ fun AcademicInfoDtoResponse.toAcademicProfile(): AcademicProfile {
         degrees = data?.degrees.orEmpty().toDegrees(),
         englishTests = data?.englishTests.orEmpty().toEnglishTests(),
         preferredPrograms = data?.preferredPrograms?.toPreference(),
-        preferredCountries = data?.preferredCountries?.toPreference()
+        preferredCountries = data?.preferredCountries?.toPreference(),
+        lastInstituteName = data?.lastAcademicInstitute
     )
 }
 
@@ -55,7 +56,7 @@ fun List<EnglishTestDto>.toEnglishTests(): List<EnglishTest> {
 }
 
 fun EnglishTestDto.toEnglishTest(): EnglishTest {
-    val resolvedEditable = editable ?: true // for initial case  editable = false fillup true
+    val resolvedEditable = isEditable ?: true // for initial case  editable = false fillup true
     return EnglishTest(
         testId = testId.orEmpty(),
         testName = testName.orEmpty(),

@@ -58,7 +58,7 @@ import scol.composeapp.generated.resources.academic_form
 import scol.composeapp.generated.resources.academic_form_bottom_sheet_msg
 
 const val UNSELECT_TEST_TYPE = "Unselect English Test"
-const val DUOLINGO = "PTE"
+const val DUOLINGO = "duolingo"
 
 @Composable
 fun AcademicFormRoute(navigator: Navigator, viewModel: AcademicViewmodel = koinViewModel()) {
@@ -134,7 +134,7 @@ fun EligibilityScreen(
 
                 },
                 modifier = Modifier.weight(1f),
-                /*  readOnly = uiState.ssc?.gpa != null*/
+                readOnly = uiState.ssc?.editable == false
             )
 
             GpaInputField(
@@ -150,7 +150,7 @@ fun EligibilityScreen(
                     }
                 },
                 modifier = Modifier.weight(1f),
-                /*readOnly = uiState.hsc?.gpa != null*/
+                readOnly = uiState.hsc?.editable == false
             )
         }
 
@@ -175,7 +175,7 @@ fun EligibilityScreen(
 
                 },
                 modifier = Modifier.weight(1f),
-             /*   readOnly = uiState.bsc?.gpa != null*/
+                readOnly = uiState.bsc?.editable == false
             )
 
             GpaInputField(
@@ -193,7 +193,7 @@ fun EligibilityScreen(
                 },
                 /*onValueChange = { onAction(AcademicFormAction.OnMscChange(it))},*/
                 modifier = Modifier.weight(1f),
-/*                readOnly = uiState.msc?.gpa != null*/
+                readOnly = uiState.msc?.editable == false
             )
         }
 
@@ -202,10 +202,10 @@ fun EligibilityScreen(
         GpaInputField(
             label = "Last institute name",
             value = uiState.lastInstitute.orEmpty(),
-            onValueChange = { },
+            onValueChange = { onAction(AcademicFormAction.OnLastInstituteChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             KeyboardType.Text,
-            readOnly = true
+            readOnly = uiState.lastInstituteEditable == false
         )
 
         Spacer(modifier = Modifier.height(35.dp))
@@ -253,7 +253,7 @@ fun EligibilityScreen(
             }
 
             // overall score ~ not for pte and unselect
-            if ((uiState.selectedTestType?.testName != DUOLINGO) && (uiState.selectedTestType?.testId != null)) {
+            if ((uiState.selectedTestType?.testName != DUOLINGO.lowercase()) && (uiState.selectedTestType?.testId != null)) {
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
@@ -272,7 +272,7 @@ fun EligibilityScreen(
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        readOnly = false
+                        readOnly = uiState.selectedTestType.editable == false
                     )
                 }
             }
@@ -283,14 +283,13 @@ fun EligibilityScreen(
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically()
         ) {
-            // Need to smart cast inside, so use local val
             val selectedTestType = uiState.selectedTestType ?: return@AnimatedVisibility
 
             Column {
                 Spacer(modifier = Modifier.height(6.dp))
 
                 AnimatedVisibility(
-                    visible = selectedTestType.testName == DUOLINGO,
+                    visible = selectedTestType.testName == DUOLINGO.lowercase(),
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
@@ -298,10 +297,6 @@ fun EligibilityScreen(
                         GpaInputField(
                             label = "Score",  //supported for pte
                             value = (selectedTestType.overallScore ?: 0.0).toString(),
-//                            onValueChange = {
-//                                //write condition for pte
-//
-//                            },
                             onValueChange = { input ->
                                 val inputValue = input.toDoubleOrNull()
                                 val maxScore = uiState.selectedTestType.maxScore?.toDouble()
@@ -314,14 +309,14 @@ fun EligibilityScreen(
                                 }
                             },
                             modifier = Modifier.fillMaxWidth(),
-//                            readOnly = selectedTestType.overallScore != null
+                            readOnly = uiState.selectedTestType.editable == false
                         )
                         Spacer(modifier = Modifier.height(17.dp))
                     }
                 }
 
                 AnimatedVisibility(
-                    visible = (selectedTestType.testName != DUOLINGO) && (selectedTestType.testName != UNSELECT_TEST_TYPE),
+                    visible = (selectedTestType.testName != DUOLINGO.lowercase()) && (selectedTestType.testName != UNSELECT_TEST_TYPE),
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
@@ -352,6 +347,7 @@ fun EligibilityScreen(
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
+                                readOnly = uiState.selectedTestType.editable == false
                             )
                             GpaInputField(
                                 label = "Listening",
@@ -369,6 +365,7 @@ fun EligibilityScreen(
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
+                                readOnly = uiState.selectedTestType.editable == false
                             )
                         }
 
@@ -398,6 +395,7 @@ fun EligibilityScreen(
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
+                                readOnly = uiState.selectedTestType.editable == false
                             )
                             GpaInputField(
                                 label = "Writing",
@@ -420,6 +418,7 @@ fun EligibilityScreen(
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
+                                readOnly = uiState.selectedTestType.editable == false
                             )
                         }
                     }
@@ -445,7 +444,8 @@ fun EligibilityScreen(
             onExpandedChange = { countryExpanded = it },
             onOptionSelected = {
                 onAction(AcademicFormAction.OnCountryPrefChange(it.itemName.orEmpty(),it.id.orEmpty()))
-            }
+            },
+            enabled = uiState.selectedCountryPreferenceEditable == true
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -466,7 +466,8 @@ fun EligibilityScreen(
             onExpandedChange = { programExpanded = it },
             onOptionSelected = {
                 onAction(AcademicFormAction.OnProgrammePrefChange(it.itemName.orEmpty(),it.id.orEmpty()))
-            }
+            },
+            enabled = uiState.selectedProgrammePreferenceEditable == true
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -525,7 +526,8 @@ fun MaterialDropdown(
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onOptionSelected: (DropDownUiModel) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
         // Dropdown Trigger Box
@@ -533,8 +535,15 @@ fun MaterialDropdown(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFFD9E8ED))
-                .clickable { onExpandedChange(true) }
+                .background(
+                    if (enabled) Color(0xFFD9E8ED)
+                    else Color.LightGray.copy(alpha = 0.4f)
+                )
+                .clickable(enabled = enabled) {
+                    if (enabled) {
+                        onExpandedChange(true)
+                    }
+                }
                 .padding(16.dp)
         ) {
             Row(
@@ -557,7 +566,7 @@ fun MaterialDropdown(
 
         // Material Dropdown Menu
         DropdownMenu(
-            expanded = expanded,
+            expanded = expanded && enabled,
             onDismissRequest = { onExpandedChange(false) },
             modifier = Modifier
                 .fillMaxWidth(0.9f)
@@ -604,8 +613,9 @@ fun GpaInputField(
             onValueChange = { newValue ->
                 // Regex: Allows digits, and optionally one '.' followed by more digits
                 // Matches: "12", "12.", "12.5"
-                if ((newValue.isEmpty() || newValue.matches(Regex("""^\d+\.?\d*$"""))
-                            && (keyboardType == KeyboardType.Decimal))) {
+                if ((newValue.isEmpty() || newValue.matches(Regex("""^\d+\.?\d*$""")) && (keyboardType == KeyboardType.Decimal))) {
+                    onValueChange(newValue)
+                } else if (keyboardType == KeyboardType.Text) {
                     onValueChange(newValue)
                 }
             },

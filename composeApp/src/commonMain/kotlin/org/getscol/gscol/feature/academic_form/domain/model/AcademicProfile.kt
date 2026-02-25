@@ -4,12 +4,9 @@ data class AcademicProfile(
     val degrees: List<Degree>? = null,
     val englishTests: List<EnglishTest>? = null,
     val preferredPrograms: List<Preference>? = null,
-    val preferredCountries: List<Preference>? = null
+    val preferredCountries: List<Preference>? = null,
+    val lastInstituteName: String? = null
 ) {
-    fun getLastDegree(): String {
-        return degrees?.findLast { it.gpa != null && it.gpa != "" }?.name.orEmpty()
-    }
-
     fun getSelectedEnglishTest(): EnglishTest? {
         return englishTests?.find { it.overallScore !=  "" }
     }
@@ -21,6 +18,19 @@ data class AcademicProfile(
     fun getSelectedProgrammePref(): Preference? {
         return preferredPrograms?.find { it.selected == true }
     }
+
+    fun isLastInstituteEditable(): Boolean? {
+        return lastInstituteName == null
+    }
+
+    fun isPreferredCountriesEditable(): Boolean? {
+        return getSelectedCountryPref() == null
+    }
+
+    fun isPreferredProgrammeEditable(): Boolean? {
+        return getSelectedProgrammePref() == null
+    }
+
 }
 
 data class Degree(
@@ -36,7 +46,7 @@ data class EnglishTest(
     val overallScore: String? = null,
     val sections: List<TestSection>? = null,
     val maxScore: Int? = null,
-    val editable: Boolean? = null,
+    val editable: Boolean? = true,
     val readyForSubmit: Boolean? = null,
 )
 

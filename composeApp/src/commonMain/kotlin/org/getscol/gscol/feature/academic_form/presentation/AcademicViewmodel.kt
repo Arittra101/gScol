@@ -64,6 +64,10 @@ class AcademicViewmodel(
                 updateMscGpa(action.gpa)
             }
 
+            is AcademicFormAction.OnLastInstituteChange -> {
+                updateLastInstitute(action.instituteName)
+            }
+
             is AcademicFormAction.OnTestTypeChange -> {
                 selectTestType(action.testId)
             }
@@ -107,10 +111,13 @@ class AcademicViewmodel(
             hsc = data.degrees?.getOrNull(1),
             bsc = data.degrees?.getOrNull(2),
             msc = data.degrees?.getOrNull(3),
-            lastInstitute = data.getLastDegree(),
+            lastInstitute = data.lastInstituteName,
+            lastInstituteEditable = data.isLastInstituteEditable(),
             selectedTestType = data.getSelectedEnglishTest(),
             selectedProgrammePreference = data.getSelectedProgrammePref(),
             selectedCountryPreference = data.getSelectedCountryPref(),
+            selectedCountryPreferenceEditable = data.isPreferredCountriesEditable(),
+            selectedProgrammePreferenceEditable = data.isPreferredProgrammeEditable(),
             testTypeList = updatedTestList,
             programmePreferenceList = data.preferredPrograms,
             programmeCountryList = data.preferredCountries,
@@ -124,7 +131,7 @@ class AcademicViewmodel(
         buttonState(true)
     }
 
-    private fun submitAcademicInfoForm(){
+    private fun submitAcademicInfoForm() {
         viewModelScope.launch {
             val result =
                 academicRepository.updateAcademicInfo(academicUiState.value.toAcademicInfoRequest())
@@ -145,7 +152,8 @@ class AcademicViewmodel(
         localUpdates.value = current.copy(
             ssc = current.ssc?.copy(gpa = gpa)
         )
-        val isEnable = (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
+        val isEnable =
+            (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
         buttonState(isEnable)
     }
 
@@ -154,7 +162,8 @@ class AcademicViewmodel(
         localUpdates.value = current.copy(
             hsc = current.hsc?.copy(gpa = gpa)
         )
-        val isEnable = (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
+        val isEnable =
+            (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
         buttonState(isEnable)
     }
 
@@ -163,7 +172,8 @@ class AcademicViewmodel(
         localUpdates.value = current.copy(
             bsc = current.bsc?.copy(gpa = gpa)
         )
-        val isEnable = (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
+        val isEnable =
+            (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
         buttonState(isEnable)
     }
 
@@ -172,7 +182,18 @@ class AcademicViewmodel(
         localUpdates.value = current.copy(
             msc = current.msc?.copy(gpa = gpa)
         )
-        val isEnable = (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
+        val isEnable =
+            (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
+        buttonState(isEnable)
+    }
+
+    private fun updateLastInstitute(instituteName: String) {
+        val current = academicUiState.value
+        localUpdates.value = current.copy(
+            lastInstitute = instituteName
+        )
+        val isEnable =
+            (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
         buttonState(isEnable)
     }
 
@@ -184,7 +205,8 @@ class AcademicViewmodel(
                 id = countryId
             ) ?: Preference(id = countryId, name = countryName)
         )
-        val isEnable = (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
+        val isEnable =
+            (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
         buttonState(isEnable)
     }
 
@@ -196,7 +218,8 @@ class AcademicViewmodel(
                 id = programmeId
             ) ?: Preference(id = programmeId, name = programmeName)
         )
-        val isEnable = (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
+        val isEnable =
+            (current.selectedTestType?.readyForSubmit == true) || (current.selectedTestType?.testId == null)
         buttonState(isEnable)
     }
 
@@ -212,7 +235,7 @@ class AcademicViewmodel(
         buttonState(isEnable)
     }
 
-    private fun updateOverallScoreAndTestList(overallScore: String, isDuolingo: Boolean?=null) {
+    private fun updateOverallScoreAndTestList(overallScore: String, isDuolingo: Boolean? = null) {
 
         val current = academicUiState.value
         val selectedTestType = current.selectedTestType ?: return
@@ -243,7 +266,7 @@ class AcademicViewmodel(
         val isUserFillup = sectionsScoreList?.all { it != null }.orFalse() && (overallScore.isNotEmpty())
         val updatedSelectedTestType = selectedTestType.copy(overallScore = overallScore, readyForSubmit = isUserFillup)
 
-         val updatedTestTypeList = current.testTypeList?.map { test ->
+        val updatedTestTypeList = current.testTypeList?.map { test ->
             if (test.testId == updatedSelectedTestType.testId) {
                 updatedSelectedTestType
             } else {
@@ -302,7 +325,53 @@ class AcademicViewmodel(
 
     private fun buttonState(enable: Boolean) {
         val current = academicUiState.value
+
+        if (isInitialState()) {
+            localUpdates.value = current.copy(enableSubmitButton = false)
+            return
+        }
+
         localUpdates.value = current.copy(enableSubmitButton = enable)
+    }
+
+    private fun isInitialState(): Boolean {
+        val current = academicUiState.value
+
+        val academicInitialSate = isAcademicInfoInitialState()
+
+        //last institute
+        val isLastInstituteInitialState =
+            current.lastInstituteEditable == true && current.lastInstitute.isNullOrEmpty()
+
+        // selected type initial state
+        val isSelectedTypeInitialState =
+            (current.selectedTestType?.testId == null) || (current.selectedTestType.editable == false)
+
+        // selected pref country
+        val isSelectedProgrammePrefInitialState =
+            current.selectedProgrammePreferenceEditable == true && current.selectedProgrammePreference == null
+
+        val isSelectedCountryPrefInitialState =
+            current.selectedCountryPreferenceEditable == true && current.selectedCountryPreference == null
+
+
+        return academicInitialSate
+                && isLastInstituteInitialState
+                && isSelectedTypeInitialState
+                && isSelectedProgrammePrefInitialState
+                && isSelectedCountryPrefInitialState
+
+    }
+
+    private fun isAcademicInfoInitialState(): Boolean {
+        val current = academicUiState.value
+
+        return listOfNotNull(
+            current.ssc,
+            current.hsc,
+            current.bsc,
+            current.msc
+        ).filter { it.editable }.all { it.gpa.isNullOrEmpty() }
     }
 
 }

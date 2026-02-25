@@ -6,6 +6,8 @@ sealed interface AcademicFormAction {
     data class OnBscChange(val gpa: String) : AcademicFormAction
     data class OnMscChange(val gpa: String) : AcademicFormAction
 
+    data class OnLastInstituteChange(val instituteName: String) : AcademicFormAction
+
     data class OnTestTypeChange(val testId: String) : AcademicFormAction
     data class OnTestScoreChange(val testSectionId: String, val testScore: String): AcademicFormAction
     data class OnOverallScoreChange(val overallScore: String, val isDuolingo: Boolean?=null): AcademicFormAction

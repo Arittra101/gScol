@@ -9,17 +9,24 @@ data class AcademicUiState(
     val hsc: Degree? = null,
     val bsc: Degree? = null,
     val msc: Degree? = null,
+
     val lastInstitute: String? = null,
-    val selectedTestType: EnglishTest? = null,
-    val selectedProgrammePreference: Preference? = null,
-    val selectedCountryPreference: Preference? = null,
+    val lastInstituteEditable: Boolean? = true,
+
     val testTypeList: List<EnglishTest>? = null,
+    val selectedTestType: EnglishTest? = null,
+
     val programmePreferenceList: List<Preference>? = null,
+    val selectedProgrammePreference: Preference? = null,
+    val selectedProgrammePreferenceEditable: Boolean? = null,
+
     val programmeCountryList: List<Preference>? = null,
+    val selectedCountryPreference: Preference? = null,
+    val selectedCountryPreferenceEditable: Boolean? = null,
+
     val showLoader: Boolean = true,
     val formSubmitSuccess: Boolean  = false,
     val enableSubmitButton: Boolean = false,
-    val duolingoScore: String? = null,
 )
 
 fun List<Preference>.toListDropDownUiModel() = map { it.toDropDownUiModel() }

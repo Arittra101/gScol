@@ -6,25 +6,27 @@ import org.getscol.gscol.core.data.dto.BaseDto
 
 @Serializable
 data class AcademicInfoDtoResponse(
-    @SerialName("data")
-    val data: ProfileDataDto? = null
+    @SerialName("data") val data: ProfileDataDto? = null
 ) : BaseDto()
 
 @Serializable
 data class ProfileDataDto(
-    @SerialName("degrees") val degrees: List<DegreeDto>? = null,
-    @SerialName("englishTests") val englishTests: List<EnglishTestDto>? = null,
+    @SerialName("academicFormStatus") val academicFormStatus: String? = null,
+    @SerialName("academicResults") val degrees: List<DegreeDto>? = null,
+    @SerialName("englishTestResults") val englishTests: List<EnglishTestDto>? = null,
     @SerialName("preferredCountries") val preferredCountries: List<PreferenceDto>? = null,
-    @SerialName("preferredPrograms") val preferredPrograms: List<PreferenceDto>? = null
+    @SerialName("preferredProgrammes") val preferredPrograms: List<PreferenceDto>? = null,
+    @SerialName("lastAcademicInstitute") val lastAcademicInstitute: String? = null
 )
 
 @Serializable
 data class DegreeDto(
     @SerialName("degreeId") val degreeId: String? = null,
-    @SerialName("name") val name: String? = null,
+    @SerialName("degreeName") val name: String? = null,
     @SerialName("gpa") val gpa: Double? = null,
     @SerialName("institute") val institute: String? = null,
     @SerialName("passingDate") val passingDate: String? = null,
+    @SerialName("isEditable") val isEditable: Boolean? = null,
     @SerialName("validation") val validation: DegreeValidationDto? = null
 )
 
@@ -38,11 +40,10 @@ data class EnglishTestDto(
     @SerialName("testId") val testId: String? = null,
     @SerialName("testName") val testName: String? = null,
     @SerialName("overallScore") val overallScore: Double? = null,
-    @SerialName("editable") val editable: Boolean? = null,
+    @SerialName("isEditable") val isEditable: Boolean? = null,
     @SerialName("testDate") val testDate: String? = null,
     @SerialName("sections") val sections: List<TestSectionDto>? = null,
-    @SerialName("validation") val validation: EnglishTestValidationDto? = null,
-
+    @SerialName("validation") val validation: EnglishTestValidationDto? = null
 )
 
 @Serializable
