@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
@@ -23,7 +22,6 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -71,9 +69,8 @@ fun HomeAppBar(
                         },
                 )
                 HomeSearchBar(
-                    value = "",
-                    onValueChange = { },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onClick = { navigator.navigateToRoute(Route.Search) }
                 )
                 BadgedBox(
                     badge = {
@@ -113,3 +110,50 @@ fun HomeAppBar(
         }
     }
 }
+
+@Composable
+fun HomeSearchBar(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val colors = appColors()
+    val rowModifier = modifier
+        .height(36.dp)
+        .padding(start = 12.dp)
+        .background(
+            color = colors.customPrimaryContainer,
+            shape = RoundedCornerShape(50.dp)
+        )
+        .border(
+            width = 1.dp,
+            color = colors.customInfo,
+            shape = RoundedCornerShape(50.dp)
+        )
+        .padding(horizontal = 12.dp)
+        .then(
+            Modifier.clickable(onClick = onClick)
+        )
+
+    Row(
+        modifier = rowModifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            Icons.Default.Search,
+            contentDescription = null,
+            tint = colors.customInfo,
+            modifier = Modifier.size(18.dp)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+
+        Text(
+            "Search country, course, intake",
+            fontSize = 11.sp,
+            color = colors.customInfo,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+

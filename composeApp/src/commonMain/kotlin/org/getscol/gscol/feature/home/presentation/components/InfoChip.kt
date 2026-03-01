@@ -1,9 +1,9 @@
 package org.getscol.gscol.feature.home.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -26,6 +26,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun InfoChip(
+    modifier: Modifier = Modifier,
     iconPath: DrawableResource,
     title: String,
     text: String,
@@ -42,7 +43,7 @@ fun InfoChip(
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = effectiveBackgroundColor,
-        modifier = Modifier.widthIn(max = 220.dp)
+        modifier = modifier
             .drawBehind {
                 val strokeWidth = 2.dp.toPx()
                 val brush =
@@ -69,7 +70,8 @@ fun InfoChip(
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             Icon(
                 painter = painterResource(iconPath),
@@ -91,7 +93,9 @@ fun InfoChip(
                 text = text,
                 fontSize = 11.sp,
                 color = effectiveTextColor,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

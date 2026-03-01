@@ -43,4 +43,5 @@ data class AppColors(
     val customSuccessText: Color,
     val customWarning: Color,
     val customInfo: Color,
+    val customSurface: Color
 )

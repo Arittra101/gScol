@@ -66,25 +66,28 @@ class Navigator(private val navController: NavController) {
         navController.popBackStack()
     }
 
+    /** Push a route onto the back stack (e.g. Search from Home). */
+    fun navigateToRoute(route: Route) {
+        navController.navigate(route)
+    }
 
+    /* for reset password support & login screen support */
+    fun navigateToOtherScreen(route: Route?, dropScreen: Boolean? = null) {
+        val targetRoute = route
+        if (targetRoute == null) return
 
-    /* below condition will be removed during refactoring time */
-     fun navigateToOtherScreen(route: Route?, dropScreen: Boolean? = null) {
-         val targetRoute = route
-         if (targetRoute == null) return
-
-         navController.navigate(targetRoute) {
-             if (dropScreen == true) {
-                 val currentScreen = navController.currentBackStackEntry?.destination?.id ?: return@navigate
-                 popUpTo(currentScreen) { inclusive = true }
-             }
-             else {
-                 authRoute.firstOrNull()?.let { popUpTo(Route.HomeRoute) { inclusive = false } }
-                 authRoute.clear()
-             }
+        navController.navigate(targetRoute) {
+            if (dropScreen == true) {
+                val currentScreen = navController.currentBackStackEntry?.destination?.id ?: return@navigate
+                popUpTo(currentScreen) { inclusive = true }
+            }
+            else {
+                authRoute.firstOrNull()?.let { popUpTo(Route.HomeRoute) { inclusive = false } }
+                authRoute.clear()
+            }
         }
 
-     }
+    }
 
     // will be removed soon
     fun navigateToAuthScreen(loginRoute: Route) {

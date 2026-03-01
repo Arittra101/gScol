@@ -38,6 +38,19 @@ sealed interface Route {
     object Desire : Route
 
     @Serializable
+    object Search : Route
+
+    @Serializable
+    data class SearchResults(
+        val searchText: String,
+        val listType: String = "ELIGIBLE_ONLY",
+        val advancedParamsJson: String? = null
+    ) : Route
+
+    @Serializable
+    object AdvancedSearch : Route
+
+    @Serializable
     object AcademicForm : Route
 
 //    @Serializable

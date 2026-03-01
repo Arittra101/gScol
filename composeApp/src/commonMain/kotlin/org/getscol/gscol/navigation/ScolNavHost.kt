@@ -19,6 +19,11 @@ import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.feature.home.presentation.HomeScreenRoot
+import org.getscol.gscol.feature.search.presentation.advance_search.AdvancedSearchScreenRoot
+import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
+import org.getscol.gscol.feature.search.presentation.search_result.SearchResultsScreenRoot
+import org.getscol.gscol.feature.search.presentation.search.SearchScreenRoot
+import kotlinx.serialization.json.Json
 
 @Composable
 fun ScolNavHost(
@@ -42,6 +47,28 @@ fun ScolNavHost(
 
         composableNoAnimation<Route.HomeRoute> {
             HomeScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.Search> {
+            SearchScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.SearchResults> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.SearchResults>()
+            val advancedParams = args.advancedParamsJson?.let { json ->
+                try {
+                    Json.decodeFromString<AdvancedSearchParams>(json)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            SearchResultsScreenRoot(
+                searchText = args.searchText,
+                listType = args.listType,
+                advancedParams = advancedParams,
+                navigator = navigator
+            )
+        }
+        composableNoAnimation<Route.AdvancedSearch> {
+            AdvancedSearchScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.CompareRoute> {
             CompareScreen()
