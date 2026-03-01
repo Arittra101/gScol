@@ -26,17 +26,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.LaunchedEffect
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
-import org.getscol.gscol.core.Helper.toDollar
-import org.getscol.gscol.core.Helper.toShortDate
 import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
@@ -131,8 +129,8 @@ fun SearchResultsScreen(
                                     universityName = course.universityName,
                                     universityLogo = course.imageUrl,
                                     backgroundImage = course.imageUrl,
-                                    intake = course.intake.toShortDate(),
-                                    tuitionFees = course.tuitionFee.toString().toDollar(),
+                                    intake = course.intake,
+                                    tuitionFees = course.tuitionFee.toString(),
                                     duration = course.duration,
                                     scholarship = course.scholarship.toString(),
                                     initialDeposit = course.deposit.toString(),

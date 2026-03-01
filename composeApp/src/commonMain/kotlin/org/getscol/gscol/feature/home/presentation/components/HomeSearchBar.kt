@@ -2,6 +2,7 @@ package org.getscol.gscol.feature.home.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -25,25 +26,29 @@ import org.getscol.gscol.theme.appColors
 
 @Composable
 fun HomeSearchBar(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     val colors = appColors()
+    val rowModifier = modifier
+        .height(36.dp)
+        .padding(start = 12.dp)
+        .background(
+            color = colors.customPrimaryContainer,
+            shape = RoundedCornerShape(50.dp)
+        )
+        .border(
+            width = 1.dp,
+            color = colors.customInfo,
+            shape = RoundedCornerShape(50.dp)
+        )
+        .padding(horizontal = 12.dp)
+        .then(
+            Modifier.clickable(onClick = onClick)
+        )
+
     Row(
-        modifier = modifier
-            .height(36.dp)
-            .padding(start = 12.dp)
-            .background(
-                color = colors.customPrimaryContainer,
-                shape = RoundedCornerShape(50.dp)
-            )
-            .border(
-                width = 1.dp,
-                color = colors.customInfo,
-                shape = RoundedCornerShape(50.dp)
-            )
-            .padding(horizontal = 12.dp),
+        modifier = rowModifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -55,26 +60,12 @@ fun HomeSearchBar(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(
-                fontSize = 12.sp,
-                color = colors.customPrimaryText
-            ),
-            modifier = Modifier
-                .weight(1f),
-            decorationBox = { innerTextField ->
-                if (value.isEmpty()) {
-                    Text(
-                        "Search country, course, intake",
-                        fontSize = 11.sp,
-                        color = colors.customInfo
-                    )
-                }
-                innerTextField()
-            }
+
+        Text(
+            "Search country, course, intake",
+            fontSize = 11.sp,
+            color = colors.customInfo,
+            modifier = Modifier.weight(1f)
         )
     }
 }
