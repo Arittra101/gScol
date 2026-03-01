@@ -6,9 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,19 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,18 +27,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.ApiResponseBottomSheet
 import org.getscol.gscol.core.presentation.components.ConfirmationBottomSheet
 import org.getscol.gscol.core.presentation.components.ErrorMsgBottomSheet
+import org.getscol.gscol.core.presentation.components.GpaInputField
+import org.getscol.gscol.core.presentation.components.MaterialDropdown
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -79,8 +70,11 @@ fun AcademicScreen(
     uiState: AcademicUiState,
     onAction: (AcademicFormAction) -> Unit
 ) {
-    BaseScreen(title = stringResource(Res.string.academic_form), showLoader = uiState.showLoader) {
-        EligibilityScreen(uiState,onAction)
+    BaseScreen(
+        title = stringResource(Res.string.academic_form),
+        showLoader = uiState.showLoader,
+        onBackPress = { navigator.navigateBack() }) {
+        EligibilityScreen(uiState, onAction, navigator)
     }
 }
 
@@ -89,7 +83,8 @@ fun AcademicScreen(
 @Preview
 fun EligibilityScreen(
     uiState: AcademicUiState = AcademicUiState(),
-    onAction: (AcademicFormAction) -> Unit
+    onAction: (AcademicFormAction) -> Unit,
+    navigator: Navigator
 ) {
 
     var countryExpanded by remember { mutableStateOf(false) }
@@ -191,7 +186,6 @@ fun EligibilityScreen(
                     }
 
                 },
-                /*onValueChange = { onAction(AcademicFormAction.OnMscChange(it))},*/
                 modifier = Modifier.weight(1f),
                 readOnly = uiState.msc?.editable == false
             )
@@ -329,11 +323,6 @@ fun EligibilityScreen(
                             GpaInputField(
                                 label = "Speaking",
                                 value = (selectedTestType.sections?.getOrNull(2)?.score.orEmpty()),
-                               /* onValueChange = {
-                                    selectedTestType.sections?.getOrNull(2)?.id?.let { id ->
-                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
-                                    }
-                                },*/
                                 onValueChange = { input ->
                                     val inputValue = input.toIntOrNull()
                                     val maxScore = uiState.selectedTestType.maxScore
@@ -377,11 +366,6 @@ fun EligibilityScreen(
                             GpaInputField(
                                 label = "Reading",
                                 value = (selectedTestType.sections?.getOrNull(1)?.score ?: ""),
-                               /* onValueChange = {
-                                    selectedTestType.sections?.getOrNull(1)?.id?.let { id ->
-                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
-                                    }
-                                },*/
                                 onValueChange = { input ->
                                     val inputValue = input.toIntOrNull()
                                     val maxScore = uiState.selectedTestType.maxScore
@@ -400,11 +384,6 @@ fun EligibilityScreen(
                             GpaInputField(
                                 label = "Writing",
                                 value = (selectedTestType.sections?.getOrNull(3)?.score ?: 0.0).toString(),
-                              /*  onValueChange = {
-                                    selectedTestType.sections?.getOrNull(3)?.id?.let { id ->
-                                        onAction(AcademicFormAction.OnTestScoreChange(id, it))
-                                    }
-                                },*/
                                 onValueChange = { input ->
                                     val inputValue = input.toIntOrNull()
                                     val maxScore = uiState.selectedTestType.maxScore
@@ -504,10 +483,21 @@ fun EligibilityScreen(
         message = stringResource(Res.string.academic_form_bottom_sheet_msg),
         confirmButtonText = "Yes, Submit",
         cancelButtonText = "Go Back",
+        onConfirm = { onAction(AcademicFormAction.SubmitAcademicForm) }
+    )
+
+    ApiResponseBottomSheet(
+        showBottomSheet = uiState.showApiResponseBottomSheet,
+        isSuccess = uiState.isApiSuccess,
+        message = if (uiState.isApiSuccess) uiState.successMsg else uiState.errorMsg,
+        onDismiss = {
+            onAction(AcademicFormAction.DismissApiResponseSheet)
+        },
         onConfirm = {
-            // Handle submission logic
-           // println("Confirmed!")
-            onAction(AcademicFormAction.SubmitAcademicForm)
+            if (uiState.isApiSuccess) {
+                navigator.navigateTo(Route.HomeRoute,true)
+            }
+            onAction(AcademicFormAction.DismissApiResponseSheet)
         }
     )
 
@@ -515,126 +505,4 @@ fun EligibilityScreen(
         showBottomSheet = showErrorMsgBottomSheet,
         onDismiss = { showErrorMsgBottomSheet = false },
         message = bottomSheetErrorMsg)
-}
-
-// NEW MATERIAL DROPDOWN COMPONENT
-@Composable
-fun MaterialDropdown(
-    selectedValue: String,
-    placeholder: String,
-    options: List<DropDownUiModel>,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
-    onOptionSelected: (DropDownUiModel) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    Box(modifier = modifier.fillMaxWidth()) {
-        // Dropdown Trigger Box
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(
-                    if (enabled) Color(0xFFD9E8ED)
-                    else Color.LightGray.copy(alpha = 0.4f)
-                )
-                .clickable(enabled = enabled) {
-                    if (enabled) {
-                        onExpandedChange(true)
-                    }
-                }
-                .padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = selectedValue.ifEmpty { placeholder },
-                    fontSize = 16.sp,
-                    color = if (selectedValue.isEmpty()) Color.DarkGray else Color.Black
-                )
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Dropdown",
-                    tint = Color.Gray
-                )
-            }
-        }
-
-        // Material Dropdown Menu
-        DropdownMenu(
-            expanded = expanded && enabled,
-            onDismissRequest = { onExpandedChange(false) },
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .background(Color.White)
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = option.itemName.orEmpty(),
-                            fontSize = 16.sp,
-                            color = Color.Black
-                        )
-                    },
-                    onClick = {
-                        onOptionSelected(option)
-                        onExpandedChange(false)
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun GpaInputField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    keyboardType: KeyboardType = KeyboardType.Decimal,
-    readOnly: Boolean = false
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = label,
-            fontSize = 15.sp,
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 6.dp)
-        )
-
-        OutlinedTextField(
-            value = value,
-            onValueChange = { newValue ->
-                // Regex: Allows digits, and optionally one '.' followed by more digits
-                // Matches: "12", "12.", "12.5"
-                if ((newValue.isEmpty() || newValue.matches(Regex("""^\d+\.?\d*$""")) && (keyboardType == KeyboardType.Decimal))) {
-                    onValueChange(newValue)
-                } else if (keyboardType == KeyboardType.Text) {
-                    onValueChange(newValue)
-                }
-            },
-            readOnly = readOnly,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFFD9E8ED),
-                focusedContainerColor = Color(0xFFD9E8ED),
-                unfocusedBorderColor = Color.Transparent,
-                focusedBorderColor = Color.Transparent,
-                unfocusedTextColor = Color.Black,
-                focusedTextColor = Color.Black
-            ),
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(
-                fontSize = 15.sp
-            )
-        )
-    }
 }

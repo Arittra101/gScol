@@ -1,5 +1,6 @@
 package org.getscol.gscol.feature.academic_form.data.mapper
 
+import org.getscol.gscol.core.helper.orFalse
 import org.getscol.gscol.core.helper.toStringOrEmpty
 import org.getscol.gscol.feature.academic_form.data.academic_dto.AcademicInfoDtoResponse
 import org.getscol.gscol.feature.academic_form.data.academic_dto.AcademicInfoRequest
@@ -47,7 +48,8 @@ fun DegreeDto.toDegree(): Degree {
     return Degree(
         degreeId = degreeId.orEmpty(),
         name = name.orEmpty(),
-        gpa = gpa?.toString() ?: ""
+        gpa = gpa?.toString() ?: "",
+        editable = isEditable.orFalse()
     )
 }
 
@@ -81,32 +83,47 @@ fun List<TestSectionDto>.toTestSections(): List<TestSection> {
 
 fun AcademicUiState.toAcademicInfoRequest(): AcademicInfoRequest {
 
-    val academicResults = listOfNotNull(ssc, hsc, bsc, msc).map { degree ->
-        AcademicResultRequest(
-            degreeId = degree.degreeId,
-            gpa = degree.gpa?.toDoubleOrNull(),
-        )
-    }
+    val academicResults = listOfNotNull(ssc, hsc, bsc, msc)
+        .filter { degree ->
+            degree.editable && !degree.gpa.isNullOrEmpty()
+        }
+        .mapNotNull { degree ->
+            degree.gpa?.toDoubleOrNull()?.let { gpaValue ->
+                AcademicResultRequest(
+                    degreeId = degree.degreeId,
+                    gpa = gpaValue
+                )
+            }
+        }.takeIf { it.isNotEmpty() }
+
+
+    val lastInstituteName = if (lastInstituteEditable == true && !lastInstitute.isNullOrEmpty()) lastInstitute else null
 
     val englishTestResults = testTypeList
         .orEmpty()
-        .map { test ->
-            EnglishTestResultRequest(
-                testId = test.testId,
-                overallScore = test.overallScore?.toDoubleOrNull(),
-                sections = test.sections?.map { section ->
-                    EnglishSectionRequest(
-                        id = section.id,
-                        score = section.score?.toDoubleOrNull()
-                    )
-                }
-            )
-        }
+        .mapNotNull { test ->
+            val overall = test.overallScore?.toDoubleOrNull()
+            if (test.editable == true && overall != null) {
+                EnglishTestResultRequest(
+                    testId = test.testId,
+                    overallScore = overall,
+                    sections = test.sections?.mapNotNull { section ->
+                        section.score?.toDoubleOrNull()?.let { scoreValue ->
+                            EnglishSectionRequest(
+                                id = section.id,
+                                score = scoreValue
+                            )
+                        }
+                    }
+                )
+            } else null
+        }.takeIf { it.isNotEmpty() }
 
     return AcademicInfoRequest(
         academicResults = academicResults,
         englishTestResults = englishTestResults,
-        preferredCountryIds = listOfNotNull(selectedCountryPreference?.id),
-        preferredProgrammeIds = listOfNotNull(selectedProgrammePreference?.id)
+        lastAcademicInstitute = lastInstituteName,
+        preferredCountryIds = listOfNotNull(selectedCountryPreference?.id).takeIf { selectedCountryPreferenceEditable == true },
+        preferredProgrammeIds = listOfNotNull(selectedProgrammePreference?.id).takeIf { selectedProgrammePreferenceEditable == true }
     )
 }

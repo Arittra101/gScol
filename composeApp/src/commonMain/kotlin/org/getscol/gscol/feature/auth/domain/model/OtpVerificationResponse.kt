@@ -5,15 +5,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OtpVerificationResponse(
-    @SerialName("status") val status: String,
-    @SerialName("message") val message: String,
-    @SerialName("statusCode") val statusCode: Int,
-    @SerialName("data") val data: OtpVerificationData
+    @SerialName("status") val status: String? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("statusCode") val statusCode: Int? = null,
+    @SerialName("data") val data: OtpVerificationData? = null
 )
 
 @Serializable
 data class OtpVerificationData(
-    @SerialName("userId") val userId: String? = null,
+    @SerialName("user") val user: User? = null,
     @SerialName("accessToken") val accessToken: String,
     @SerialName("refreshToken") val refreshToken: String
 )

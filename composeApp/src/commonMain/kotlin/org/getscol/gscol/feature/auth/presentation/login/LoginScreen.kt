@@ -62,21 +62,16 @@ fun LoginScreenRoot(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-
-
         viewModel.uiEffect.collect { effect ->
             when (effect) {
-                LoginUiEffect.LoginSuccess -> {
-
-                    //navigator.navigateToOtherScreen(route = Route.Desire)
-                    navigator.navigateToTopLevel(Route.HomeRoute)
+                is LoginUiEffect.LoginSuccess -> {
+                    if (effect.isUserFillupAcademicForm > 0) {
+                        navigator.navigateToTopLevel(Route.HomeRoute)
+                    } else {
+                        navigator.navigateTo(Route.AcademicForm, true)
+                    }
                 }
-                is LoginUiEffect.ShowToast -> {
-//                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                }
-                LoginUiEffect.NavigateBack -> {
-//                    navController.popBackStack()
-                }
+                is LoginUiEffect.ShowToast -> { }
             }
         }
     }
@@ -196,9 +191,9 @@ fun LoginScreen(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Navigate to registration
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -230,11 +225,7 @@ fun LoginScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.clickable(
-                    onClick = { /* Handle skip */
-                    navigator.navigateAuthScreenBack(Route.Login)
-                }
-                )
+                modifier = Modifier.clickable(onClick = { navigator.navigateAuthScreenBack(Route.Login) })
             ) {
                 Text(
                     stringResource(Res.string.skip_text),

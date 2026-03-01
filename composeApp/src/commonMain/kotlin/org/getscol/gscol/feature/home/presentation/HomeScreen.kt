@@ -18,6 +18,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ import org.getscol.gscol.core.helper.toDollar
 import org.getscol.gscol.core.helper.toShortDate
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
+import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
@@ -44,19 +47,23 @@ fun HomeScreenRoot(
           viewmodel.onAction(data)
       }*/
 
-    HomeScreen(viewmode,navigator,action)
+    val academicFormSubmitTrigger by viewmode.session.academicFormSubmitTrigger.collectAsState(initial = 0)
+    val isUserLogin by viewmode.session.isUserLoggedIn.collectAsState(initial = false)
+
+    HomeScreen(viewmode, navigator, action, academicFormSubmitTrigger > 0, isUserLogin)
 }
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewmodel,
     navigator: Navigator,
-    action: (HomeAction) -> Unit
+    action: (HomeAction) -> Unit,
+    isUserFillupAcademicForm: Boolean,
+    isUserLogin: Boolean
 ) {
     val courses = viewModel.courses.collectAsLazyPagingItems()
-
     Scaffold(
-        topBar = { HomeAppBar(navigator = navigator,action) },
+        topBar = { HomeAppBar(navigator = navigator, action, isUserFillupAcademicForm, isUserLogin) },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
 
@@ -68,7 +75,9 @@ fun HomeScreen(
         ) {
 
             when (val refreshState = courses.loadState.refresh) {
-                is LoadState.Loading -> { FullScreenLoader() }
+                is LoadState.Loading -> {
+                    FullScreenLoader()
+                }
 
                 is LoadState.Error -> {
                     FullScreenError(
@@ -77,45 +86,57 @@ fun HomeScreen(
                     )
                 }
 
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.navigationBarsPadding(),
-                        contentPadding = PaddingValues(
-                            bottom = innerPadding.calculateTopPadding()
+                is LoadState.NotLoading -> {
+
+                    if (courses.itemCount <= 0) {
+                        NoCoursesFound(
+                            onContactConsultant = {
+                                // navigate or launch intent
+                            }
                         )
-                    ) {
 
-                        items(count = courses.itemCount) { index ->
-                            courses[index]?.let {
-                                CourseInfoCard(
-                                    courseId = it.courseId,
-                                    courseName = it.courseName,
-                                    city = it.city,
-                                    country = it.country,
-                                    universityName = it.universityName,
-                                    universityLogo = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg" /*it.imageUrl*/,
-                                    backgroundImage = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg" /*it.imageUrl*/,
-                                    intake = it.intake.toShortDate(),
-                                    tuitionFees = it.tuitionFee.toString().toDollar(),
-                                    duration = it.duration,
-                                    scholarship = it.scholarship.toString(),
-                                    initialDeposit = "12333",
-                                    ieltsBand = it.ieltsOverallRequired,
-                                    ieltsSingleBand = it.ieltsBandRequired,
-                                    isFavorite = it.isWishlisted,
-                                    action = action
-                                )
-                            }
-                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.navigationBarsPadding(),
+                            contentPadding = PaddingValues(
+                                bottom = innerPadding.calculateTopPadding()
+                            )
+                        ) {
 
-                        when (courses.loadState.append) {
-                            is LoadState.Loading -> {
-                                item { PaginationLoader() }
+                            items(count = courses.itemCount) { index ->
+                                courses[index]?.let {
+                                    CourseInfoCard(
+                                        courseId = it.courseId,
+                                        courseName = it.courseName,
+                                        city = it.city,
+                                        country = it.country,
+                                        universityName = it.universityName,
+                                        universityLogo = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg" /*it.imageUrl*/,
+                                        backgroundImage = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg" /*it.imageUrl*/,
+                                        intake = it.intake.toShortDate(),
+                                        tuitionFees = it.tuitionFee.toString().toDollar(),
+                                        duration = it.duration,
+                                        scholarship = it.scholarship.toString(),
+                                        initialDeposit = "12333",
+                                        ieltsBand = it.ieltsOverallRequired,
+                                        ieltsSingleBand = it.ieltsBandRequired,
+                                        isFavorite = it.isWishlisted,
+                                        action = action
+                                    )
+                                }
                             }
-                            is LoadState.Error -> {
-                                item { PaginationError(onRetry = { courses.retry() }) }
+
+                            when (courses.loadState.append) {
+                                is LoadState.Loading -> {
+                                    item { PaginationLoader() }
+                                }
+
+                                is LoadState.Error -> {
+                                    item { PaginationError(onRetry = { courses.retry() }) }
+                                }
+
+                                else -> Unit
                             }
-                            else -> Unit
                         }
                     }
                 }

@@ -17,17 +17,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.eligibility_icon
 
 @Composable
 @Preview
-fun EligibilityButton(navigator: Navigator) {
+fun EligibilityButton(navigator: Navigator, isUserFillupAcademicForm: Boolean, isUserLogin: Boolean) {
     Button(
-        onClick = {navigator.navigateToAuthScreen(Route.Login)},
+        onClick = {
+            if (!isUserLogin) {
+                navigator.navigateToAuthScreen(Route.Login)
+            } else if (isUserLogin && !isUserFillupAcademicForm) {
+                navigator.navigateTo(Route.AcademicForm)
+            } else {
+                // todo ~ yet to implement navigation for ineligible course
+            }
+        },
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
@@ -43,7 +51,7 @@ fun EligibilityButton(navigator: Navigator) {
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
-            text = "Check Your Eligibility",
+            text = if(!isUserFillupAcademicForm) "Check Your Eligibility" else "Check Ineligible Courses",
             color = appColors().customPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold

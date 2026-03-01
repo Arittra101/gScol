@@ -9,30 +9,23 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.domain.repository.HomeRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewmodel(private val homeRepository: HomeRepository, private val session: Session) : ViewModel() {
-
-    init {
-        println("HomeVIewmodel")
-    }
+class HomeViewmodel(private val homeRepository: HomeRepository, val session: Session) : ViewModel() {
 
     private val favoriteUpdates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     private val baseCourses: Flow<PagingData<Course>> =
-        session.isUserLoggedIn
-            .distinctUntilChanged()
-            .flatMapLatest { isLoggedIn ->
-                favoriteUpdates.value = emptyMap()
-                homeRepository.getHomeCoursesStream(isLoggedIn)
-            }.cachedIn(viewModelScope)
-
+        combine(session.isUserLoggedIn, session.academicFormSubmitTrigger) { isLoggedIn, _ ->
+            isLoggedIn
+        }.flatMapLatest { isLoggedIn ->
+            favoriteUpdates.value = emptyMap()
+            homeRepository.getHomeCoursesStream(isLoggedIn)
+        }.cachedIn(viewModelScope)
 
     val courses: Flow<PagingData<Course>> =
         combine(baseCourses, favoriteUpdates) { pagingData, favourite ->
@@ -43,29 +36,14 @@ class HomeViewmodel(private val homeRepository: HomeRepository, private val sess
             }
         }
 
-
-    fun setLoginState(){
-        viewModelScope.launch {
-            session.setUserLoggedIn(false)
-        }
-    }
-
     fun onAction(action: HomeAction) {
         when(action){
-         /*   is HomeAction.Change -> {
-                setLoginState()
-            }*/
-            is HomeAction.AddToWishlist -> {
-                favoriteUpdates.update { current ->
-                    current + ((action.courseId to !action.isWishListed))
-                }
-            }
+            is HomeAction.AddToWishlist -> favoriteUpdates.update { current -> current + ((action.courseId to !action.isWishListed)) }
         }
     }
 
 }
 
 sealed interface HomeAction{
-//    data object Change: HomeAction
     data class AddToWishlist(val courseId: String, val isWishListed: Boolean): HomeAction
 }

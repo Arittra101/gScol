@@ -7,21 +7,15 @@ import androidx.navigation.NavController
 /*
    ---------
    In future we will adopt nav3 if nav3 is available for cmp/kmp
-   File name will be ScolAppState :)
+   BTW IT WORKS :)
    ---------
 */
 
 
 class Navigator(private val navController: NavController) {
 
-    enum class AuthRoute {
-        LOGIN,
-        REGISTRATION,
-        FORGOT_PASSWORD,
-        OTP_VERIFICATION
-    }
-
     private val authRoute = mutableListOf<Route>()
+    private val startDestinationRoute = Route.HomeRoute
 
      fun navigateToTopLevel(destination: TopLevelDestination) {
         navController.navigate(destination.route) {
@@ -38,6 +32,7 @@ class Navigator(private val navController: NavController) {
         }
     }
 
+    // will be removed soon
     fun navigateToTopLevel(route: Route) {
         navController.navigate(route) {
             popUpTo(Route.Login) {
@@ -52,7 +47,28 @@ class Navigator(private val navController: NavController) {
         }
     }
 
-    /* for reset password support & login screen support */
+    // From now try to use this method if possible
+    fun navigateTo(route: Route, popUpToStartDestinationRoute: Boolean = false) {
+        navController.navigate(route) {
+            if (popUpToStartDestinationRoute) {
+                popUpTo(startDestinationRoute) { inclusive = false }
+                // Avoid multiple copies
+                launchSingleTop = true
+
+                // Restore state when reselection
+                restoreState = true
+            }
+
+        }
+    }
+
+    fun navigateBack() {
+        navController.popBackStack()
+    }
+
+
+
+    /* below condition will be removed during refactoring time */
      fun navigateToOtherScreen(route: Route?, dropScreen: Boolean? = null) {
          val targetRoute = route
          if (targetRoute == null) return
@@ -70,15 +86,13 @@ class Navigator(private val navController: NavController) {
 
      }
 
+    // will be removed soon
     fun navigateToAuthScreen(loginRoute: Route) {
         authRoute.add(loginRoute)
         navController.navigate(loginRoute)
     }
 
-    fun navigateBack() {
-        navController.popBackStack()
-    }
-
+    // will be removed soon
     fun navigateAuthScreenBack(route: Route){
         authRoute.remove(route)
         navController.popBackStack()

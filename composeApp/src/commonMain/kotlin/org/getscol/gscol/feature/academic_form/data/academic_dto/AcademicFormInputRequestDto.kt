@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AcademicInfoRequest(
     @SerialName("academicResults") val academicResults: List<AcademicResultRequest>? = null,
+    @SerialName("lastAcademicInstitute") val lastAcademicInstitute: String? = null,
     @SerialName("englishTestResults") val englishTestResults: List<EnglishTestResultRequest>? = null,
     @SerialName("preferredCountryIds") val preferredCountryIds: List<String>? = null,
     @SerialName("preferredProgrammeIds") val preferredProgrammeIds: List<String>? = null

@@ -8,8 +8,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.auth.domain.repository.AuthRepository
 import org.getscol.gscol.feature.auth.domain.validation.AuthValidator
@@ -17,6 +19,7 @@ import org.getscol.gscol.feature.auth.utils.toUiMessage
 
 class LoginViewModel(
     private val authRepository: AuthRepository,
+    private val session : Session
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -43,12 +46,6 @@ class LoginViewModel(
 
         }
     }
-/*    fun setLoginState(){
-        viewModelScope.launch {
-            session.setUserLoggedIn(false)
-            _uiEffect.emit(LoginUiEffect.LoginSuccess)
-        }
-    }*/
 
     private fun login() {
         _state.update { it.copy(errorMessage = null) }
@@ -59,15 +56,10 @@ class LoginViewModel(
         }
         val state = _state.value
 
-        // Perform login
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             when (
-                val result = authRepository.login(
-                    state.phoneNumber,
-                    state.password
-                )
-            ) {
+                val result = authRepository.login(state.phoneNumber, state.password)) {
                 is Result.Success -> {
                     _state.update {
                         it.copy(
@@ -76,7 +68,8 @@ class LoginViewModel(
                             errorMessage = null
                         )
                     }
-                    _uiEffect.emit(LoginUiEffect.LoginSuccess)
+                    val isUserFillUpAcademicForm = session.academicFormSubmitTrigger.first()
+                    _uiEffect.emit(LoginUiEffect.LoginSuccess(isUserFillUpAcademicForm))
                 }
 
                 is Result.Error -> {

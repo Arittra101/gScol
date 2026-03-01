@@ -8,6 +8,7 @@ data class OtpVerificationState(
     val errorMessage: String? = null,
     val otpError: String? = null,
     val isVerificationSuccessful: Boolean = false,
+    val isAcademicFormFillup : Boolean = false,
     
     // Timer states
     val tokenExpirationSeconds: Int = 30, // 3 minutes = 180 seconds

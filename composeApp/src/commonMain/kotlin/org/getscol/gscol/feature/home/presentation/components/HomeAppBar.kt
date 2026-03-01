@@ -41,7 +41,12 @@ import scol.composeapp.generated.resources.route
 import scol.composeapp.generated.resources.scol_text_logo_2
 
 @Composable
-fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
+fun HomeAppBar(
+    navigator: Navigator,
+    action: (HomeAction) -> Unit,
+    isUserFillupAcademicForm: Boolean,
+    isUserLogin: Boolean
+) {
     val colors = appColors()
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -61,8 +66,7 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                     contentDescription = "Logo",
                     tint = Color.Unspecified,
                     modifier = Modifier.width(50.dp)
-                        .padding(bottom = 2.dp).clickable{
-                         /*   action(HomeAction.Change)*/
+                        .padding(bottom = 2.dp).clickable {
                             navigator.navigateToOtherScreen(Route.AcademicForm)
                         },
                 )
@@ -104,64 +108,8 @@ fun HomeAppBar(navigator: Navigator, action: (HomeAction) -> Unit) {
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
-            EligibilityButton(navigator)
+            EligibilityButton(navigator, isUserFillupAcademicForm, isUserLogin)
             Spacer(modifier = Modifier.height(20.dp))
         }
-    }
-}
-
-@Composable
-fun HomeSearchBar(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val colors = appColors()
-    Row(
-        modifier = modifier
-            .height(36.dp)
-            .padding(start = 12.dp)
-            .background(
-                color = colors.customPrimaryContainer,
-                shape = RoundedCornerShape(50.dp)
-            )
-            .border(
-                width = 1.dp,
-                color = colors.customInfo,
-                shape = RoundedCornerShape(50.dp)
-            )
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            Icons.Default.Search,
-            contentDescription = null,
-            tint = colors.customInfo,
-            modifier = Modifier.size(18.dp)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(
-                fontSize = 12.sp,
-                color = colors.customPrimaryText
-            ),
-            modifier = Modifier
-                .weight(1f),
-            decorationBox = { innerTextField ->
-                if (value.isEmpty()) {
-                    Text(
-                        "Search country, course, intake",
-                        fontSize = 11.sp,
-                        color = colors.customInfo
-                    )
-                }
-                innerTextField()
-            }
-        )
     }
 }

@@ -35,7 +35,12 @@ class AcademicViewmodel(
                 .map { result ->
                     when (result) {
                         is Result.Success -> initDataBindOnAcademicUiState(result.data)
-                        is Result.Error -> AcademicUiState()
+                        is Result.Error -> AcademicUiState(
+                            showLoader = false,
+                            isApiSuccess = false,
+                            successMsg = "Something went wrong. Please try Later",
+                            showApiResponseBottomSheet = true
+                        )
                     }
                 }
         }.combine(localUpdates) { remoteState, localState ->
@@ -48,53 +53,37 @@ class AcademicViewmodel(
 
     fun onAction(action: AcademicFormAction) {
         when (action) {
-            is AcademicFormAction.OnSscChange -> {
-                updateSscGpa(action.gpa)
-            }
+            is AcademicFormAction.OnSscChange -> updateSscGpa(action.gpa)
+            is AcademicFormAction.OnBscChange -> updateBscGpa(action.gpa)
+            is AcademicFormAction.OnHscChange -> updateHscGpa(action.gpa)
+            is AcademicFormAction.OnMscChange -> updateMscGpa(action.gpa)
+            is AcademicFormAction.OnLastInstituteChange -> updateLastInstitute(action.instituteName)
+            is AcademicFormAction.OnTestTypeChange -> selectTestType(action.testId)
+            is AcademicFormAction.OnTestScoreChange -> updateTestScoreAndTestList(
+                action.testSectionId,
+                action.testScore
+            )
 
-            is AcademicFormAction.OnBscChange -> {
-                updateBscGpa(action.gpa)
-            }
+            is AcademicFormAction.OnOverallScoreChange -> updateOverallScoreAndTestList(
+                action.overallScore,
+                action.isDuolingo
+            )
 
-            is AcademicFormAction.OnHscChange -> {
-                updateHscGpa(action.gpa)
-            }
+            is AcademicFormAction.OnCountryPrefChange -> selectCountryPref(
+                action.countryName,
+                action.countryId
+            )
 
-            is AcademicFormAction.OnMscChange -> {
-                updateMscGpa(action.gpa)
-            }
+            is AcademicFormAction.OnProgrammePrefChange -> selectProgrammePref(
+                action.programmeName,
+                action.programmeId
+            )
 
-            is AcademicFormAction.OnLastInstituteChange -> {
-                updateLastInstitute(action.instituteName)
-            }
+            is AcademicFormAction.SubmitAcademicForm -> submitAcademicInfoForm()
+            is AcademicFormAction.OnUnselectTestType -> unSelectTestType()
+            is AcademicFormAction.DismissApiResponseSheet -> localUpdates.value =
+                academicUiState.value.copy(showApiResponseBottomSheet = false)
 
-            is AcademicFormAction.OnTestTypeChange -> {
-                selectTestType(action.testId)
-            }
-
-            is AcademicFormAction.OnTestScoreChange -> {
-                updateTestScoreAndTestList(action.testSectionId, action.testScore)
-            }
-
-            is AcademicFormAction.OnOverallScoreChange -> {
-                updateOverallScoreAndTestList(action.overallScore, action.isDuolingo)
-            }
-
-            is AcademicFormAction.OnCountryPrefChange -> {
-                selectCountryPref(action.countryName, action.countryId)
-            }
-
-            is AcademicFormAction.OnProgrammePrefChange -> {
-                selectProgrammePref(action.programmeName, action.programmeId)
-            }
-
-            is AcademicFormAction.SubmitAcademicForm -> {
-                submitAcademicInfoForm()
-            }
-
-            is AcademicFormAction.OnUnselectTestType -> {
-                unSelectTestType()
-            }
         }
     }
 
@@ -118,10 +107,10 @@ class AcademicViewmodel(
             selectedCountryPreference = data.getSelectedCountryPref(),
             selectedCountryPreferenceEditable = data.isPreferredCountriesEditable(),
             selectedProgrammePreferenceEditable = data.isPreferredProgrammeEditable(),
+            showLoader = false,
             testTypeList = updatedTestList,
             programmePreferenceList = data.preferredPrograms,
             programmeCountryList = data.preferredCountries,
-            showLoader = false
         )
     }
 
@@ -132,19 +121,37 @@ class AcademicViewmodel(
     }
 
     private fun submitAcademicInfoForm() {
+        showLoader(true)
         viewModelScope.launch {
-            val result =
-                academicRepository.updateAcademicInfo(academicUiState.value.toAcademicInfoRequest())
+            val result = academicRepository.updateAcademicInfo(academicUiState.value.toAcademicInfoRequest())
             when (result) {
                 is Result.Success -> {
-                    print("Success ho geya")
+                    val current = academicUiState.value
+                    session.incrementAcademicFormSubmitCount()
+                    localUpdates.value = current.copy(
+                        showLoader = false,
+                        isApiSuccess = true,
+                        successMsg = "Your academic info was submitted successfully.",
+                        showApiResponseBottomSheet = true
+                    )
                 }
 
                 is Result.Error -> {
-                    AcademicUiState()
+                    val current = academicUiState.value
+                    localUpdates.value = current.copy(
+                        showLoader = false,
+                        isApiSuccess = false,
+                        successMsg = "Something went wrong. Please try Later",
+                        showApiResponseBottomSheet = true
+                    )
                 }
             }
         }
+    }
+
+    private fun showLoader(isShow : Boolean){
+        val current = academicUiState.value
+        localUpdates.value = current.copy(showLoader = isShow)
     }
 
     private fun updateSscGpa(gpa: String) {
@@ -340,19 +347,15 @@ class AcademicViewmodel(
         val academicInitialSate = isAcademicInfoInitialState()
 
         //last institute
-        val isLastInstituteInitialState =
-            current.lastInstituteEditable == true && current.lastInstitute.isNullOrEmpty()
+        val isLastInstituteInitialState = (current.lastInstituteEditable == false) || (current.lastInstituteEditable == true && current.lastInstitute.isNullOrEmpty())
 
         // selected type initial state
-        val isSelectedTypeInitialState =
-            (current.selectedTestType?.testId == null) || (current.selectedTestType.editable == false)
+        val isSelectedTypeInitialState = (current.selectedTestType?.testId == null) || (current.selectedTestType.editable == false)
 
         // selected pref country
-        val isSelectedProgrammePrefInitialState =
-            current.selectedProgrammePreferenceEditable == true && current.selectedProgrammePreference == null
+        val isSelectedProgrammePrefInitialState = (current.selectedProgrammePreferenceEditable == false) || (current.selectedProgrammePreferenceEditable == true && current.selectedProgrammePreference == null)
 
-        val isSelectedCountryPrefInitialState =
-            current.selectedCountryPreferenceEditable == true && current.selectedCountryPreference == null
+        val isSelectedCountryPrefInitialState = (current.selectedCountryPreferenceEditable == false) || (current.selectedCountryPreferenceEditable == true && current.selectedCountryPreference == null)
 
 
         return academicInitialSate

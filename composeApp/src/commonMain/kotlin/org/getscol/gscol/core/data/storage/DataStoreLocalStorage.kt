@@ -69,6 +69,13 @@ class DataStoreLocalStorage(
         }
     }
 
+    override fun getFlowInt(key: String): Flow<Int> {
+        AppLogger.d("Int get: $key")
+        return dataStore.data.map { preferences ->
+            preferences[intPreferencesKey(key)] ?: 0
+        }
+    }
+
     // Long operations
     override suspend fun setLong(key: String, value: Long) {
         dataStore.edit { preferences ->

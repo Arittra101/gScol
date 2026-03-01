@@ -27,6 +27,11 @@ data class AcademicUiState(
     val showLoader: Boolean = true,
     val formSubmitSuccess: Boolean  = false,
     val enableSubmitButton: Boolean = false,
+
+    val showApiResponseBottomSheet: Boolean = false,
+    val isApiSuccess: Boolean = false,
+    val successMsg: String = "",
+    val errorMsg: String = ""
 )
 
 fun List<Preference>.toListDropDownUiModel() = map { it.toDropDownUiModel() }

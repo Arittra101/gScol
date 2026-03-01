@@ -5,4 +5,6 @@ object StorageKeys {
     const val USER_ID = "user_id"
     const val ACCESS_TOKEN = "access_token"
     const val REFRESH_TOKEN = "refresh_token"
+    const val IS_USER_LOGGED_IN = "IS_USER_LOGGED_IN"
+    const val ACADEMIC_FORM_SUBMIT_COUNT = "ACADEMIC_FORM_SUBMIT_COUNT"
 }

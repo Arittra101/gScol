@@ -59,7 +59,11 @@ fun OtpVerificationScreenRoot(
 
     // Handle successful verification
     if (state.isVerificationSuccessful) {
-        navigator.navigateToOtherScreen(route = Route.Desire)
+        if (state.isAcademicFormFillup) {
+            navigator.navigateTo(route = Route.HomeRoute, true)
+        } else {
+            navigator.navigateTo(Route.AcademicForm, true)
+        }
     }
     state.otp = otpNumber.orEmpty()
 

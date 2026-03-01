@@ -16,7 +16,6 @@ sealed interface AcademicFormAction {
     data class OnProgrammePrefChange(val programmeName: String, val programmeId: String): AcademicFormAction
 
     data object SubmitAcademicForm: AcademicFormAction
-
     data object OnUnselectTestType: AcademicFormAction
-
+    data object DismissApiResponseSheet: AcademicFormAction
 }

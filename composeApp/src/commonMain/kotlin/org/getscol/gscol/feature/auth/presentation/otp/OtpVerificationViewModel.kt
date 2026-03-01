@@ -7,15 +7,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.auth.domain.repository.AuthRepository
 import org.getscol.gscol.feature.auth.domain.validation.AuthValidator
 
 class OtpVerificationViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val session: Session
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(OtpVerificationState())
@@ -116,9 +119,11 @@ class OtpVerificationViewModel(
                         it.copy(
                             isVerifying = false,
                             isVerificationSuccessful = true,
-                            errorMessage = null
+                            errorMessage = null,
+                            isAcademicFormFillup = session.academicFormSubmitTrigger.first() > 0
                         )
                     }
+
                     // Stop timers on success
                     expirationTimerJob?.cancel()
                     resendTimerJob?.cancel()
