@@ -24,9 +24,9 @@ class AppSession(
     }
 
     override suspend fun resetUserPref() {
-        setUserLoggedIn(false)
         localStorage.remove(StorageKeys.ACCESS_TOKEN)
         localStorage.remove(StorageKeys.REFRESH_TOKEN)
+        localStorage.remove(StorageKeys.IS_USER_LOGGED_IN)
         localStorage.remove(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT)
     }
 
