@@ -14,8 +14,15 @@ import org.getscol.gscol.theme.scheme.scolLightColorScheme
 fun ScolTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit
 ) {
-    val colorScheme = if (isDarkTheme) scolDarkColorScheme() else scolLightColorScheme()
-    val appColors = if (isDarkTheme) appDarkColors() else appLightColors()
+
+    /*
+         For now we don't support dark mood
+         val colorScheme = if (isDarkTheme) scolDarkColorScheme() else scolLightColorScheme()
+         val appColors = if (isDarkTheme) appDarkColors() else appLightColors()
+     */
+
+    val colorScheme = if (isDarkTheme) scolLightColorScheme() else scolLightColorScheme()
+    val appColors = if (isDarkTheme) appLightColors() else appLightColors()
 
     CompositionLocalProvider(LocalAppColors provides appColors) {
         MaterialTheme(

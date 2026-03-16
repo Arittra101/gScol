@@ -38,12 +38,15 @@ fun ScolBottomBar(
 ) {
     val isDarkMode = isSystemInDarkTheme()
 
-    // Define colors based on theme
-    val backgroundColor = if (isDarkMode) {
+    // For now we don't support dark mood
+   /* val backgroundColor = if (isDarkMode) {
         Color(0xFF1C1C1E).copy(alpha = 0.85f) // Dark background
     } else {
         Color.White.copy(alpha = 0.85f) // Light background
-    }
+    }*/
+
+    // Define colors based on theme ~ for now we don't support dark mood
+    val backgroundColor = Color.White.copy(alpha = 0.85f)
 
     val borderColor = if (isDarkMode) {
         Color.White.copy(alpha = 0.1f)
