@@ -131,12 +131,11 @@ fun CourseInfoCard(
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(16.dp)
                         .size(24.dp)
-                        .background(if(!isFavorite)Color.Transparent else Color.Red, CircleShape)
                 ) {
                     Icon(
                         favoriteIcon,
                         contentDescription = "Favorite",
-                        tint = Color.White,
+                        tint = if (isFavorite) Color.Red else Color.White
                     )
                 }
             }
