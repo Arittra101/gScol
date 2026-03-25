@@ -151,6 +151,11 @@ buildkonfig {
             "BASE_URL",
             baseURL
         )
+        buildConfigField(
+            STRING,
+            "GOOGLE_MAPS_API_KEY",
+            localProperties.getProperty("google.maps.api.key", ""),
+        )
     }
 }
 

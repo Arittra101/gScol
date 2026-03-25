@@ -1,0 +1,30 @@
+package org.getscol.gscol.feature.course_details.presentation.components
+
+/**
+ * Opens Google Maps at the given coordinates (browser or Maps app when installed).
+ */
+fun googleMapsOpenUrl(latitude: Double, longitude: Double): String =
+    "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude"
+
+/**
+ * Google Static Maps image URL for a thumbnail. Enable Maps Static API for your key.
+ * Returns null when [apiKey] is blank (thumbnail falls back to placeholder).
+ */
+fun googleStaticMapImageUrl(
+    latitude: Double,
+    longitude: Double,
+    apiKey: String,
+    width: Int = 600,
+    height: Int = 360,
+): String? {
+    if (apiKey.isBlank()) return null
+    return buildString {
+        append("https://maps.googleapis.com/maps/api/staticmap?")
+        append("center=").append(latitude).append(',').append(longitude)
+        append("&zoom=15")
+        append("&size=").append(width).append('x').append(height)
+        append("&scale=2")
+        append("&markers=color:red%7C").append(latitude).append(',').append(longitude)
+        append("&key=").append(apiKey)
+    }
+}

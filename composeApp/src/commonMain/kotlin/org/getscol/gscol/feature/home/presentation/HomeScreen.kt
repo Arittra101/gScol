@@ -27,10 +27,12 @@ import androidx.paging.LoadState
 import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.core.helper.toDollar
 import org.getscol.gscol.core.helper.toShortDate
+import org.getscol.gscol.core.utils.AppLogger
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -41,13 +43,17 @@ fun HomeScreenRoot(
     navigator: Navigator
 ) {
 
-    val action = viewmode::onAction
-    // Instead of the function reference...
-    /*  val action: (HomeAction) -> Unit = { data ->
-          viewmodel.onAction(data)
-      }*/
 
-    val academicFormSubmitTrigger by viewmode.session.academicFormSubmitTrigger.collectAsState(initial = 0)
+    val action: (HomeAction) -> Unit = { data ->
+        if (data is HomeAction.OnCourseClick) {
+            AppLogger.d("Course clicked with id : ${data.courseId}")
+            navigator.navigateToOtherScreen(route = Route.CourseDetails(courseId = data.courseId))
+        } else viewmode.onAction(data)
+    }
+
+    val academicFormSubmitTrigger by viewmode.session.academicFormSubmitTrigger.collectAsState(
+        initial = 0
+    )
     val isUserLogin by viewmode.session.isUserLoggedIn.collectAsState(initial = false)
 
     HomeScreen(viewmode, navigator, action, academicFormSubmitTrigger > 0, isUserLogin)
@@ -63,7 +69,14 @@ fun HomeScreen(
 ) {
     val courses = viewModel.courses.collectAsLazyPagingItems()
     Scaffold(
-        topBar = { HomeAppBar(navigator = navigator, action, isUserFillupAcademicForm, isUserLogin) },
+        topBar = {
+            HomeAppBar(
+                navigator = navigator,
+                action,
+                isUserFillupAcademicForm,
+                isUserLogin
+            )
+        },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
 

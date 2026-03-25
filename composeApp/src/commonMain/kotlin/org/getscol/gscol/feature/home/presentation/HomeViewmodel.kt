@@ -16,7 +16,8 @@ import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.domain.repository.HomeRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewmodel(private val homeRepository: HomeRepository, val session: Session) : ViewModel() {
+class HomeViewmodel(private val homeRepository: HomeRepository, val session: Session) :
+    ViewModel() {
 
     private val favoriteUpdates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     private val baseCourses: Flow<PagingData<Course>> =
@@ -37,13 +38,15 @@ class HomeViewmodel(private val homeRepository: HomeRepository, val session: Ses
         }
 
     fun onAction(action: HomeAction) {
-        when(action){
+        when (action) {
             is HomeAction.AddToWishlist -> favoriteUpdates.update { current -> current + ((action.courseId to !action.isWishListed)) }
+            is HomeAction.OnCourseClick -> {}
         }
     }
 
 }
 
-sealed interface HomeAction{
-    data class AddToWishlist(val courseId: String, val isWishListed: Boolean): HomeAction
+sealed interface HomeAction {
+    data class AddToWishlist(val courseId: String, val isWishListed: Boolean) : HomeAction
+    data class OnCourseClick(val courseId: String) : HomeAction
 }
