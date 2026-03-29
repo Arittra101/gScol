@@ -5,9 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import org.getscol.gscol.theme.color.LocalAppColors
-import org.getscol.gscol.theme.color.appDarkColors
 import org.getscol.gscol.theme.color.appLightColors
-import org.getscol.gscol.theme.scheme.scolDarkColorScheme
 import org.getscol.gscol.theme.scheme.scolLightColorScheme
 
 @Composable
