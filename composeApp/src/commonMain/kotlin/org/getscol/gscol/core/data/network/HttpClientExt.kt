@@ -8,6 +8,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.util.AttributeKey
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.ensureActive
+import org.getscol.gscol.core.domain.ApiErrorResponse
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
 import kotlin.coroutines.coroutineContext
@@ -59,4 +60,52 @@ suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<
         in 500..599 -> Result.Error(DataError.Remote.SERVER)
         else -> Result.Error(DataError.Remote.UNKNOWN)
     }
+}
+
+// we will adopt this
+suspend inline fun <reified T> newSafeApiCall(execute: () -> HttpResponse): Result<T, DataError> {
+    val response = try {
+        execute()
+    } catch (e: SocketTimeoutException) {
+        return Result.Error(DataError.Remote.REQUEST_TIMEOUT)
+    } catch (e: UnresolvedAddressException) {
+        return Result.Error(DataError.Remote.NO_INTERNET)
+    } catch (e: Exception) {
+        coroutineContext.ensureActive()
+        return Result.Error(DataError.Remote.UNKNOWN)
+    }
+
+    return newApiResponseToResult(response)
+}
+
+
+suspend inline fun <reified T> newApiResponseToResult(response: HttpResponse): Result<T, DataError> {
+
+    return when (response.status.value) {
+        in 200..299 -> {
+            try {
+                Result.Success(response.body<T>())
+            } catch (e: NoTransformationFoundException) {
+                Result.Error(DataError.Remote.SERIALIZATION)
+            }
+        }
+        408 -> Result.Error(DataError.Remote.REQUEST_TIMEOUT)
+        429 -> Result.Error(DataError.Remote.TOO_MANY_REQUESTS)
+        in 500..599 -> Result.Error(DataError.Remote.SERVER)
+        else -> {
+            val apiError = try {
+                response.body<ApiErrorResponse>()
+            } catch (e: Exception) {
+                null
+            }
+
+            Result.Error(
+                DataError.RemoteMessage(
+                    apiError?.message,
+                    apiError?.statusCode,
+                )
+            )
+        }
+    }
+
 }
