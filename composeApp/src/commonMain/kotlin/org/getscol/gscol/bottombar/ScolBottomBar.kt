@@ -49,7 +49,8 @@ fun ScolBottomBar(
     val backgroundColor = Color.White.copy(alpha = 0.85f)
 
     val borderColor = if (isDarkMode) {
-        Color.White.copy(alpha = 0.1f)
+//        Color.White.copy(alpha = 0.1f)
+        Color.Black.copy(alpha = 0.08f)
     } else {
         Color.Black.copy(alpha = 0.08f)
     }
@@ -73,7 +74,7 @@ fun ScolBottomBar(
                         color = borderColor,
                         start = androidx.compose.ui.geometry.Offset(0f, 0f),
                         end = androidx.compose.ui.geometry.Offset(size.width, 0f),
-                        strokeWidth = 1f
+                        strokeWidth = 2f
                     )
                 }
                 .windowInsetsPadding(WindowInsets.navigationBars)
