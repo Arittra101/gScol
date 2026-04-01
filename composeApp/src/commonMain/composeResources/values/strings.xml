@@ -26,6 +26,7 @@
     <string name="enter_phone_to_verify">Enter your email or phone number\n to get verified.</string>
     <string name="academic_form">Academic Form</string>
     <string name="profile">Profile</string>
+    <string name="search_universities">Search Universities</string>
     <string name="academic_form_bottom_sheet_msg">Please review your details carefully. Once submitted,they cannot be changed without contacting SCOL support.
     </string>
 

@@ -43,17 +43,20 @@ class AdvancedSearchViewModel(
             is Result.Success -> {
                 val countryOptions = result.data.countryOptions.map { DropdownOption(it.id, it.name) }
                 val courseOptions = result.data.programmeOptions.map { DropdownOption(it.id, it.name) }
-                _state.update { it.copy(countryOptions = countryOptions, courseOptions = courseOptions) }
+                _state.update { it.copy(countryOptions = countryOptions, courseOptions = courseOptions, showLoader = false) }
             }
-            is Result.Error -> { /* optional: show error state */ }
+            is Result.Error -> {
+                _state.update { it.copy(showLoader = false) }
+            }
         }
     }
 
     private suspend fun loadCities(countryId: String) {
+        _state.update { it.copy(showLoader = true) }
         when (val result = searchRepository.getCities(countryId)) {
             is Result.Success -> {
                 val cityOptions = result.data.map { DropdownOption(it.id, it.name) }
-                _state.update { it.copy(cityOptions = cityOptions) }
+                _state.update { it.copy(cityOptions = cityOptions, showLoader = false) }
             }
             is Result.Error -> _state.update { it.copy(cityOptions = emptyList()) }
         }
