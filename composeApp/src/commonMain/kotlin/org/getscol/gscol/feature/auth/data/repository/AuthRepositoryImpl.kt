@@ -42,7 +42,7 @@ class AuthRepositoryImpl(
                 authTokenProvider.saveTokens(accessToken = resultData?.accessToken, refreshToken = resultData?.refreshToken)
 
                 if(isUserFillUpAcademicForm) {
-                    session.incrementAcademicFormSubmitCount()
+                    session.triggerAcademicFormSubmission()
                 }
 
                 Result.Success(Unit)
@@ -60,7 +60,7 @@ class AuthRepositoryImpl(
 
                 authTokenProvider.saveTokens(accessToken = resultData?.accessToken, refreshToken = resultData?.refreshToken)
                 if(isUserFillUpAcademicForm) {
-                    session.incrementAcademicFormSubmitCount()
+                    session.triggerAcademicFormSubmission()
                 }
 
                 Result.Success(Unit)

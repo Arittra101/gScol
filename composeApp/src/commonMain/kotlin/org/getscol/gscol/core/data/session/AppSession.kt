@@ -18,7 +18,7 @@ class AppSession(
     override val academicFormSubmitTrigger: Flow<Int>
         get() = localStorage.getFlowInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT)
 
-    override suspend fun incrementAcademicFormSubmitCount() {
+    override suspend fun triggerAcademicFormSubmission() {
         val current = localStorage.getInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT) ?: 0
         localStorage.setInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT, current + 1)
     }

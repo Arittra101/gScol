@@ -127,7 +127,7 @@ class AcademicViewmodel(
             when (result) {
                 is Result.Success -> {
                     val current = academicUiState.value
-                    session.incrementAcademicFormSubmitCount()
+                    session.triggerAcademicFormSubmission()
                     localUpdates.value = current.copy(
                         showLoader = false,
                         isApiSuccess = true,
