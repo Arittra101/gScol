@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import app.cash.paging.compose.collectAsLazyPagingItems
@@ -122,6 +124,13 @@ fun HomeScreen(
                                         ieltsSingleBand = it.ieltsBandRequired,
                                         isFavorite = it.isWishlisted,
                                         action = action
+                                    )
+                                }
+                                // Add divider after each item except the last
+                                if (index < courses.itemCount - 1) {
+                                    HorizontalDivider(
+                                        thickness = 9.dp,
+                                        color = Color(0xFFE8E8E8)
                                     )
                                 }
                             }

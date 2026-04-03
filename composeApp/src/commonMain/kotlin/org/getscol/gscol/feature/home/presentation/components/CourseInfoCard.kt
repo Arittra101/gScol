@@ -196,7 +196,7 @@ fun CourseInfoCard(
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                color = colors.customBackground,
+                color = Color(0xFFF0F0F0),
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
