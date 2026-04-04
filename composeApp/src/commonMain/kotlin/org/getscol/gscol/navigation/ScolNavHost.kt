@@ -20,6 +20,7 @@ import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.feature.home.presentation.HomeScreenRoot
+import org.getscol.gscol.feature.home.presentation.InEligibleScreenRoute
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
 import org.getscol.gscol.feature.search.presentation.advance_search.AdvancedSearchScreenRoot
 import org.getscol.gscol.feature.search.presentation.search.SearchScreenRoot
@@ -103,6 +104,9 @@ fun ScolNavHost(
         }
         composableNoAnimation<Route.AcademicForm> {
             AcademicFormRoute(navigator)
+        }
+        composableNoAnimation<Route.InEligibleScreen> {
+            InEligibleScreenRoute(navigator = navigator)
         }
     }
 }

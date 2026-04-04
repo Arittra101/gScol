@@ -53,10 +53,9 @@ sealed interface Route {
     @Serializable
     object AcademicForm : Route
 
-//    @Serializable
-//    data class SettingsRoute(val userId: Int) : Route
-
-
     @Serializable
     object Splash : Route
+
+    @Serializable
+    object InEligibleScreen : Route
 }
