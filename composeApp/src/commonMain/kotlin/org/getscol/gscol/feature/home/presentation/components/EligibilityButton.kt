@@ -33,7 +33,7 @@ fun EligibilityButton(navigator: Navigator, isUserFillupAcademicForm: Boolean, i
             } else if (isUserLogin && !isUserFillupAcademicForm) {
                 navigator.navigateTo(Route.AcademicForm)
             } else {
-                // todo ~ yet to implement navigation for ineligible course
+                navigator.navigateTo(Route.InEligibleScreen)
             }
         },
         modifier = Modifier
@@ -51,7 +51,7 @@ fun EligibilityButton(navigator: Navigator, isUserFillupAcademicForm: Boolean, i
         )
         Spacer(modifier = Modifier.width(20.dp))
         Text(
-            text = if(!isUserFillupAcademicForm) "Check Your Eligibility" else "Check Ineligible Courses",
+            text = if(!isUserLogin || !isUserFillupAcademicForm) "Check Your Eligibility" else "Check Ineligible Courses",
             color = appColors().customPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold

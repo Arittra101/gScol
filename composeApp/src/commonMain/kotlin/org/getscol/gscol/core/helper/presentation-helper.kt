@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.theme.appColors
 
 
 inline fun Modifier.conditional(
@@ -33,6 +35,12 @@ inline fun Modifier.conditional(
         then(ifFalse(Modifier))
     }
 }
+
+inline fun Modifier.thenIf(
+    condition: Boolean,
+    modifier: Modifier.() -> Modifier
+): Modifier = if (condition) then(modifier()) else this
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,6 +73,9 @@ fun ScolDefaultTopBar(
                     )
                 }
             }
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = appColors().customSecondaryContainer
+        )
     )
 }

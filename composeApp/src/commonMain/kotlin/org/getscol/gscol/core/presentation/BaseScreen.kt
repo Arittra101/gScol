@@ -11,9 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import org.getscol.gscol.core.helper.ScolDefaultTopBar
-import org.getscol.gscol.core.helper.conditional
 import org.getscol.gscol.theme.appColors
 
 @Composable
@@ -47,15 +45,11 @@ fun BaseScreen(
                 .fillMaxSize()
                 .background(color = bgColorContent)
                 .padding(innerPadding)
-                .conditional(
-                    isTopLevelScreen = isTopLevelScreen,
-                    ifTrue = { Modifier.padding(bottom = innerPadding.calculateBottomPadding() + 56.dp) },
-                    ifZeroBottomBarTrue = { Modifier.padding(bottom = 0.dp) }
-                )
-                .then(modifier))
+                .then(modifier)
+        )
         {
             if (showLoader == true) LoadingDialog()
-            content(innerPadding)
+            content(PaddingValues())
         }
     }
 }
