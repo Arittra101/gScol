@@ -17,7 +17,10 @@ data class AdvancedSearchState(
     val scholarshipFilter: Boolean? = null,
     val showLoader: Boolean = true
 ) {
-    /** Selected months as a range: first click = one month, second click = from first to last (inclusive). */
+    /**
+     * Intake months: 1st tap = single month; 2nd tap = inclusive range between the two;
+     * 3rd tap = reset and select only the tapped month (cycle repeats).
+     */
     val selectedIntakeMonths: Set<Int>
         get() = when {
             firstSelectedMonth == null -> emptySet()

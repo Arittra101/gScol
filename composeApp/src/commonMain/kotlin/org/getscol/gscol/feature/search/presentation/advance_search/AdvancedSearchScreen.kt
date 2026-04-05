@@ -53,6 +53,19 @@ import kotlin.math.roundToInt
 private const val TUITION_MAX = 50_000
 private const val DURATION_YEARS_MAX = 5
 
+private fun formatTuitionRangeLabel(maxUsd: Int): String {
+    val maxPart =
+        if (maxUsd >= TUITION_MAX) "50K+"
+        else "${((maxUsd + 500).coerceAtLeast(0)) / 1000}K"
+    return "$0K - $maxPart"
+}
+
+private fun formatDurationRangeLabel(maxYears: Int): String {
+    val y = maxYears.coerceIn(1, DURATION_YEARS_MAX)
+    val unit = if (y == 1) "year" else "years"
+    return "1 - $y $unit"
+}
+
 @Composable
 fun AdvancedSearchScreenRoot(
     navigator: Navigator,
@@ -213,15 +226,27 @@ fun AdvancedSearchScreen(
             color = colors.customPrimaryText
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            "Tuition Range",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = colors.customPrimaryText
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Tuition Range",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = colors.customPrimaryText
+            )
+            Text(
+                text = formatTuitionRangeLabel(state.tuitionRangeMax),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = colors.customPrimary
+            )
+        }
         val tuitionSliderColors = SliderDefaults.colors(
             thumbColor = colors.customPrimary,
-            activeTrackColor = colors.customSecondary,
+            activeTrackColor = colors.customPrimary,
             inactiveTrackColor = colors.customSecondary
         )
         val tuitionInteractionSource = remember { MutableInteractionSource() }
@@ -248,31 +273,28 @@ fun AdvancedSearchScreen(
                 )
             }
         )
+        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "$0",
-                style = MaterialTheme.typography.bodySmall,
+                "Duration",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
                 color = colors.customPrimaryText
             )
             Text(
-                "$50k+",
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.customPrimaryText
+                text = formatDurationRangeLabel(state.durationMaxYears),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = colors.customPrimary
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Duration",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = colors.customPrimaryText
-        )
         val durationSliderColors = SliderDefaults.colors(
             thumbColor = colors.customPrimary,
-            activeTrackColor = colors.customSecondary,
+            activeTrackColor = colors.customPrimary,
             inactiveTrackColor = colors.customSecondary
         )
         val durationInteractionSource = remember { MutableInteractionSource() }
@@ -305,18 +327,6 @@ fun AdvancedSearchScreen(
                 )
             }
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            listOf("1 yr", "2 yrs", "3 yrs", "4 yrs", "5 yrs+").forEach { label ->
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = colors.customPrimaryText
-                )
-            }
-        }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             "Scholarships",
