@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,17 +31,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import org.getscol.gscol.core.presentation.components.PillTag
+import org.getscol.gscol.feature.course_details.domain.model.CourseRanking
+import org.getscol.gscol.feature.course_details.domain.model.CourseTag
 import org.getscol.gscol.theme.appColors
 
 @Composable
 fun CourseOverviewCard(
     courseName: String,
-    ranking: String?,
+    ranking: CourseRanking?,
     universityName: String,
     universityLogoUrl: String,
-    establishedYear: String?,
-    institutionType: String,
-    location: String,
+    tags: List<CourseTag>,
     modifier: Modifier = Modifier,
     onRankingInfoClick: (() -> Unit)? = null,
 ) {
@@ -110,9 +109,9 @@ fun CourseOverviewCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                ranking?.let { rank ->
+                ranking?.position?.let { rankPosition ->
                     Text(
-                        text = rank,
+                        text = "#$rankPosition",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.customPrimary,
@@ -124,20 +123,22 @@ fun CourseOverviewCard(
                             stepSize = 1.sp,
                         ),
                     )
-                    IconButton(
-                        onClick = { onRankingInfoClick?.invoke() },
-                        modifier = Modifier.size(20.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = "Ranking info",
-                            modifier = Modifier.size(16.dp),
-                            tint = colors.customPrimary,
-                        )
+                    if (ranking.hasInfo && onRankingInfoClick != null) {
+                        IconButton(
+                            onClick = { onRankingInfoClick.invoke() },
+                            modifier = Modifier.size(20.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Ranking info",
+                                modifier = Modifier.size(16.dp),
+                                tint = colors.customPrimary,
+                            )
+                        }
                     }
                     Text(
                         text = "•",
-                        fontSize = 12.sp,
+                        fontSize = 16.sp,
                         color = colors.customSecondaryText,
                         modifier = Modifier.padding(horizontal = 2.dp),
                     )
@@ -161,18 +162,16 @@ fun CourseOverviewCard(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                establishedYear?.let { year ->
+                tags.forEach { tag ->
+                    val isLocation = tag.type.equals("location", ignoreCase = true)
+                    val isFirstTag = tag == tags.first()
                     PillTag(
-                        text = year,
-                        backgroundColor = colors.customPrimary.copy(alpha = 0.2f),
-                        textColor = colors.customPrimary,
+                        text = tag.label,
+                        backgroundColor = if (isFirstTag) colors.customPrimary.copy(alpha = 0.2f) else null,
+                        textColor = if (isFirstTag) colors.customPrimary else null,
+                        leadingIcon = if (isLocation) Icons.Default.LocationOn else null,
                     )
                 }
-                PillTag(text = institutionType)
-                PillTag(
-                    text = location,
-                    leadingIcon = Icons.Default.LocationOn,
-                )
             }
         }
     }

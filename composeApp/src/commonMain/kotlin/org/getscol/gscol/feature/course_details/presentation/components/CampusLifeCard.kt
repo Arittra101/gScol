@@ -132,12 +132,15 @@ private fun extractYoutubeId(url: String): String? {
         url.contains(shortPrefix) -> {
             url.substringAfter(shortPrefix).substringBeforeAny('&', '?', '/')
         }
+
         url.contains(embedPrefix) -> {
             url.substringAfter(embedPrefix).substringBeforeAny('&', '?', '/')
         }
+
         url.contains(watchPrefix) -> {
             url.substringAfter(watchPrefix).substringBeforeAny('&', '#')
         }
+
         else -> null
     }
 }

@@ -5,20 +5,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,34 +30,40 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.getscol.gscol.BuildKonfig
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.components.KeyValueRow
 import org.getscol.gscol.core.presentation.components.PrimaryButton
 import org.getscol.gscol.core.presentation.components.ReadMoreText
 import org.getscol.gscol.core.presentation.components.ScrollableTabs
 import org.getscol.gscol.core.presentation.components.SectionHeader
+import org.getscol.gscol.feature.course_details.domain.model.AboutUs
 import org.getscol.gscol.feature.course_details.domain.model.CampusLifeItem
+import org.getscol.gscol.feature.course_details.domain.model.CourseLocation
+import org.getscol.gscol.feature.course_details.domain.model.FeeItems
+import org.getscol.gscol.feature.course_details.domain.model.InfoMetaData
 import org.getscol.gscol.feature.course_details.presentation.components.CampusLifeCard
 import org.getscol.gscol.feature.course_details.presentation.components.CourseOverviewCard
+import org.getscol.gscol.feature.course_details.presentation.components.LocationMapCard
 import org.getscol.gscol.feature.course_details.presentation.components.googleMapsOpenUrl
 import org.getscol.gscol.feature.course_details.presentation.components.googleStaticMapImageUrl
-import org.getscol.gscol.feature.course_details.presentation.components.LocationMapCard
+import org.getscol.gscol.feature.course_details.presentation.components.normalizeCoordinatesLink
+import org.getscol.gscol.feature.course_details.presentation.components.parseLatLngFromMapsUrl
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
-import com.getscol.gscol.BuildKonfig
 
-private val TAB_TITLES = listOf(
+private val DEFAULT_TAB_TITLES = listOf(
     "About us",
     "Campus Life",
     "Location",
@@ -63,86 +71,6 @@ private val TAB_TITLES = listOf(
     "Fees & Scholarships",
     "Intake Dates",
 )
-
-private data class InfoBlock(
-    val subtitle: String? = null,
-    val description: List<String>,
-)
-
-private data class InfoMetaData(
-    val infoKey: String,
-    val title: String,
-    val information: List<InfoBlock>,
-)
-
-private val infoMetaDataByKey: Map<String, InfoMetaData> = listOf(
-    InfoMetaData(
-        infoKey = "rankingMetaData",
-        title = "Ranking",
-        information = listOf(
-            InfoBlock(
-                description = listOf(
-                    "Ranked #42 globally for International Business Management based on research output, student satisfaction, and graduate employability.",
-                    "Consistently ranked in the top 20 universities across the United Kingdom.",
-                )
-            )
-        )
-    ),
-    InfoMetaData(
-        infoKey = "academicRequirementsMetaData",
-        title = "Academic Requirements",
-        information = listOf(
-            InfoBlock(
-                subtitle = "GPA",
-                description = listOf(
-                    "A minimum GPA of 3.5 out of 4.0 is required for consideration into the program."
-                )
-            ),
-            InfoBlock(
-                subtitle = "English Proficiency",
-                description = listOf(
-                    "Non-native English speakers must submit TOEFL scores of 100+ or IELTS scores of 7.0 or above."
-                )
-            ),
-        )
-    ),
-    InfoMetaData(
-        infoKey = "feesAndScholarshipsMetaData",
-        title = "Fees & Scholarships",
-        information = listOf(
-            InfoBlock(
-                subtitle = "Tuition Fees",
-                description = listOf(
-                    "The annual tuition fee is $45,000, covering all core modules and university facilities."
-                )
-            ),
-            InfoBlock(
-                subtitle = "Scholarships",
-                description = listOf(
-                    "Merit-based and need-based scholarships are available. Students can apply during the admissions process."
-                )
-            ),
-        )
-    ),
-    InfoMetaData(
-        infoKey = "intakeDatesMetaData",
-        title = "Intake Dates",
-        information = listOf(
-            InfoBlock(
-                subtitle = "Fall Intake",
-                description = listOf(
-                    "The Fall intake begins in September. Application deadline is typically June 30th."
-                )
-            ),
-            InfoBlock(
-                subtitle = "Spring Intake",
-                description = listOf(
-                    "The Spring intake begins in March. Application deadline is typically December 15th."
-                )
-            ),
-        )
-    ),
-).associateBy { it.infoKey }
 
 @Composable
 fun CourseDetailsScreenRoot(
@@ -181,9 +109,7 @@ fun CourseDetailsScreenRoot(
                     )
             }
         },
-        onLocationClick = { lat, lng ->
-            uriHandler.openUri(googleMapsOpenUrl(lat, lng))
-        },
+        onOpenMapsUrl = { url -> uriHandler.openUri(url) },
     )
 }
 
@@ -193,7 +119,7 @@ fun CourseDetailsScreen(
     onAction: (CourseDetailsAction) -> Unit,
     onBack: () -> Unit,
     onCampusLifeItemClick: (CampusLifeItem) -> Unit = {},
-    onLocationClick: (latitude: Double, longitude: Double) -> Unit = { _, _ -> },
+    onOpenMapsUrl: (String) -> Unit = {},
 ) {
     BaseScreen(
         title = "Course Details",
@@ -215,6 +141,10 @@ fun CourseDetailsScreen(
         val scrollState = rememberScrollState()
         val colors = appColors()
         val selectedInfoMeta = remember { mutableStateOf<InfoMetaData?>(null) }
+        val metaByKey = remember(details.meta) { details.meta.associateBy { it.infoKey } }
+        val tabTitles = remember(details.tabs) {
+            details.tabs.map { it.label }.ifEmpty { DEFAULT_TAB_TITLES }
+        }
         val sectionOffsets = remember { mutableStateListOf(0, 0, 0, 0, 0, 0) }
         val tabsEnabled = remember { mutableStateOf(false) }
 
@@ -233,7 +163,7 @@ fun CourseDetailsScreen(
                 .verticalScroll(scrollState)
                 .background(colors.customSurface),
         ) {
-            BannerImage(imageUrl = details.imageUrl)
+            BannerImage(imageUrl = details.university.uniCoverImageUrl.orEmpty())
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -243,18 +173,18 @@ fun CourseDetailsScreen(
                 CourseOverviewCard(
                     courseName = details.courseName,
                     ranking = details.ranking,
-                    universityName = details.universityName,
-                    universityLogoUrl = details.universityLogoUrl,
-                    establishedYear = details.establishedYear,
-                    institutionType = details.institutionType,
-                    location = details.location,
-                    onRankingInfoClick = {
-                        selectedInfoMeta.value = infoMetaDataByKey["rankingMetaData"]
-                    },
+                    universityName = details.university.uniName,
+                    universityLogoUrl = details.university.uniLogoUrl.orEmpty(),
+                    tags = details.tags,
+                    onRankingInfoClick = if (details.ranking?.hasInfo == true) {
+                        {
+                            details.ranking.infoKey?.let { selectedInfoMeta.value = metaByKey[it] }
+                        }
+                    } else null,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 ScrollableTabs(
-                    tabs = TAB_TITLES,
+                    tabs = tabTitles,
                     selectedIndex = state.selectedTabIndex,
                     onTabSelected = {
                         tabsEnabled.value = true
@@ -278,7 +208,16 @@ fun CourseDetailsScreen(
                     }
                 ) {
                     CampusLifeSection(
-                        items = details.campusLifeVideos,
+                        items = details.campusLife?.videoUrls.orEmpty().mapIndexed { index, url ->
+                            CampusLifeItem(
+                                title = "Video ${index + 1}",
+                                thumbnailUrl = null,
+                                duration = null,
+                                count = null,
+                                isVideo = true,
+                                videoUrl = url,
+                            )
+                        },
                         onItemClick = onCampusLifeItemClick,
                     )
                 }
@@ -290,9 +229,8 @@ fun CourseDetailsScreen(
                     }
                 ) {
                     LocationSection(
-                        latitude = details.latitude,
-                        longitude = details.longitude,
-                        onLocationClick = onLocationClick,
+                        location = details.location,
+                        onOpenMapsUrl = onOpenMapsUrl,
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
@@ -304,14 +242,31 @@ fun CourseDetailsScreen(
                 ) {
                     SectionHeader(
                         title = "Academic Requirements",
-                        showInfoIcon = true,
+                        showInfoIcon = details.academicRequirements?.infoKey
+                            ?.let { metaByKey[it]?.information?.isNotEmpty() == true } == true,
                         onInfoClick = {
-                            selectedInfoMeta.value = infoMetaDataByKey["academicRequirementsMetaData"]
+                            details.academicRequirements?.infoKey?.let {
+                                selectedInfoMeta.value = metaByKey[it]
+                            }
                         },
                     )
-                    details.academicRequirements.forEach { (label, value) ->
-                        KeyValueRow(label = label, value = value)
-                    }
+                    details.academicRequirements?.requirements?.degreeRequirements.orEmpty()
+                        .forEach { req ->
+                            KeyValueRow(
+                                label = req.degreeName.orEmpty(),
+                                value = req.minValue.orEmpty(),
+                            )
+                        }
+                    details.academicRequirements?.requirements?.englishRequirements.orEmpty()
+                        .forEach { req ->
+                            KeyValueRow(
+                                label = req.testName.orEmpty(),
+                                value = listOfNotNull(
+                                    req.minOverallValue,
+                                    req.minSectionValue,
+                                ).joinToString(" / "),
+                            )
+                        }
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Column(
@@ -322,16 +277,50 @@ fun CourseDetailsScreen(
                 ) {
                     SectionHeader(
                         title = "Fees & Scholarships",
-                        showInfoIcon = true,
+                        showInfoIcon = details.feesAndScholarships?.infoKey
+                            ?.let { metaByKey[it]?.information?.isNotEmpty() == true } == true,
                         onInfoClick = {
-                            selectedInfoMeta.value = infoMetaDataByKey["feesAndScholarshipsMetaData"]
+                            details.feesAndScholarships?.infoKey?.let {
+                                selectedInfoMeta.value = metaByKey[it]
+                            }
                         },
                     )
-                    details.feesAndScholarships.forEach { (label, value) ->
+                    details.feesAndScholarships?.items?.tuitionFees?.let { tf ->
+                        val amount = tf.amount.orEmpty()
+                        val currency = tf.currency.orEmpty()
+                        val frequency = tf.frequency.orEmpty()
                         KeyValueRow(
-                            label = label,
-                            value = value,
-                            valueColor = if (value == "Available") colors.customPrimary else null,
+                            label = "Tuition Fees",
+                            value = listOfNotNull(
+                                listOfNotNull(
+                                    currency.ifBlank { null },
+                                    amount.ifBlank { null }).joinToString(" ").ifBlank { null },
+                                frequency.ifBlank { null },
+                            ).joinToString(" / "),
+                        )
+                    }
+                    details.feesAndScholarships?.items?.initialDeposit?.let { dep ->
+                        KeyValueRow(label = "Initial Deposit", value = dep)
+                    }
+                    details.feesAndScholarships?.items?.applicationFee?.let { fee ->
+                        KeyValueRow(label = "Application Fee", value = fee)
+                    }
+                    details.feesAndScholarships?.items?.scholarshipDetails?.let { s ->
+                        s.scholarshipName?.let { KeyValueRow(label = "Scholarship", value = it) }
+                        val amountLine = listOfNotNull(
+                            s.scholarshipAmount?.takeIf { a -> a.isNotBlank() },
+                            s.currency?.takeIf { c -> c.isNotBlank() },
+                            s.scholarshipType?.takeIf { t -> t.isNotBlank() },
+                        ).joinToString(" · ")
+                        if (amountLine.isNotBlank()) {
+                            KeyValueRow(label = "Scholarship details", value = amountLine)
+                        }
+                    }
+                    if (details.feesAndScholarships?.items.hasScholarshipInfo()) {
+                        KeyValueRow(
+                            label = "Scholarships",
+                            value = "Available",
+                            valueColor = colors.customPrimary,
                         )
                     }
                 }
@@ -344,12 +333,15 @@ fun CourseDetailsScreen(
                 ) {
                     SectionHeader(
                         title = "Intake Dates",
-                        showInfoIcon = true,
+                        showInfoIcon = details.intakeDates?.infoKey
+                            ?.let { metaByKey[it]?.information?.isNotEmpty() == true } == true,
                         onInfoClick = {
-                            selectedInfoMeta.value = infoMetaDataByKey["intakeDatesMetaData"]
+                            details.intakeDates?.infoKey?.let {
+                                selectedInfoMeta.value = metaByKey[it]
+                            }
                         },
                     )
-                    details.intakeDates.forEach { (label, value) ->
+                    details.intakeDates?.intakeRows.orEmpty().forEach { (label, value) ->
                         KeyValueRow(label = label, value = value)
                     }
                 }
@@ -374,11 +366,11 @@ private fun InfoMetaDialog(
     onDismiss: () -> Unit,
 ) {
     if (meta == null) return
-    androidx.compose.material3.AlertDialog(
+    AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
-                androidx.compose.material3.Text("Close")
+            TextButton(onClick = onDismiss) {
+                Text("Close")
             }
         },
         title = {
@@ -413,6 +405,7 @@ private fun InfoMetaDialog(
                                 }
                             }
                         }
+
                         else -> {
                             descriptions.forEach { line ->
                                 InfoBulletLine(text = line)
@@ -465,10 +458,11 @@ private fun BannerImage(imageUrl: String) {
 }
 
 @Composable
-private fun AboutUsSection(aboutUs: String) {
+private fun AboutUsSection(aboutUs: AboutUs?) {
     SectionHeader(title = "About Us")
     Spacer(modifier = Modifier.height(8.dp))
-    ReadMoreText(text = aboutUs, readMoreLabel = "Read More")
+    val text = aboutUs?.description?.joinToString("\n\n").orEmpty()
+    ReadMoreText(text = text, readMoreLabel = "Read More")
 }
 
 @Composable
@@ -500,12 +494,21 @@ private fun CampusLifeSection(
 
 @Composable
 private fun LocationSection(
-    latitude: Double?,
-    longitude: Double?,
-    onLocationClick: (latitude: Double, longitude: Double) -> Unit,
+    location: CourseLocation?,
+    onOpenMapsUrl: (String) -> Unit,
 ) {
     SectionHeader(title = "Location")
     Spacer(modifier = Modifier.height(12.dp))
+    val coords = location?.coordinates
+    val link = coords?.link?.trim()?.takeIf { it.isNotEmpty() }?.let { normalizeCoordinatesLink(it) }
+    val parsedFromLink = remember(link) { link?.let { parseLatLngFromMapsUrl(it) } }
+    val latitude = coords?.latitude ?: parsedFromLink?.first
+    val longitude = coords?.longitude ?: parsedFromLink?.second
+    val openUrl = link
+        ?: if (latitude != null && longitude != null) googleMapsOpenUrl(
+            latitude,
+            longitude
+        ) else null
     val mapImageUrl = remember(latitude, longitude) {
         if (latitude != null && longitude != null) {
             googleStaticMapImageUrl(latitude, longitude, BuildKonfig.GOOGLE_MAPS_API_KEY)
@@ -515,8 +518,19 @@ private fun LocationSection(
     }
     LocationMapCard(
         mapImageUrl = mapImageUrl,
-        onClick = if (latitude != null && longitude != null) {
-            { onLocationClick(latitude, longitude) }
-        } else null,
+        onClick = openUrl?.let { url -> { onOpenMapsUrl(url) } },
     )
+}
+
+private fun FeeItems?.hasScholarshipInfo(): Boolean {
+    if (this == null) return false
+    val s = scholarshipDetails
+    val structured = s != null && sequenceOf(
+        s.scholarshipName,
+        s.scholarshipAmount,
+        s.currency,
+        s.scholarshipType,
+    ).any { !it.isNullOrBlank() }
+    val textFromApi = !scholarshipsText.isNullOrBlank()
+    return structured || textFromApi
 }
