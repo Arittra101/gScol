@@ -83,11 +83,12 @@ class AdvancedSearchViewModel(
             is AdvancedSearchAction.IntakeMonthSelected -> _state.update { s ->
                 val month = action.month.coerceIn(1, 12)
                 when {
-                    s.firstSelectedMonth == null -> s.copy(firstSelectedMonth = month, lastSelectedMonth = null)
-                    s.lastSelectedMonth == null -> s.copy(lastSelectedMonth = month)
-                    month < s.firstSelectedMonth -> s.copy(firstSelectedMonth = month, lastSelectedMonth = s.firstSelectedMonth)
-                    month > s.lastSelectedMonth -> s.copy(lastSelectedMonth = month)
-                    else -> s.copy(lastSelectedMonth = month)
+                    s.firstSelectedMonth == null ->
+                        s.copy(firstSelectedMonth = month, lastSelectedMonth = null)
+                    s.lastSelectedMonth != null ->
+                        s.copy(firstSelectedMonth = month, lastSelectedMonth = null)
+                    else ->
+                        s.copy(lastSelectedMonth = month)
                 }
             }
             is AdvancedSearchAction.TuitionRangeChange -> _state.update { it.copy(tuitionRangeMax = action.maxValue) }
