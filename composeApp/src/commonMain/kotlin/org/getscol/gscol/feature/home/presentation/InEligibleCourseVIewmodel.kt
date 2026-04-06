@@ -18,7 +18,8 @@ import org.getscol.gscol.feature.home.domain.repository.HomeRepository
 import kotlin.collections.plus
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class InEligibleCourseViewmodel(private val homeRepository: HomeRepository,val session: Session) : ViewModel() {
+class InEligibleCourseViewmodel(private val homeRepository: HomeRepository, val session: Session) :
+    ViewModel() {
 
     private val favoriteUpdates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     private val triggerApiCall = MutableStateFlow(Unit)
@@ -33,7 +34,7 @@ class InEligibleCourseViewmodel(private val homeRepository: HomeRepository,val s
 
     private val baseCourses = triggerApiCall.flatMapLatest {
         val isLogin = session.isUserLoggedIn.first()
-        homeRepository.getHomeCoursesStream(isLogin,INELIGIBLE_ONLY)
+        homeRepository.getHomeCoursesStream(isLogin, INELIGIBLE_ONLY)
     }.cachedIn(viewModelScope)
 
     val courses: Flow<PagingData<Course>> =

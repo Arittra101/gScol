@@ -17,17 +17,28 @@ fun HomeScreenRoot(
     navigator: Navigator
 ) {
 
-    val action = viewmodel::onAction
     // Instead of the function reference...
     /*  val action: (HomeAction) -> Unit = { data ->
           viewmodel.onAction(data)
       }*/
+    val action: (HomeAction) -> Unit = { data ->
+        viewmodel.onAction(data)
+    }
 
-    val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(initial = 0)
+    val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(
+        initial = 0
+    )
     val isUserLogin by viewmodel.session.isUserLoggedIn.collectAsState(initial = false)
     val isUserFillupAcademicForm: Boolean = academicFormSubmitTrigger > 0
 
-    BaseScreen(topBar = { HomeAppBar(navigator = navigator, action, isUserFillupAcademicForm, isUserLogin)}, isTopLevelScreen = true) {
+    BaseScreen(topBar = {
+        HomeAppBar(
+            navigator = navigator,
+            action,
+            isUserFillupAcademicForm,
+            isUserLogin
+        )
+    }, isTopLevelScreen = true) {
         CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it, true)
     }
 }

@@ -17,6 +17,7 @@ import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 
 @Composable
 fun CourseItemView(
@@ -50,7 +51,9 @@ fun CourseItemView(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = if(isUsedForTopLevelScreen) PaddingValues(bottom = values.calculateBottomPadding() + 80.dp) else PaddingValues(bottom = 0.dp)
+                    contentPadding = if (isUsedForTopLevelScreen) PaddingValues(bottom = values.calculateBottomPadding() + 80.dp) else PaddingValues(
+                        bottom = 0.dp
+                    )
                 ) {
                     items(count = courses.itemCount) { index ->
                         courses[index]?.let {
@@ -70,7 +73,14 @@ fun CourseItemView(
                                 ieltsBand = it.ieltsOverallRequired,
                                 ieltsSingleBand = it.ieltsBandRequired,
                                 isFavorite = it.isWishlisted,
-                                action = action
+                                action = action,
+                                onCourseClick = {
+                                    navigator.navigateToOtherScreen(
+                                        route = Route.CourseDetails(
+                                            courseId = it.courseId,
+                                        )
+                                    )
+                                }
                             )
                         }
                         // Add divider after each item except the last
@@ -86,9 +96,11 @@ fun CourseItemView(
                         is LoadState.Loading -> {
                             item { PaginationLoader() }
                         }
+
                         is LoadState.Error -> {
                             item { PaginationError(onRetry = { courses.retry() }) }
                         }
+
                         else -> Unit
                     }
                 }

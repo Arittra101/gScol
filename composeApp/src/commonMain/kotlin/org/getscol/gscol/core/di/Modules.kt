@@ -2,6 +2,7 @@ package org.getscol.gscol.core.di
 
 import org.getscol.gscol.auth.di.authModule
 import org.getscol.gscol.feature.academic_form.di.academicModule
+import org.getscol.gscol.feature.course_details.di.courseDetailsModule
 import org.getscol.gscol.feature.home.di.homeModule
 import org.getscol.gscol.feature.profile.di.profileModule
 import org.getscol.gscol.feature.search.di.searchModule
@@ -18,6 +19,7 @@ fun appModules() = listOf(
     homeModule,
     searchModule,
     academicModule,
+    courseDetailsModule,
     profileModule
 )
 
