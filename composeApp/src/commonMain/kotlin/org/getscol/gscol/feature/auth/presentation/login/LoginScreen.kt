@@ -66,7 +66,7 @@ fun LoginScreenRoot(
             when (effect) {
                 is LoginUiEffect.LoginSuccess -> {
                     if (effect.isUserFillupAcademicForm > 0) {
-                        navigator.navigateToTopLevel(Route.HomeRoute)
+                        navigator.navigateTo(Route.HomeRoute,true)
                     } else {
                         navigator.navigateTo(Route.AcademicForm, true)
                     }

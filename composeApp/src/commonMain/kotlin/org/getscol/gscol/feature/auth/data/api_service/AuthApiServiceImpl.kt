@@ -7,11 +7,9 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import org.getscol.gscol.core.data.network.markAsNoAuth
-import org.getscol.gscol.core.data.network.safeApiCall
+import org.getscol.gscol.core.data.network.newSafeApiCall
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
-import org.getscol.gscol.feature.auth.data.authdto.AuthPassResetReqDto
-import org.getscol.gscol.feature.auth.data.authdto.AuthPassResetResponseDto
 import org.getscol.gscol.feature.auth.domain.model.ForgotPasswordRequest
 import org.getscol.gscol.feature.auth.domain.model.ForgotPasswordResponse
 import org.getscol.gscol.feature.auth.domain.model.LoginRequest
@@ -30,8 +28,8 @@ class AuthApiServiceImpl(
         phone: String,
         password: String,
         fullName: String
-    ): Result<RegistrationResponse, DataError.Remote> {
-        return safeApiCall {
+    ): Result<RegistrationResponse, DataError> {
+        return newSafeApiCall {
             httpClient.post("auth/register") {
                 contentType(ContentType.Application.Json)
                 setBody(
@@ -49,8 +47,8 @@ class AuthApiServiceImpl(
     override suspend fun login(
         phoneNumber: String,
         password: String
-    ): Result<LoginResponse, DataError.Remote> {
-        return safeApiCall {
+    ): Result<LoginResponse, DataError> {
+        return newSafeApiCall {
             httpClient.post("auth/login") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginRequest(phoneNumber = phoneNumber, password = password))
@@ -59,8 +57,8 @@ class AuthApiServiceImpl(
         }
     }
 
-    override suspend fun verifyOtp(otp: String): Result<OtpVerificationResponse, DataError.Remote> {
-        return safeApiCall {
+    override suspend fun verifyOtp(otp: String): Result<OtpVerificationResponse, DataError> {
+        return newSafeApiCall {
             httpClient.post("auth/verify-otp") {
                 contentType(ContentType.Application.Json)
                 setBody(OtpVerificationRequest(otp = otp))
@@ -68,15 +66,15 @@ class AuthApiServiceImpl(
         }
     }
 
-    override suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote> {
-        return safeApiCall { httpClient.get("auth/resend-otp") {} }
+    override suspend fun resendOtp(): Result<ResendOtpResponse, DataError> {
+        return newSafeApiCall { httpClient.get("auth/resend-otp") {} }
     }
 
     override suspend fun forgotPassword(
         phone: String,
         newPassword: String
-    ): Result<ForgotPasswordResponse, DataError.Remote> {
-        return safeApiCall {
+    ): Result<ForgotPasswordResponse, DataError> {
+        return newSafeApiCall {
             httpClient.post("auth/forgot-password") {
                 contentType(ContentType.Application.Json)
                 setBody(ForgotPasswordRequest(phone = phone, newPassword))
@@ -85,12 +83,4 @@ class AuthApiServiceImpl(
         }
     }
 
-    override suspend fun resetPassword(newPassword: String): Result<AuthPassResetResponseDto, DataError.Remote> {
-        return safeApiCall {
-            httpClient.post("auth/reset-password") {
-                contentType(ContentType.Application.Json)
-                setBody(AuthPassResetReqDto(newPassword = newPassword))
-            }
-        }
-    }
 }

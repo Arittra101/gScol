@@ -101,19 +101,19 @@ fun String.toShortDate(): String {
     val year = parts[1]
 
     val shortMonth = when (month) {
-        "january"   -> "Jan"
-        "february"  -> "Feb"
-        "march"     -> "Mar"
-        "april"     -> "Apr"
-        "may"       -> "May"
-        "june"      -> "Jun"
-        "july"      -> "Jul"
-        "august"    -> "Aug"
+        "january" -> "Jan"
+        "february" -> "Feb"
+        "march" -> "Mar"
+        "april" -> "Apr"
+        "may" -> "May"
+        "june" -> "Jun"
+        "july" -> "Jul"
+        "august" -> "Aug"
         "september" -> "Sep"
-        "october"   -> "Oct"
-        "november"  -> "Nov"
-        "december"  -> "Dec"
-        else        -> month.take(3).replaceFirstChar { it.uppercase() }
+        "october" -> "Oct"
+        "november" -> "Nov"
+        "december" -> "Dec"
+        else -> month.take(3).replaceFirstChar { it.uppercase() }
     }
 
     val shortYear = if (year.length >= 2) year.takeLast(2) else year

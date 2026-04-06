@@ -2,7 +2,6 @@ package org.getscol.gscol.feature.auth.data.api_service
 
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
-import org.getscol.gscol.feature.auth.data.authdto.AuthPassResetResponseDto
 import org.getscol.gscol.feature.auth.domain.model.ForgotPasswordResponse
 import org.getscol.gscol.feature.auth.domain.model.LoginResponse
 import org.getscol.gscol.feature.auth.domain.model.OtpVerificationResponse
@@ -14,21 +13,20 @@ interface AuthApiService {
         phone: String,
         password: String,
         fullName: String
-    ): Result<RegistrationResponse, DataError.Remote>
+    ): Result<RegistrationResponse, DataError>
 
     suspend fun login(
         phoneNumber: String,
         password: String
-    ): Result<LoginResponse, DataError.Remote>
+    ): Result<LoginResponse, DataError>
 
-    suspend fun verifyOtp(otp: String): Result<OtpVerificationResponse, DataError.Remote>
+    suspend fun verifyOtp(otp: String): Result<OtpVerificationResponse, DataError>
 
-    suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote>
+    suspend fun resendOtp(): Result<ResendOtpResponse, DataError>
 
     suspend fun forgotPassword(
         phone: String,
         newPassword: String
-    ): Result<ForgotPasswordResponse, DataError.Remote>
+    ): Result<ForgotPasswordResponse, DataError>
 
-    suspend fun resetPassword(newPassword: String): Result<AuthPassResetResponseDto, DataError.Remote>
 }

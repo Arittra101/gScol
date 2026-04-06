@@ -14,14 +14,23 @@ class HomeRepositoryImpl(
     private val homeApiService: HomeApiService,
 ) : HomeRepository {
 
-    override suspend fun getHomeCoursesStream(isLoggedIn: Boolean): Flow<PagingData<Course>> {
+    override suspend fun getHomeCoursesStream(
+        isLoggedIn: Boolean,
+        isEligible: String?
+    ): Flow<PagingData<Course>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 4,
                 enablePlaceholders = false,
                 prefetchDistance = 10
             ),
-            pagingSourceFactory = { HomePagingSource(homeApiService, isLoggedIn) }
+            pagingSourceFactory = {
+                HomePagingSource(
+                    homeApiService,
+                    isLoggedIn,
+                    isEligible ?: "ELIGIBLE_ONLY"
+                )
+            }
         ).flow
     }
 }

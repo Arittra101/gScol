@@ -36,6 +36,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        //forcefully set the system light mood for my app
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = true  // dark icons on light background
+            isAppearanceLightNavigationBars = true
+        }
+
         setContent {
             val currentLogoutEvent by logoutEvent.collectAsState()
             ScolTheme {

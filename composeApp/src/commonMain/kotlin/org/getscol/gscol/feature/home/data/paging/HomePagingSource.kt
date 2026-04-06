@@ -12,7 +12,7 @@ import org.getscol.gscol.feature.home.domain.model.PaginationRequest
 class HomePagingSource(
     private val homeApiService: HomeApiService,
     private val isUserLogin: Boolean,
-    private val isEligible: String? = "ELIGIBLE_ONLY"
+    private val isEligible: String?
 ) : PagingSource<String, Course>() {
 
     override fun getRefreshKey(state: PagingState<String, Course>): String? = null

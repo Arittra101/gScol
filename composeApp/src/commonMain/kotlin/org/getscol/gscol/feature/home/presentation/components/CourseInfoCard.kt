@@ -127,23 +127,15 @@ fun CourseInfoCard(
                 }
 
                 IconButton(
-                    onClick = {
-                        action(
-                            HomeAction.AddToWishlist(
-                                courseId = courseId,
-                                isWishListed = isFavorite
-                            )
-                        )
-                    },
+                    onClick = { action(HomeAction.AddToWishlist(courseId = courseId, isWishListed = isFavorite)) },
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(16.dp)
                         .size(24.dp)
-                        .background(if (!isFavorite) Color.Transparent else Color.Red, CircleShape)
                 ) {
                     Icon(
                         favoriteIcon,
                         contentDescription = "Favorite",
-                        tint = Color.White,
+                        tint = if (isFavorite) Color.Red else Color.White
                     )
                 }
             }
@@ -204,7 +196,7 @@ fun CourseInfoCard(
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                color = colors.customBackground,
+                color = Color(0xFFF0F0F0),
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(

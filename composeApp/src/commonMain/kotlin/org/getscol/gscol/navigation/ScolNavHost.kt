@@ -5,11 +5,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.toRoute
+import kotlinx.serialization.json.Json
 import org.getscol.gscol.DesireScreen
 import org.getscol.gscol.auth.presentation.application.ApplicationScreen
 import org.getscol.gscol.auth.presentation.compare.CompareScreen
 import org.getscol.gscol.auth.presentation.consultant.ConsultantScreen
-import org.getscol.gscol.auth.presentation.profile.ProfileScreen
+import org.getscol.gscol.auth.presentation.profile.ProfileScreenRoute
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
@@ -21,11 +22,11 @@ import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.feature.home.presentation.HomeScreenRoot
-import org.getscol.gscol.feature.search.presentation.advance_search.AdvancedSearchScreenRoot
+import org.getscol.gscol.feature.home.presentation.InEligibleScreenRoute
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
-import org.getscol.gscol.feature.search.presentation.search_result.SearchResultsScreenRoot
+import org.getscol.gscol.feature.search.presentation.advance_search.AdvancedSearchScreenRoot
 import org.getscol.gscol.feature.search.presentation.search.SearchScreenRoot
-import kotlinx.serialization.json.Json
+import org.getscol.gscol.feature.search.presentation.search_result.SearchResultsScreenRoot
 
 @Composable
 fun ScolNavHost(
@@ -79,7 +80,7 @@ fun ScolNavHost(
             ApplicationScreen()
         }
         composableNoAnimation<Route.Profile> {
-            ProfileScreen()
+            ProfileScreenRoute(navigator = navigator)
         }
         composableNoAnimation<Route.Consultant> {
             ConsultantScreen()
@@ -117,6 +118,9 @@ fun ScolNavHost(
         composableNoAnimation<Route.WebViewRoute> { backStackEntry ->
             val args = backStackEntry.toRoute<Route.WebViewRoute>()
             InAppWebViewScreenRoot(title = args.title, url = args.url, navigator = navigator)
+        }
+        composableNoAnimation<Route.InEligibleScreen> {
+            InEligibleScreenRoute(navigator = navigator)
         }
     }
 }

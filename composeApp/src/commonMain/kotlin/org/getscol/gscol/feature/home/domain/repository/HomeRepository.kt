@@ -5,5 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import org.getscol.gscol.feature.home.domain.model.Course
 
 interface HomeRepository {
-    suspend fun getHomeCoursesStream(isLoggedIn: Boolean): Flow<PagingData<Course>>
+    suspend fun getHomeCoursesStream(
+        isLoggedIn: Boolean,
+        isEligible: String? = null
+    ): Flow<PagingData<Course>>
 }

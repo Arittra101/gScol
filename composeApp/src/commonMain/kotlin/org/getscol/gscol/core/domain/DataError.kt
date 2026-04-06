@@ -8,14 +8,7 @@ sealed interface DataError : Error {
         SERVER,
         SERIALIZATION,
         UNKNOWN,
-        REFRESH_TOKEN_EXPIRED,
-        UNAUTHORIZED,
-        FORBIDDEN,
-        NOT_FOUND
     }
 
-    enum class Local : DataError {
-        DISK_FULL,
-        UNKNOWN
-    }
+    data class RemoteMessage(val message: String?, val statusCode: Int?) : DataError
 }

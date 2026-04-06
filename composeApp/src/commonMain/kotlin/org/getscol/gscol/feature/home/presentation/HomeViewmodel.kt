@@ -24,7 +24,7 @@ class HomeViewmodel(private val homeRepository: HomeRepository, val session: Ses
         combine(session.isUserLoggedIn, session.academicFormSubmitTrigger) { isLoggedIn, _ ->
             isLoggedIn
         }.flatMapLatest { isLoggedIn ->
-            favoriteUpdates.value = emptyMap()
+           /* favoriteUpdates.value = emptyMap()*/
             homeRepository.getHomeCoursesStream(isLoggedIn)
         }.cachedIn(viewModelScope)
 
@@ -50,3 +50,23 @@ sealed interface HomeAction {
     data class AddToWishlist(val courseId: String, val isWishListed: Boolean) : HomeAction
     data class OnCourseClick(val courseId: String) : HomeAction
 }
+
+
+/*
+Soon we will remove this shit and move on to our own pagination wrapper :)
+2️⃣ What “lazy” means here
+
+Lazy = the transformation is applied only when each item is loaded and displayed.
+
+Timeline example:
+
+Time 0: Page 1 loaded with items 1-10
+PagingData.map { ... } runs for 1-10 → UI shows items
+Time 1: User scrolls → Page 2 loaded with items 11-20
+PagingData.map { ... } runs for 11-20 → UI shows new items
+Page 2 items are transformed only when they arrive
+Page 1 items were already transformed earlier
+You don’t need to recompute everything for every new page
+
+That’s why it’s called lazy transformation — done just in time for each page.
+*/

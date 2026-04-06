@@ -43,17 +43,20 @@ class AdvancedSearchViewModel(
             is Result.Success -> {
                 val countryOptions = result.data.countryOptions.map { DropdownOption(it.id, it.name) }
                 val courseOptions = result.data.programmeOptions.map { DropdownOption(it.id, it.name) }
-                _state.update { it.copy(countryOptions = countryOptions, courseOptions = courseOptions) }
+                _state.update { it.copy(countryOptions = countryOptions, courseOptions = courseOptions, showLoader = false) }
             }
-            is Result.Error -> { /* optional: show error state */ }
+            is Result.Error -> {
+                _state.update { it.copy(showLoader = false) }
+            }
         }
     }
 
     private suspend fun loadCities(countryId: String) {
+        _state.update { it.copy(showLoader = true) }
         when (val result = searchRepository.getCities(countryId)) {
             is Result.Success -> {
                 val cityOptions = result.data.map { DropdownOption(it.id, it.name) }
-                _state.update { it.copy(cityOptions = cityOptions) }
+                _state.update { it.copy(cityOptions = cityOptions, showLoader = false) }
             }
             is Result.Error -> _state.update { it.copy(cityOptions = emptyList()) }
         }
@@ -80,11 +83,12 @@ class AdvancedSearchViewModel(
             is AdvancedSearchAction.IntakeMonthSelected -> _state.update { s ->
                 val month = action.month.coerceIn(1, 12)
                 when {
-                    s.firstSelectedMonth == null -> s.copy(firstSelectedMonth = month, lastSelectedMonth = null)
-                    s.lastSelectedMonth == null -> s.copy(lastSelectedMonth = month)
-                    month < s.firstSelectedMonth -> s.copy(firstSelectedMonth = month, lastSelectedMonth = s.firstSelectedMonth)
-                    month > s.lastSelectedMonth -> s.copy(lastSelectedMonth = month)
-                    else -> s.copy(lastSelectedMonth = month)
+                    s.firstSelectedMonth == null ->
+                        s.copy(firstSelectedMonth = month, lastSelectedMonth = null)
+                    s.lastSelectedMonth != null ->
+                        s.copy(firstSelectedMonth = month, lastSelectedMonth = null)
+                    else ->
+                        s.copy(lastSelectedMonth = month)
                 }
             }
             is AdvancedSearchAction.TuitionRangeChange -> _state.update { it.copy(tuitionRangeMax = action.maxValue) }

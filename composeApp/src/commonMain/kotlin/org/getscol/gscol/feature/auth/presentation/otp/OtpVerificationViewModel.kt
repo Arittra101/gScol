@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.data.session.Session
-import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.auth.domain.repository.AuthRepository
 import org.getscol.gscol.feature.auth.domain.validation.AuthValidator
+import org.getscol.gscol.feature.auth.utils.toUiMessage
 
 class OtpVerificationViewModel(
     private val authRepository: AuthRepository,
@@ -130,28 +130,10 @@ class OtpVerificationViewModel(
                 }
 
                 is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        DataError.Remote.REQUEST_TIMEOUT ->
-                            "Request timeout. Please try again."
-
-                        DataError.Remote.NO_INTERNET ->
-                            "No internet connection. Please check your network."
-
-                        DataError.Remote.SERVER ->
-                            "Server error. Please try again later."
-
-                        DataError.Remote.SERIALIZATION ->
-                            "Invalid response from server."
-
-                        DataError.Remote.TOO_MANY_REQUESTS ->
-                            "Too many requests. Please try again later."
-
-                        else -> "Invalid OTP. Please try again."
-                    }
                     _state.update {
                         it.copy(
                             isVerifying = false,
-                            errorMessage = errorMessage
+                            errorMessage = result.error.toUiMessage()
                         )
                     }
                 }
@@ -181,31 +163,15 @@ class OtpVerificationViewModel(
                 }
 
                 is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        DataError.Remote.REQUEST_TIMEOUT ->
-                            "Request timeout. Please try again."
-
-                        DataError.Remote.NO_INTERNET ->
-                            "No internet connection. Please check your network."
-
-                        DataError.Remote.SERVER ->
-                            "Server error. Please try again later."
-
-                        DataError.Remote.TOO_MANY_REQUESTS ->
-                            "Too many requests. Please try again later."
-
-                        else -> "Failed to resend OTP. Please try again."
-                    }
                     print("get the error")
                     _state.update {
                         it.copy(
                             isResending = false,
-                            errorMessage = errorMessage,
+                            errorMessage = result.error.toUiMessage(),
                             resendingOtp = false
                         )
                     }
                     resendTimerJob?.cancel()
-
                 }
             }
         }

@@ -3,7 +3,6 @@ package org.getscol.gscol.feature.auth.data.repository
 import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.DataError
 import org.getscol.gscol.core.domain.Result
-import org.getscol.gscol.core.domain.asUnit
 import org.getscol.gscol.feature.auth.data.AuthTokenProvider
 import org.getscol.gscol.feature.auth.data.api_service.AuthApiService
 import org.getscol.gscol.feature.auth.domain.model.ForgotPasswordResponse
@@ -21,7 +20,7 @@ class AuthRepositoryImpl(
         phone: String,
         password: String,
         fullName: String
-    ): Result<RegistrationResponse, DataError.Remote> {
+    ): Result<RegistrationResponse, DataError> {
         return when (val result = authApiService.register(phone, password, fullName)) {
             is Result.Success -> {
                 authTokenProvider.saveAccessToken(accessToken = result.data.data.otpAccessToken)
@@ -34,7 +33,7 @@ class AuthRepositoryImpl(
     override suspend fun login(
         phoneNumber: String,
         password: String
-    ): Result<Unit, DataError.Remote> {
+    ): Result<Unit, DataError> {
         return when (val result = authApiService.login(phoneNumber, password)) {
             is Result.Success -> {
                 val resultData = result.data.data
@@ -43,7 +42,7 @@ class AuthRepositoryImpl(
                 authTokenProvider.saveTokens(accessToken = resultData?.accessToken, refreshToken = resultData?.refreshToken)
 
                 if(isUserFillUpAcademicForm) {
-                    session.incrementAcademicFormSubmitCount()
+                    session.triggerAcademicFormSubmission()
                 }
 
                 Result.Success(Unit)
@@ -53,7 +52,7 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun verifyOtp(otp: String): Result<Unit, DataError.Remote> {
+    override suspend fun verifyOtp(otp: String): Result<Unit, DataError> {
         return when (val result = authApiService.verifyOtp(otp)) {
             is Result.Success -> {
                 val resultData = result.data.data
@@ -61,7 +60,7 @@ class AuthRepositoryImpl(
 
                 authTokenProvider.saveTokens(accessToken = resultData?.accessToken, refreshToken = resultData?.refreshToken)
                 if(isUserFillUpAcademicForm) {
-                    session.incrementAcademicFormSubmitCount()
+                    session.triggerAcademicFormSubmission()
                 }
 
                 Result.Success(Unit)
@@ -70,7 +69,7 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun resendOtp(): Result<ResendOtpResponse, DataError.Remote> {
+    override suspend fun resendOtp(): Result<ResendOtpResponse, DataError> {
         return when (val result = authApiService.resendOtp()) {
             is Result.Success -> {
                 authTokenProvider.saveAccessToken(accessToken = result.data.data?.otpAccessToken)
@@ -80,7 +79,7 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun forgotPassword(phone: String, newPassword: String): Result<ForgotPasswordResponse, DataError.Remote> {
+    override suspend fun forgotPassword(phone: String, newPassword: String): Result<ForgotPasswordResponse, DataError> {
         return when (val result = authApiService.forgotPassword(phone, newPassword)) {
             is Result.Success -> {
                 authTokenProvider.saveAccessToken(accessToken = result.data.data?.otpAccessToken)
@@ -88,10 +87,6 @@ class AuthRepositoryImpl(
             }
             is Result.Error -> Result.Error(result.error)
         }
-    }
-
-    override suspend fun resetPassword(newPassword: String): Result<Unit, DataError.Remote> {
-        return authApiService.resetPassword(newPassword).asUnit()
     }
 
 }
