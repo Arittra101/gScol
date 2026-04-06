@@ -1,5 +1,6 @@
 package org.getscol.gscol.feature.course_details.presentation.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.getscol.gscol.theme.appColors
+import org.jetbrains.compose.resources.painterResource
+import scol.composeapp.generated.resources.Res
+import scol.composeapp.generated.resources.map_placeholder
 
 @Composable
 fun LocationMapCard(
@@ -53,6 +57,12 @@ fun LocationMapCard(
                 )
             }
             if (mapImageUrl.isNullOrBlank()) {
+                Image(
+                    painter = painterResource(Res.drawable.map_placeholder),
+                    contentDescription = "Map placeholder",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                )
                 Icon(
                     imageVector = Icons.Default.LocationOn,
                     contentDescription = "Location",
