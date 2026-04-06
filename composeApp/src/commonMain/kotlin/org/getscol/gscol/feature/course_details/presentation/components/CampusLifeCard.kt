@@ -59,7 +59,7 @@ fun CampusLifeCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(18f / 12f)
+                .aspectRatio(16f / 9f)
                 .background(colors.customSecondary),
         ) {
             if (thumbnail != null) {
@@ -119,7 +119,7 @@ fun CampusLifeCard(
 private fun youtubeThumbnailFromUrl(url: String): String? {
     // Supports typical YouTube URL forms: https://www.youtube.com/watch?v=ID, https://youtu.be/ID, /embed/ID
     val id = extractYoutubeId(url) ?: return null
-    return "https://img.youtube.com/vi/$id/hqdefault.jpg"
+    return "https://img.youtube.com/vi/$id/mqdefault.jpg"
 }
 
 private fun extractYoutubeId(url: String): String? {

@@ -89,7 +89,7 @@ private fun dummyCourseDetailsResponseJson(courseId: String): String = """
       "campusLife": {
         "media": {
           "videoUrl": [
-            "https://www.youtube.com/watch?v=r7R8ewU1Wqc",
+            "https://www.youtube.com/watch?v=SOxqUyBCo8E",
             "https://www.youtube.com/watch?v=r7R8ewU1Wqc"
           ]
         }
