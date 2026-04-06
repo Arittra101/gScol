@@ -18,7 +18,6 @@ import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
 import org.getscol.gscol.feature.search.domain.repository.SearchRepository
-import kotlin.collections.plus
 
 data class SearchResultsParams(
     val searchText: String,
@@ -44,18 +43,18 @@ class SearchResultsViewModel(
 
 
     val baseCourses: Flow<PagingData<Course>> = params.flatMapLatest { p ->
-                if (p == null) flow<PagingData<Course>> { }
-                else session.isUserLoggedIn
-                    .distinctUntilChanged()
-                    .flatMapLatest { isLoggedIn ->
-                        searchRepository.getSearchResultsStream(
-                            searchText = p.searchText,
-                            listType = p.listType,
-                            isLoggedIn = isLoggedIn,
-                            advancedParams = p.advancedParams
-                        )
-                    }
-            }.cachedIn(viewModelScope)
+        if (p == null) flow<PagingData<Course>> { }
+        else session.isUserLoggedIn
+            .distinctUntilChanged()
+            .flatMapLatest { isLoggedIn ->
+                searchRepository.getSearchResultsStream(
+                    searchText = p.searchText,
+                    listType = p.listType,
+                    isLoggedIn = isLoggedIn,
+                    advancedParams = p.advancedParams
+                )
+            }
+    }.cachedIn(viewModelScope)
 
     val courses: Flow<PagingData<Course>> =
         combine(baseCourses, favoriteUpdates) { pagingData, favourite ->

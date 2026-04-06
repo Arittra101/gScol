@@ -24,7 +24,7 @@ class HomeViewmodel(private val homeRepository: HomeRepository, val session: Ses
         combine(session.isUserLoggedIn, session.academicFormSubmitTrigger) { isLoggedIn, _ ->
             isLoggedIn
         }.flatMapLatest { isLoggedIn ->
-           /* favoriteUpdates.value = emptyMap()*/
+            /* favoriteUpdates.value = emptyMap()*/
             homeRepository.getHomeCoursesStream(isLoggedIn)
         }.cachedIn(viewModelScope)
 
@@ -40,7 +40,6 @@ class HomeViewmodel(private val homeRepository: HomeRepository, val session: Ses
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.AddToWishlist -> favoriteUpdates.update { current -> current + ((action.courseId to !action.isWishListed)) }
-            is HomeAction.OnCourseClick -> {}
         }
     }
 
@@ -48,7 +47,6 @@ class HomeViewmodel(private val homeRepository: HomeRepository, val session: Ses
 
 sealed interface HomeAction {
     data class AddToWishlist(val courseId: String, val isWishListed: Boolean) : HomeAction
-    data class OnCourseClick(val courseId: String) : HomeAction
 }
 
 
