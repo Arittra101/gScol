@@ -174,43 +174,30 @@ private fun IntakeDatesDto.toDomain(): IntakeDates {
     return IntakeDates(
         hasInfo = hasInfo ?: false,
         infoKey = infoKey,
-        intakeRows = intakes.toIntakeRows(),
+        intakes = intakes.toIntakeList(),
     )
 }
 
-private val INTAKE_ARRAY_SEASON_LABELS = listOf("Fall", "Spring", "Summer")
-
-private fun JsonElement?.toIntakeRows(): List<Pair<String, String>> {
+private fun JsonElement?.toIntakeList(): List<String> {
     if (this == null) return emptyList()
     return when (this) {
         is JsonArray -> {
-            val values = this.mapNotNull { el ->
+            this.mapNotNull { el ->
                 val prim = el as? JsonPrimitive ?: return@mapNotNull null
                 prim.content.trim().takeIf { it.isNotEmpty() }
             }
-            if (values.isEmpty()) emptyList()
-            else {
-                values.mapIndexed { index, value ->
-                    val label = INTAKE_ARRAY_SEASON_LABELS.getOrNull(index)
-                        ?: "Intake ${index + 1}"
-                    label to value
-                }
-            }
         }
 
-        is JsonObject -> this.entries.mapNotNull { (key, value) ->
-            val prim = value as? JsonPrimitive ?: return@mapNotNull null
-            val v = prim.content.trim()
-            if (v.isBlank()) return@mapNotNull null
-            val label = key.replaceFirstChar { ch ->
-                if (ch.isLowerCase()) ch.titlecase() else ch.toString()
+        is JsonObject -> {
+            this.entries.mapNotNull { (_, value) ->
+                val prim = value as? JsonPrimitive ?: return@mapNotNull null
+                prim.content.trim().takeIf { it.isNotEmpty() }
             }
-            label to v
         }
 
         is JsonPrimitive -> {
             val text = this.content.trim()
-            if (text.isBlank()) emptyList() else listOf(text to "")
+            if (text.isBlank()) emptyList() else listOf(text)
         }
     }
 }

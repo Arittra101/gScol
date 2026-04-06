@@ -253,7 +253,7 @@ fun CourseDetailsScreen(
                     details.academicRequirements?.requirements?.degreeRequirements.orEmpty()
                         .forEach { req ->
                             KeyValueRow(
-                                label = req.degreeName.orEmpty(),
+                                label = req.degreeName.orEmpty().plus(" (" + req.label + ")"),
                                 value = req.minValue.orEmpty(),
                             )
                         }
@@ -305,17 +305,6 @@ fun CourseDetailsScreen(
                     details.feesAndScholarships?.items?.applicationFee?.let { fee ->
                         KeyValueRow(label = "Application Fee", value = fee)
                     }
-                    details.feesAndScholarships?.items?.scholarshipDetails?.let { s ->
-                        s.scholarshipName?.let { KeyValueRow(label = "Scholarship", value = it) }
-                        val amountLine = listOfNotNull(
-                            s.scholarshipAmount?.takeIf { a -> a.isNotBlank() },
-                            s.currency?.takeIf { c -> c.isNotBlank() },
-                            s.scholarshipType?.takeIf { t -> t.isNotBlank() },
-                        ).joinToString(" · ")
-                        if (amountLine.isNotBlank()) {
-                            KeyValueRow(label = "Scholarship details", value = amountLine)
-                        }
-                    }
                     if (details.feesAndScholarships?.items.hasScholarshipInfo()) {
                         KeyValueRow(
                             label = "Scholarships",
@@ -341,9 +330,10 @@ fun CourseDetailsScreen(
                             }
                         },
                     )
-                    details.intakeDates?.intakeRows.orEmpty().forEach { (label, value) ->
-                        KeyValueRow(label = label, value = value)
-                    }
+                    KeyValueRow(
+                        "Intakes",
+                        details.intakeDates?.intakes.orEmpty().joinToString(", ")
+                    )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
                 PrimaryButton(
@@ -500,7 +490,8 @@ private fun LocationSection(
     SectionHeader(title = "Location")
     Spacer(modifier = Modifier.height(12.dp))
     val coords = location?.coordinates
-    val link = coords?.link?.trim()?.takeIf { it.isNotEmpty() }?.let { normalizeCoordinatesLink(it) }
+    val link =
+        coords?.link?.trim()?.takeIf { it.isNotEmpty() }?.let { normalizeCoordinatesLink(it) }
     val parsedFromLink = remember(link) { link?.let { parseLatLngFromMapsUrl(it) } }
     val latitude = coords?.latitude ?: parsedFromLink?.first
     val longitude = coords?.longitude ?: parsedFromLink?.second

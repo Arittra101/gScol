@@ -124,8 +124,7 @@ data class TuitionFees(
 data class IntakeDates(
     val hasInfo: Boolean = false,
     val infoKey: String? = null,
-    /** Label → value rows for the intake section (from array or object payloads). */
-    val intakeRows: List<Pair<String, String>> = emptyList(),
+    val intakes: List<String> = emptyList(),
 )
 
 data class InfoBlock(

@@ -105,10 +105,7 @@ val sampleCourseDetails = CourseDetails(
     intakeDates = IntakeDates(
         hasInfo = true,
         infoKey = "intakeDatesMetaData",
-        intakeRows = listOf(
-            "Fall" to "September",
-            "Spring" to "March",
-        ),
+        intakes = listOf("September", "March"),
     ),
     meta = listOf(
         InfoMetaData(
