@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.getscol.gscol.BuildKonfig
+import org.getscol.gscol.core.helper.iso4217CurrencySymbol
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.components.KeyValueRow
 import org.getscol.gscol.core.presentation.components.PrimaryButton
@@ -287,13 +288,15 @@ fun CourseDetailsScreen(
                     )
                     details.feesAndScholarships?.items?.tuitionFees?.let { tf ->
                         val amount = tf.amount.orEmpty()
-                        val currency = tf.currency.orEmpty()
+                        val currencyCode = tf.currency.orEmpty()
+                        val currencyLabel =
+                            currencyCode.ifBlank { null }?.let { iso4217CurrencySymbol(it) }
                         val frequency = tf.frequency.orEmpty()
                         KeyValueRow(
                             label = "Tuition Fees",
                             value = listOfNotNull(
                                 listOfNotNull(
-                                    currency.ifBlank { null },
+                                    currencyLabel,
                                     amount.ifBlank { null }).joinToString(" ").ifBlank { null },
                                 frequency.ifBlank { null },
                             ).joinToString(" / "),

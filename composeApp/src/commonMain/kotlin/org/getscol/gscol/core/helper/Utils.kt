@@ -30,16 +30,68 @@ inline fun <reified T : Route> NavGraphBuilder.composableNoAnimation(
     )
 }
 
-fun String.toDollar(): String {
+/**
+ * Maps ISO 4217 codes (e.g. "USD") to a display symbol (e.g. "$").
+ * Unknown or non-3-letter codes are returned unchanged (trimmed).
+ */
+fun iso4217CurrencySymbol(code: String): String {
+    val trimmed = code.trim()
+    if (trimmed.isEmpty()) return ""
+    val upper = trimmed.uppercase()
+    if (upper.length != 3 || !upper.all { it.isLetter() }) return trimmed
+    return Iso4217CurrencySymbols[upper] ?: upper
+}
+
+private val Iso4217CurrencySymbols = mapOf(
+    "USD" to "$",
+    "EUR" to "€",
+    "GBP" to "£",
+    "JPY" to "¥",
+    "AUD" to "A$",
+    "CAD" to "C$",
+    "CHF" to "CHF",
+    "SGD" to "S$",
+    "KRW" to "₩",
+    "CNY" to "¥",
+    "HKD" to "HK$",
+    "NZD" to "NZ$",
+    "INR" to "₹",
+    "SEK" to "kr",
+    "NOK" to "kr",
+    "DKK" to "kr",
+    "PLN" to "zł",
+    "THB" to "฿",
+    "MYR" to "RM",
+    "IDR" to "Rp",
+    "PHP" to "₱",
+    "VND" to "₫",
+    "TWD" to "NT$",
+    "ILS" to "₪",
+    "AED" to "د.إ",
+    "SAR" to "﷼",
+    "ZAR" to "R",
+    "MXN" to "MX$",
+    "BRL" to "R$",
+    "TRY" to "₺",
+)
+
+fun String.toAbbreviatedTuitionAmount(): String {
     val amount = this.toDoubleOrNull() ?: 0.0
     val result = amount / 1000
-
     val rounded = (result * 10).roundToInt()
     val wholePart = rounded / 10
     val fractionalPart = rounded % 10
-
-    return "$$wholePart.$fractionalPart"
+    return "$wholePart.$fractionalPart"
 }
+
+/** Abbreviated tuition (÷1000, one decimal) with the correct currency symbol for [currencyCode]. */
+fun formatTuitionFeeAbbreviated(amount: Int, currencyCode: String): String {
+    val symbol = iso4217CurrencySymbol(currencyCode)
+    val body = amount.toString().toAbbreviatedTuitionAmount()
+    return if (symbol.isEmpty()) body else symbol + body
+}
+
+fun String.toDollar(): String = "$" + this.toAbbreviatedTuitionAmount()
 
 fun String.toShortDate(): String {
     val parts = this.trim().split(" ")
