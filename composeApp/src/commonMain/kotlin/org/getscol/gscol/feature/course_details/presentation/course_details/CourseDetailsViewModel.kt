@@ -12,6 +12,7 @@ import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.course_details.domain.repository.CourseDetailsRepository
 
 class CourseDetailsViewModel(
+    private val courseId: String,
     private val repository: CourseDetailsRepository,
 ) : ViewModel() {
 
@@ -21,7 +22,7 @@ class CourseDetailsViewModel(
     private val _uiEffect = MutableSharedFlow<CourseDetailsUiEffect>(replay = 0)
     val uiEffect = _uiEffect.asSharedFlow()
 
-    fun setCourseId(courseId: String) {
+    init {
         loadCourseDetails(courseId)
     }
 
