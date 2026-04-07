@@ -62,6 +62,7 @@ import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.math.roundToInt
 
 private val DEFAULT_TAB_TITLES = listOf(
@@ -77,11 +78,11 @@ private val DEFAULT_TAB_TITLES = listOf(
 fun CourseDetailsScreenRoot(
     courseId: String,
     navigator: Navigator,
-    viewModel: CourseDetailsViewModel = koinViewModel(key = "CourseDetails-$courseId"),
+    viewModel: CourseDetailsViewModel = koinViewModel(
+        key = "CourseDetails-$courseId",
+        parameters = { parametersOf(courseId) }
+    ),
 ) {
-    LaunchedEffect(courseId) {
-        viewModel.setCourseId(courseId)
-    }
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
             when (effect) {
@@ -102,7 +103,7 @@ fun CourseDetailsScreenRoot(
         onCampusLifeItemClick = { item ->
             when {
                 !item.videoUrl.isNullOrBlank() ->
-                    navigator.navigateToRoute(
+                    navigator.navigateTo(
                         Route.CourseVideoPlayer(
                             title = item.title,
                             videoUrl = item.videoUrl
