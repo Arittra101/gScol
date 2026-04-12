@@ -1,26 +1,30 @@
-package org.getscol.gscol.auth.presentation.application
+package org.getscol.gscol.feature.application
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import org.getscol.gscol.core.presentation.components.rememberFilePicker
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ApplicationScreen() {
+fun ApplicationScreen(viewmodel: ApplicationViewmodel = koinViewModel()) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Application Screen",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+
+        val pickFile = rememberFilePicker("application/pdf") { pickedFile ->
+//            viewModel.uploadDocument(file.bytes, file.name)
+            viewmodel.uploadPdf(pickedFile)
+//            println("here==>  ${file.fileName}")
+        }
+
+        Button(onClick = pickFile) {
+            Text("Attach Document")
+        }
     }
 }

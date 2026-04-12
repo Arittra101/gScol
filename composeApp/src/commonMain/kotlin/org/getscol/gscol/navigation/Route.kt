@@ -58,4 +58,7 @@ sealed interface Route {
 
     @Serializable
     object InEligibleScreen : Route
+
+    @Serializable
+    object UploadScreen : Route
 }

@@ -26,13 +26,16 @@ inline fun <T, E : Err> Result<T, E>.onSuccess(onAction: () -> Unit): Result<T, 
     }
 }
 
-fun <T, E : Err> Result<T, E>.toData(): AuthTokenResponse? {
+fun <T, E : Err> Result<T, E>.toData(): T? {
     return when (this) {
-        is Result.Success -> data as? AuthTokenResponse
+        is Result.Success -> data
         is Result.Error -> null
     }
 }
 
+fun <T, E : DataError> checkSuccessResponse(result: Result<T, E>): Boolean {
+    return result is Result.Success
+}
 
 inline fun <T, E : Err> Result<T, E>.onError(onAction: () -> Unit): Result<T, E> {
     return when (this) {

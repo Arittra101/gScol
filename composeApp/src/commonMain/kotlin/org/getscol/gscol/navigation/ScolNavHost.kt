@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.toRoute
 import kotlinx.serialization.json.Json
 import org.getscol.gscol.DesireScreen
-import org.getscol.gscol.auth.presentation.application.ApplicationScreen
+import org.getscol.gscol.feature.application.ApplicationScreen
 import org.getscol.gscol.auth.presentation.compare.CompareScreen
 import org.getscol.gscol.auth.presentation.consultant.ConsultantScreen
 import org.getscol.gscol.auth.presentation.profile.ProfileScreenRoute
@@ -104,6 +104,9 @@ fun ScolNavHost(
         }
         composableNoAnimation<Route.AcademicForm> {
             AcademicFormRoute(navigator)
+        }
+        composableNoAnimation<Route.InEligibleScreen> {
+            InEligibleScreenRoute(navigator = navigator)
         }
         composableNoAnimation<Route.InEligibleScreen> {
             InEligibleScreenRoute(navigator = navigator)
