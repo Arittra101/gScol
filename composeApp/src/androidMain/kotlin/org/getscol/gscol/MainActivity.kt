@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.utils.setContext
 import org.getscol.gscol.navigation.LogoutEventManager
 import org.getscol.gscol.navigation.NavigationAction
 import org.getscol.gscol.theme.ScolTheme
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
+        setContext(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         lifecycleScope.launch {
