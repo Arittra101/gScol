@@ -54,6 +54,19 @@ sealed interface Route {
     object AcademicForm : Route
 
     @Serializable
+    data class CourseDetails(val courseId: String) : Route
+
+    @Serializable
+    data class CourseVideoPlayer(val title: String, val videoUrl: String) : Route
+
+    @Serializable
+    data class WebViewRoute(val title: String, val url: String) : Route
+
+//    @Serializable
+//    data class SettingsRoute(val userId: Int) : Route
+
+
+    @Serializable
     object Splash : Route
 
     @Serializable

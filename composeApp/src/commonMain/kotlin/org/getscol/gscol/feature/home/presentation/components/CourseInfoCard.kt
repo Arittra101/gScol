@@ -45,7 +45,7 @@ import scol.composeapp.generated.resources.tution_fee_icon
 
 @Composable
 fun CourseInfoCard(
-    courseId : String,
+    courseId: String,
     courseName: String,
     city: String,
     country: String,
@@ -61,6 +61,7 @@ fun CourseInfoCard(
     ieltsSingleBand: String,
     isFavorite: Boolean,
     action: (HomeAction) -> Unit,
+    onCourseClick: () -> Unit,
 ) {
     val colors = appColors()
     val favoriteIcon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
@@ -127,7 +128,14 @@ fun CourseInfoCard(
                 }
 
                 IconButton(
-                    onClick = { action(HomeAction.AddToWishlist(courseId = courseId, isWishListed = isFavorite)) },
+                    onClick = {
+                        action(
+                            HomeAction.AddToWishlist(
+                                courseId = courseId,
+                                isWishListed = isFavorite
+                            )
+                        )
+                    },
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(16.dp)
                         .size(24.dp)
@@ -220,7 +228,7 @@ fun CourseInfoCard(
                 }
 
                 Button(
-                    onClick = {},
+                    onClick = onCourseClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.customPrimary.copy(alpha = 0.15f)
                     ),

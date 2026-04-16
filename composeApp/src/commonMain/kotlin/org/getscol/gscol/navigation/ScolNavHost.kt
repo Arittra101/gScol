@@ -14,6 +14,8 @@ import org.getscol.gscol.auth.presentation.profile.ProfileScreenRoute
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
+import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
+import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
 import org.getscol.gscol.feature.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.feature.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
@@ -104,6 +106,18 @@ fun ScolNavHost(
         }
         composableNoAnimation<Route.AcademicForm> {
             AcademicFormRoute(navigator)
+        }
+        composableNoAnimation<Route.CourseDetails> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.CourseDetails>()
+            CourseDetailsScreenRoot(courseId = args.courseId, navigator = navigator)
+        }
+        composableNoAnimation<Route.CourseVideoPlayer> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.CourseVideoPlayer>()
+            InAppWebViewScreenRoot(title = args.title, url = args.videoUrl, navigator = navigator)
+        }
+        composableNoAnimation<Route.WebViewRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.WebViewRoute>()
+            InAppWebViewScreenRoot(title = args.title, url = args.url, navigator = navigator)
         }
         composableNoAnimation<Route.InEligibleScreen> {
             InEligibleScreenRoute(navigator = navigator)
