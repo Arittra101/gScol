@@ -20,6 +20,9 @@ sealed interface Route {
     object Profile : Route
 
     @Serializable
+    object EditProfile : Route
+
+    @Serializable
     object Login : Route
 
     @Serializable

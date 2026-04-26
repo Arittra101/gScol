@@ -16,6 +16,7 @@ import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
 import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
 import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
+import org.getscol.gscol.feature.profile.presentation.edit_profile.EditProfileScreenRoute
 import org.getscol.gscol.feature.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.feature.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
@@ -81,6 +82,9 @@ fun ScolNavHost(
         }
         composableNoAnimation<Route.Profile> {
             ProfileScreenRoute(navigator = navigator)
+        }
+        composableNoAnimation<Route.EditProfile> {
+            EditProfileScreenRoute(navigator = navigator)
         }
         composableNoAnimation<Route.Consultant> {
             ConsultantScreen()

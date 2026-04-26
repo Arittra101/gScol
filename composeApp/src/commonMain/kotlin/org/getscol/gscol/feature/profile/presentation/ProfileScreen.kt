@@ -116,7 +116,7 @@ fun ProfileScreen(
             ProfileHeader(
                 userName = userName,
                 joinYear = joinYear,
-                onEditInformation = {}
+                onEditInformation = { navigator?.navigateTo(Route.EditProfile) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
