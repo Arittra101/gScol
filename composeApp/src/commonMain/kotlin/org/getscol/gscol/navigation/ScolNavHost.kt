@@ -15,7 +15,7 @@ import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.core.helper.fromNavJson
 import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
-import org.getscol.gscol.feature.application.ApplicationScreenDemo
+import org.getscol.gscol.feature.application.ApplicationDetailsScreen
 import org.getscol.gscol.feature.application.presentation.application_screen.ApplicationListScreenRoute
 import org.getscol.gscol.feature.application.presentation.application_screen.ApplicationListViewmodel
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ApplicationStatusScreenRoute
@@ -158,7 +158,7 @@ fun ScolNavHost(
         composableNoAnimation<Route.Application> {
             val args = it.toRoute<Route.Application>()
             val applicationId = args.applicationId
-            ApplicationScreenDemo(applicationId)
+            ApplicationDetailsScreen(navigator, applicationId)
         }
     }
 }

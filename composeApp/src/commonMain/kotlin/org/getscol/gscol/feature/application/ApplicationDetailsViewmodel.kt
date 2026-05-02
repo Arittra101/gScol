@@ -7,8 +7,13 @@ import kotlinx.coroutines.launch
 import org.getscol.gscol.core.feature_components.upload.PdfUploader
 import org.getscol.gscol.core.feature_components.upload.domain.model.UploadPdfModel
 import org.getscol.gscol.core.presentation.components.PickedFile
+import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 
-class ApplicationDemoViewmodel(private val pdfUploader: PdfUploader) : ViewModel() {
+class ApplicationDetailsViewmodel(
+    private val applicationId: String,
+    private val applicationRepository: ApplicationRepository,
+    private val pdfUploader: PdfUploader
+) : ViewModel() {
 
     private var uploadJob: Job? = null
 

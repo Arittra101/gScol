@@ -18,5 +18,6 @@ val applicationModule = module {
     viewModel { ApplicationListViewmodel(get()) }
     viewModel { params -> ApplicationFormViewmodel(courseDetails = params.get(), get()) }
     viewModel { params -> ApplicationStatusViewmodel(applicationId = params.get(), get()) }
+    viewModel { params -> ApplicationDetailsViewmodel(applicationId = params.get(), get(), get()) }
 }
 

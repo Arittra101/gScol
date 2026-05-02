@@ -8,10 +8,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.getscol.gscol.core.presentation.components.rememberFilePicker
+import org.getscol.gscol.navigation.Navigator
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ApplicationScreenDemo(applicationId: String, viewmodel: ApplicationDemoViewmodel = koinViewModel()) {
+fun ApplicationDetailsScreen(
+    navigator: Navigator,
+    applicationId: String,
+    viewmodel: ApplicationDetailsViewmodel = koinViewModel(
+        key = "ApplicationDetails-$applicationId",
+        parameters = { parametersOf(applicationId) })
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
