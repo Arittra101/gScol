@@ -20,12 +20,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -51,10 +55,15 @@ fun StepProgressBar(
 
     val scrollState = rememberScrollState()
 
+    val itemOffsets = remember { mutableStateMapOf<Int, Int>() }
+    val extraScrollOffset = 0
+
     LaunchedEffect(steps) {
         val activeIndex = steps.indexOfFirst { it.state == StageState.CURRENT }
         if (activeIndex > 2) {
-            scrollState.animateScrollTo(activeIndex * 80)
+            itemOffsets[activeIndex]?.let { offset ->
+                scrollState.animateScrollTo(offset + extraScrollOffset)
+            }
         }
     }
 
@@ -91,8 +100,10 @@ fun StepProgressBar(
                     steps.forEachIndexed { index, step ->
                         StepCircle(
                             state = step.state ?: StageState.UPCOMING,
-                            size = stepSize
-                        )
+                            size = stepSize,
+                            modifier = Modifier.onGloballyPositioned { coordinates ->
+                                itemOffsets[index] = coordinates.positionInParent().x.toInt()
+                            })
                         if (index < steps.lastIndex) {
                             StepConnector(
                                 fromState = step.state ?: StageState.UPCOMING,
@@ -108,12 +119,12 @@ fun StepProgressBar(
 }
 
 @Composable
-private fun StepCircle(state: StageState, size: Dp) {
+private fun StepCircle(state: StageState, size: Dp, modifier: Modifier = Modifier) {
     when (state) {
         StageState.COMPLETED -> {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
+                modifier = modifier
                     .size(size)
                     .clip(CircleShape)
                     .background(GreenCompleted)
@@ -130,7 +141,7 @@ private fun StepCircle(state: StageState, size: Dp) {
         StageState.CURRENT -> {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
+                modifier = modifier
                     .size(size)
                     .drawWithContent {
                         // Draw circles first (behind children)
@@ -158,7 +169,7 @@ private fun StepCircle(state: StageState, size: Dp) {
         StageState.UPCOMING -> {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier
+                modifier = modifier
                     .size(size)
                     .drawWithContent {
                         // Draw circles first (behind children)
@@ -185,7 +196,7 @@ private fun StepCircle(state: StageState, size: Dp) {
 
         StageState.UNKNOWN -> {
             Box(
-                modifier = Modifier
+                modifier = modifier
                     .size(size)
                     .clip(CircleShape)
                     .background(GrayPending)
