@@ -102,7 +102,7 @@ fun CourseOverviewCard(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             // Row: ranking, info icon, dot, university name
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -136,11 +136,12 @@ fun CourseOverviewCard(
                             )
                         }
                     }
-                    Text(
-                        text = "•",
-                        fontSize = 16.sp,
-                        color = colors.customSecondaryText,
-                        modifier = Modifier.padding(horizontal = 2.dp),
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 2.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(colors.customSecondaryText)
+                            .size(6.dp)
                     )
                 }
                 Text(
@@ -160,7 +161,7 @@ fun CourseOverviewCard(
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 tags.forEach { tag ->
                     val isLocation = tag.type.equals("location", ignoreCase = true)
