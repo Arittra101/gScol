@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -37,7 +36,6 @@ import org.getscol.gscol.feature.application.presentation.application_status_tra
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.GrayPending
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.GreenActive
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.GreenCompleted
-import org.getscol.gscol.feature.application.presentation.application_status_tracker.GreyDarkInactive
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.GreyLightInactive
 
 @Composable
