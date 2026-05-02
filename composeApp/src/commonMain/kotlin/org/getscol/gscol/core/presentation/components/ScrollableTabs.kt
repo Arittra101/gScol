@@ -1,5 +1,6 @@
 package org.getscol.gscol.core.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -37,11 +38,15 @@ fun ScrollableTabs(
             Surface(
                 modifier = Modifier.clickable { onTabSelected(index) },
                 shape = RoundedCornerShape(20.dp),
-                color = if (selected) colors.customPrimary else colors.customSecondary,
+                border = BorderStroke(
+                    1.dp,
+                    if (selected) colors.customPrimary else colors.customSecondary
+                ),
+                color = if (selected) colors.customPrimary else colors.customSurface,
             ) {
                 Text(
                     text = title,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = if (selected) Color.White else colors.customPrimaryText,
