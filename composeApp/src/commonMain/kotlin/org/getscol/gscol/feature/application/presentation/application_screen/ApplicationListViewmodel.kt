@@ -37,10 +37,16 @@ class ApplicationListViewmodel(private val repository: ApplicationRepository) : 
                 .collect { result ->
                     when (result) {
                         is Result.Success -> {
+                            if (result.data.applications.isEmpty()) {
+                                _applicationListUiState.value = ApplicationListUiState(showEmptyView = true, isLoading = false)
+                                return@collect
+                            }
+
                             _applicationListUiState.value = ApplicationListUiState(
                                 isLoading = false,
                                 isRefreshing = false,
-                                applications = result.data.applications
+                                applications = result.data.applications,
+                                showEmptyView = false
                             )
                         }
 
@@ -48,6 +54,7 @@ class ApplicationListViewmodel(private val repository: ApplicationRepository) : 
                             _applicationListUiState.value = ApplicationListUiState(
                                 isLoading = false,
                                 isRefreshing = false,
+                                showEmptyView = true
                             )
                         }
                     }
@@ -80,7 +87,8 @@ class ApplicationListViewmodel(private val repository: ApplicationRepository) : 
 data class ApplicationListUiState(
     val applications: List<ApplicationInfo>? = null,
     val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    val showEmptyView: Boolean = false
 )
 
 sealed interface ApplicationListUiEffect {

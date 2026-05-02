@@ -65,6 +65,8 @@ fun ApplicationListScreenRoute(
         title = "Applications",
         isTopLevelScreen = true,
         showBackButton = false,
+        isEmpty = state.showEmptyView,
+        emptyMessage = "You have no active university applications.",
         onBackPress = { navigator.navigateBack() }) {
         ApplicationTrackerContent(
             state.applications.orEmpty(),

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.getscol.gscol.core.helper.ScolDefaultTopBar
+import org.getscol.gscol.core.presentation.components.EmptyView
 import org.getscol.gscol.theme.appColors
 
 @Composable
@@ -24,6 +25,8 @@ fun BaseScreen(
     onBackPress: (() -> Unit)? = null,
     topBar: @Composable (() -> Unit)? = null,
     showLoader: Boolean? = false,
+    isEmpty: Boolean = false,
+    emptyMessage: String = "No data available",
     content: @Composable ((PaddingValues) -> Unit),
 ) {
     Scaffold(
@@ -49,8 +52,13 @@ fun BaseScreen(
                 .then(modifier)
         )
         {
-            if (showLoader == true) LoadingDialog()
-            content(PaddingValues())   /*padding value profile padding.calculateBottomPadding*/
+            if (showLoader == true) {
+                LoadingDialog()
+            } else if (isEmpty) {
+                EmptyView(message = emptyMessage)
+            } else {
+                content(PaddingValues())
+            }
         }
     }
 }
