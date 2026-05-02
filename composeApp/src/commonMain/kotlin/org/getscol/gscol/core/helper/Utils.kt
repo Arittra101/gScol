@@ -6,6 +6,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import kotlinx.serialization.json.Json
 import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.platformEnterTransition
 import org.getscol.gscol.platformExitTransition
@@ -121,5 +122,26 @@ fun String.toShortDate(): String {
     return "$shortMonth$shortYear"
 }
 
+fun String.toMonthNumber(): Int? {
+    return when (this.trim().lowercase()) {
+        "january" -> 1
+        "february" -> 2
+        "march" -> 3
+        "april" -> 4
+        "may" -> 5
+        "june" -> 6
+        "july" -> 7
+        "august" -> 8
+        "september" -> 9
+        "october" -> 10
+        "november" -> 11
+        "december" -> 12
+        else -> null
+    }
+}
+
 fun Boolean?.orFalse() = this ?: false
 fun Double?.toStringOrEmpty(): String = this?.toString() ?: ""
+
+inline fun <reified T> T.toNavJson(): String = Json.encodeToString(this)
+inline fun <reified T> String.fromNavJson(): T = Json.decodeFromString(this)

@@ -1,4 +1,5 @@
 [versions]
+accompanistPlaceholderMaterial = "0.36.0"
 agp = "8.11.2"
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -26,6 +27,7 @@ datastore = "1.2.0"
 uiBackhandler = "1.9.3"
 
 [libraries]
+accompanist-placeholder-material = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanistPlaceholderMaterial" }
 coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coilCompose" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

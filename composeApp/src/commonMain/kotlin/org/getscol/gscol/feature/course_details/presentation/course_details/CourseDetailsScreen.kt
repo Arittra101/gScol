@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.getscol.gscol.BuildKonfig
 import org.getscol.gscol.core.helper.iso4217CurrencySymbol
+import org.getscol.gscol.core.helper.toNavJson
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.components.KeyValueRow
 import org.getscol.gscol.core.presentation.components.PrimaryButton
@@ -83,18 +84,19 @@ fun CourseDetailsScreenRoot(
         parameters = { parametersOf(courseId) }
     ),
 ) {
+    val state by viewModel.state.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
             when (effect) {
-                CourseDetailsUiEffect.NavigateBack -> navigator.navigateBack()
-                is CourseDetailsUiEffect.ApplyNow -> {
-                    // TODO: Navigate to application flow when ready
-                    navigator.navigateBack()
+                is CourseDetailsUiEffect.NavigateBack -> navigator.navigateBack()
+                is CourseDetailsUiEffect.ApplyNow ->  {
+                    navigator.navigateTo(Route.ApplicationFormRoute(courseDetails = state.courseDetails.toNavJson()))
                 }
             }
         }
     }
-    val state by viewModel.state.collectAsState()
+
     val uriHandler = LocalUriHandler.current
     CourseDetailsScreen(
         state = state,

@@ -11,7 +11,7 @@ import org.getscol.gscol.core.presentation.components.rememberFilePicker
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ApplicationScreen(viewmodel: ApplicationViewmodel = koinViewModel()) {
+fun ApplicationScreenDemo(applicationId: String, viewmodel: ApplicationDemoViewmodel = koinViewModel()) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

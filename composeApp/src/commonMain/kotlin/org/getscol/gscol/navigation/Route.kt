@@ -8,7 +8,7 @@ sealed interface Route {
     object HomeRoute : Route
 
     @Serializable
-    object Application : Route
+    object ApplicationList : Route
 
     @Serializable
     object CompareRoute : Route
@@ -35,9 +35,6 @@ sealed interface Route {
     object ResetPassword : Route
 
     @Serializable
-    object Desire : Route
-
-    @Serializable
     object Search : Route
 
     @Serializable
@@ -62,10 +59,6 @@ sealed interface Route {
     @Serializable
     data class WebViewRoute(val title: String, val url: String) : Route
 
-//    @Serializable
-//    data class SettingsRoute(val userId: Int) : Route
-
-
     @Serializable
     object Splash : Route
 
@@ -74,4 +67,13 @@ sealed interface Route {
 
     @Serializable
     object UploadScreen : Route
+
+    @Serializable
+    class ApplicationFormRoute(val courseDetails: String) : Route
+
+    @Serializable
+    class ApplicationStatusTrackerRoute(val applicationId: String): Route
+
+    @Serializable
+    class Application(val applicationId: String): Route
 }

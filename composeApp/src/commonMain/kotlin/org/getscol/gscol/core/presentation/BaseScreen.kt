@@ -33,6 +33,7 @@ fun BaseScreen(
                 title != null -> ScolDefaultTopBar(
                     title = title,
                     onBackPress = onBackPress,
+                    isIOSAlignment = isTopLevelScreen,
                     showBackButton = showBackButton
                 )
             }
@@ -44,12 +45,12 @@ fun BaseScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = bgColorContent)
-                .padding(innerPadding)
+                .padding(innerPadding)  /*it provide bottom and top system padding*/
                 .then(modifier)
         )
         {
             if (showLoader == true) LoadingDialog()
-            content(PaddingValues())
+            content(PaddingValues())   /*padding value profile padding.calculateBottomPadding*/
         }
     }
 }

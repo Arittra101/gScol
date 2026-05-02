@@ -21,7 +21,7 @@ enum class TopLevelDestination(
     ),
 
     APPLICATION(
-        route = Route.Application,
+        route = Route.ApplicationList,
         icon = "files/ic_com.svg",
         label = "Application"
     ),
