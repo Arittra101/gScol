@@ -41,6 +41,7 @@ import coil3.compose.AsyncImage
 import com.getscol.gscol.BuildKonfig
 import org.getscol.gscol.core.helper.iso4217CurrencySymbol
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.HorizontalPaddingBleed
 import org.getscol.gscol.core.presentation.components.KeyValueRow
 import org.getscol.gscol.core.presentation.components.PrimaryButton
 import org.getscol.gscol.core.presentation.components.ReadMoreText
@@ -192,6 +193,9 @@ fun CourseDetailsScreen(
                         tabsEnabled.value = true
                         onAction(CourseDetailsAction.TabSelected(it))
                     },
+                    horizontalOutdent = 20.dp,
+                    scrollLeadingPadding = 20.dp,
+                    scrollTrailingPadding = 20.dp,
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Column(
@@ -466,22 +470,24 @@ private fun CampusLifeSection(
 ) {
     SectionHeader(title = "Campus Life")
     Spacer(modifier = Modifier.height(12.dp))
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(horizontal = 0.dp),
-    ) {
-        items(
-            items = items,
-            key = { it.title },
-        ) { item ->
-            val hasUrl = !item.videoUrl.isNullOrBlank()
-            CampusLifeCard(
-                item = item,
-                modifier = Modifier.width(200.dp),
-                onClick = if (hasUrl) {
-                    { onItemClick(item) }
-                } else null,
-            )
+    HorizontalPaddingBleed(outdent = 20.dp) {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp),
+        ) {
+            items(
+                items = items,
+                key = { it.title },
+            ) { item ->
+                val hasUrl = !item.videoUrl.isNullOrBlank()
+                CampusLifeCard(
+                    item = item,
+                    modifier = Modifier.width(200.dp),
+                    onClick = if (hasUrl) {
+                        { onItemClick(item) }
+                    } else null,
+                )
+            }
         }
     }
 }
