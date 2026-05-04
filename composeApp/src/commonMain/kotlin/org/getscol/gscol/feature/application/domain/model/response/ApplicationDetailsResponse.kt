@@ -1,6 +1,6 @@
 package org.getscol.gscol.feature.application.domain.model.response
 
-data class ApplicationDetailsModel(
+data class ApplicationDetailsResponse(
     val applicationId: String? = null,
     val applicationSerialNumber: String? = null,
     val applicationOverview: ApplicationOverviewModel? = null,

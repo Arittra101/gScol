@@ -12,6 +12,7 @@ import org.getscol.gscol.feature.application.data.api_service.ApplicationApiServ
 import org.getscol.gscol.feature.application.data.mapper.toDomain
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 import org.getscol.gscol.feature.application.domain.model.request.ApplicationCreateRequestBody
+import org.getscol.gscol.feature.application.domain.model.response.ApplicationDetailsResponse
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationListResponse
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationStage
 import toDto
@@ -37,6 +38,13 @@ class ApplicationRepositoryImp(private val applicationService: ApplicationApiSer
         return flow {
             val result = applicationService.createApplication(applicationFormRequest.toDto())
             emit(result.map { it.data?.applicationId })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    override suspend fun getApplicationById(applicationId: String): Flow<Result<ApplicationDetailsResponse, DataError>> {
+        return flow {
+            val result = applicationService.getApplicationById(applicationId)
+            emit(result.map { it.toDomain() })
         }.flowOn(Dispatchers.IO)
     }
 

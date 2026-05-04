@@ -10,7 +10,7 @@ import org.getscol.gscol.feature.application.data.dto.response.DocumentTypeDto
 import org.getscol.gscol.feature.application.data.dto.response.IntakeInfoApplicationDto
 import org.getscol.gscol.feature.application.data.dto.response.UniversityInfoApplicationDto
 import org.getscol.gscol.feature.application.data.dto.response.UploadedDocumentDto
-import org.getscol.gscol.feature.application.domain.model.response.ApplicationDetailsModel
+import org.getscol.gscol.feature.application.domain.model.response.ApplicationDetailsResponse
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationOverviewModel
 import org.getscol.gscol.feature.application.domain.model.response.CourseInfoApplicationModel
 import org.getscol.gscol.feature.application.domain.model.response.CurrentStageModel
@@ -21,8 +21,8 @@ import org.getscol.gscol.feature.application.domain.model.response.IntakeInfoApp
 import org.getscol.gscol.feature.application.domain.model.response.UniversityInfoApplicationModel
 import org.getscol.gscol.feature.application.domain.model.response.UploadedDocumentModel
 
-fun ApplicationDetailsResponseDto.toDomain(): ApplicationDetailsModel =
-    ApplicationDetailsModel(
+fun ApplicationDetailsResponseDto.toDomain(): ApplicationDetailsResponse =
+    ApplicationDetailsResponse(
         applicationId = data?.applicationId,
         applicationSerialNumber = data?.applicationSerialNumber,
         applicationOverview = data?.applicationOverview?.toDomain(),
