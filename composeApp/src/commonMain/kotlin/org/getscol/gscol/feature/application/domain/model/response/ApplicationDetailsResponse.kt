@@ -1,68 +1,53 @@
 package org.getscol.gscol.feature.application.domain.model.response
 
-data class ApplicationDetailsResponse(
-    val applicationId: String? = null,
-    val applicationSerialNumber: String? = null,
-    val applicationOverview: ApplicationOverviewModel? = null,
-    val documentCheckLists: List<DocumentCheckListModel?>? = null,
-)
+import org.getscol.gscol.core.helper.orFalse
 
-data class ApplicationOverviewModel(
-    val universityInfo: UniversityInfoApplicationModel? = null,
-    val courseInfo: CourseInfoApplicationModel? = null,
-    val intakeInfo: IntakeInfoApplicationModel? = null,
-    val currentStage: CurrentStageModel? = null,
-    val currentStatus: CurrentStatusModel? = null,
-    val appliedDate: String? = null,
-    val lastUpdatedAt: String? = null,
-    val assignedTo: String? = null,
-)
-
-data class UniversityInfoApplicationModel(
-    val universityId: String? = null,
-    val universityName: String? = null,
-    val universityLogoUrl: String? = null,
+data class ApplicationDetails(
     val universityCoverImageUrl: String? = null,
-)
-
-data class CourseInfoApplicationModel(
-    val courseId: String? = null,
-    val courseName: String? = null,
-)
-
-data class IntakeInfoApplicationModel(
+    val universityName: String? = null,
     val intakeMonth: String? = null,
     val intakeYear: String? = null,
+    val courseName: String? = null,
+    val applicationSerialNumber: String? = null,
+    val documentCheckLists: List<DocumentCheckList?>? = null,
 )
 
-data class CurrentStageModel(
-    val stageCode: String? = null,
-    val stageName: String? = null,
-    val stageInformation: String? = null,
-)
-
-data class CurrentStatusModel(
-    val statusCode: String? = null,
-    val statusName: String? = null,
-)
-
-data class DocumentCheckListModel(
-    val documentType: DocumentTypeModel? = null,
+data class DocumentCheckList(
+    val documentTypeId: String? = null,
+    val documentTypeName: String? = null,
     val isRequired: Boolean? = null,
     val isMultipleAllowed: Boolean? = null,
     val overallStatus: String? = null,
     val allowedMimeTypes: List<String?>? = null,
     val maxFileSizeBytes: Long? = null,
-    val uploadedDocuments: List<UploadedDocumentModel?>? = null,
-)
+    private var uploadedDocuments: List<UploadedDocument?>? = null,
 
-data class DocumentTypeModel(
+    var isExpandable: Boolean = false,
+) {
+    fun canUploadDocument(): Boolean {
+        return isMultipleAllowed.orFalse()
+    }
+
+    fun addFileOnList(uploadedDocument: List<UploadedDocument>) {
+        uploadedDocuments = uploadedDocument
+    }
+
+    fun totalDocumentsSize(): Int {
+        return uploadedDocuments?.size ?: 0
+    }
+
+    fun getUploadedDocuments(): List<UploadedDocument> {
+        return uploadedDocuments?.mapNotNull { it } ?: emptyList()
+    }
+}
+
+data class DocumentType(
     val documentTypeId: String? = null,
     val documentTypeCode: String? = null,
     val documentTypeName: String? = null,
 )
 
-data class UploadedDocumentModel(
+data class UploadedDocument(
     val applicationDocumentId: String? = null,
     val fileName: String? = null,
     val overallStatus: String? = null,
