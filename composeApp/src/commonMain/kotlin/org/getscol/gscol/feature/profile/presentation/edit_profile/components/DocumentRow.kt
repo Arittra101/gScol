@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,9 +46,7 @@ fun DocumentRow(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(colors.customSurface.copy(alpha = 0.55f))
-            .padding(horizontal = 12.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -58,56 +57,67 @@ fun DocumentRow(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                // Icon circle — soft rose/pink tint matching screenshot
                 Box(
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(44.dp)
                         .clip(CircleShape)
-                        .background(colors.customPrimary.copy(alpha = 0.12f)),
+                        .background(Color(0xFFFCE8E8)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    androidx.compose.material3.Icon(
+                    Icon(
                         imageVector = Icons.Default.Description,
                         contentDescription = null,
-                        tint = colors.customPrimary,
-                        modifier = Modifier.size(18.dp),
+                        tint = Color(0xFFB91C1C),
+                        modifier = Modifier.size(22.dp),
                     )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
                         text = label,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
                         color = colors.customPrimaryText,
                     )
-                    StatusPill(status = status)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    StatusDotLabel(status = status)
                 }
             }
 
-            DownloadAction(
+            Spacer(modifier = Modifier.width(12.dp))
+
+            ActionButton(
                 downloadState = downloadState,
                 documentStatus = status,
                 onDownload = onDownload,
                 onCancel = onCancel,
-                primaryColor = colors.customPrimary,
             )
         }
 
+        // Progress bar while downloading
         if (downloadState is DownloadState.Downloading) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             val progress = downloadState.progress
             LinearProgressIndicator(
                 progress = { progress },
-                modifier = Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)),
-                color = colors.customPrimary,
-                trackColor = colors.customPrimary.copy(alpha = 0.15f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp)),
+                color = Color(0xFFB91C1C),
+                trackColor = Color(0xFFFCE8E8),
             )
             if (downloadState.totalBytes > 0) {
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${(progress * 100).toInt()}%  •  ${formatBytes(downloadState.bytesDone)} / ${formatBytes(downloadState.totalBytes)}",
+                    text = "${(progress * 100).toInt()}%  •  ${formatBytes(downloadState.bytesDone)} / ${
+                        formatBytes(
+                            downloadState.totalBytes
+                        )
+                    }",
                     fontSize = 11.sp,
-                    color = colors.customPrimaryText.copy(alpha = 0.6f),
+                    color = colors.customPrimaryText.copy(alpha = 0.55f),
                 )
             }
         }
@@ -133,63 +143,100 @@ fun DocumentRow(
 }
 
 @Composable
-private fun DownloadAction(
+private fun ActionButton(
     downloadState: DownloadState,
     documentStatus: DocumentStatus,
     onDownload: () -> Unit,
     onCancel: () -> Unit,
-    primaryColor: Color,
 ) {
+    val isRejected = documentStatus == DocumentStatus.Rejected
+
     val (text, action) = when {
-        documentStatus == DocumentStatus.Rejected -> "Re-upload" to null
-        downloadState is DownloadState.Idle || downloadState is DownloadState.Cancelled -> "Download" to onDownload
+        isRejected -> "Re-upload" to onDownload
+        downloadState is DownloadState.Idle
+                || downloadState is DownloadState.Cancelled -> "View" to onDownload
+
         downloadState is DownloadState.RequestingUrl -> "Starting…" to null
         downloadState is DownloadState.Downloading -> "Cancel" to onCancel
         downloadState is DownloadState.Saving -> "Saving…" to null
         downloadState is DownloadState.Completed -> "Open" to onDownload
         downloadState is DownloadState.Failed -> "Retry" to onDownload
-        else -> "Download" to onDownload
+        else -> "View" to onDownload
     }
 
-    Text(
-        text = text,
-        color = if (action != null) primaryColor else primaryColor.copy(alpha = 0.4f),
-        fontWeight = FontWeight.SemiBold,
-        style = MaterialTheme.typography.bodyMedium,
-        modifier = if (action != null) Modifier.clickable(onClick = action) else Modifier,
-    )
+    val isEnabled = action != null
+
+    if (isRejected) {
+        // Filled dark-red pill (matches the "Re-upload" button in the screenshot)
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(999.dp))
+                .background(if (isEnabled) Color(0xFF991B1B) else Color(0xFF991B1B).copy(alpha = 0.4f))
+                .then(if (isEnabled) Modifier.clickable(onClick = action) else Modifier)
+                .padding(horizontal = 18.dp, vertical = 10.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(999.dp))
+                .background(Color(0xFFFCE8E8))
+                .then(if (isEnabled) Modifier.clickable(onClick = action) else Modifier)
+                .padding(horizontal = 18.dp, vertical = 10.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                color = if (isEnabled) Color(0xFFB91C1C) else Color(0xFFB91C1C).copy(alpha = 0.4f),
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatusDotLabel(
+    status: DocumentStatus,
+    modifier: Modifier = Modifier,
+) {
+    val (dotColor, text) = when (status) {
+        DocumentStatus.InProgress -> Color(0xFF3B82F6) to "Uploaded"      // blue dot
+        DocumentStatus.Verified -> Color(0xFF22C55E) to "Verified"      // green dot
+        DocumentStatus.Rejected -> Color(0xFFEF4444) to "Rejected"      // red dot
+    }
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .clip(CircleShape)
+                .background(dotColor),
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = text,
+            fontSize = 13.sp,
+            color = Color(0xFF6B7280), // muted grey, matching screenshot
+            fontWeight = FontWeight.Normal,
+        )
+    }
 }
 
 private fun formatBytes(bytes: Long): String {
     if (bytes < 1024) return "$bytes B"
     val kb = bytes / 1024.0
-    if (kb < 1024) return "%.1f KB".format(kb)
+    if (kb < 1024) return "${(kb * 10).toLong() / 10.0} KB"
     val mb = kb / 1024.0
-    return "%.1f MB".format(mb)
-}
-
-@Composable
-private fun StatusPill(
-    status: DocumentStatus,
-    modifier: Modifier = Modifier,
-) {
-    val (bg, fg, text) = when (status) {
-        DocumentStatus.InProgress -> Triple(Color(0xFFEFF6FF), Color(0xFF2563EB), "In progress")
-        DocumentStatus.Verified -> Triple(Color(0xFFECFDF5), Color(0xFF059669), "Verified")
-        DocumentStatus.Rejected -> Triple(Color(0xFFFEF2F2), Color(0xFFDC2626), "Rejected")
-    }
-    Box(
-        modifier = modifier
-            .padding(top = 6.dp)
-            .clip(RoundedCornerShape(999.dp))
-            .background(bg)
-            .padding(horizontal = 10.dp, vertical = 4.dp),
-    ) {
-        Text(
-            text = text,
-            fontSize = 12.sp,
-            color = fg,
-            fontWeight = FontWeight.SemiBold,
-        )
-    }
+    return "${(mb * 10).toLong() / 10.0} MB"
 }

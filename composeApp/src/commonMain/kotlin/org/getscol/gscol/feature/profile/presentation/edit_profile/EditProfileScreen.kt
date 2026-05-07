@@ -1,7 +1,7 @@
 package org.getscol.gscol.feature.profile.presentation.edit_profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -108,10 +109,14 @@ fun EditProfileScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = profile.academicRecordsTitle,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
                 AcademicRecordsCard(
-                    title = profile.academicRecordsTitle,
                     items = profile.academicRecords,
                     downloadStates = uiState.downloadStates,
                     onDownload = { docId ->
@@ -122,7 +127,7 @@ fun EditProfileScreen(
                 )
             } else if (!uiState.errorMessage.isNullOrBlank()) {
                 Text(
-                    text = uiState.errorMessage.orEmpty(),
+                    text = uiState.errorMessage,
                     color = colors.customErrorText,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
@@ -226,7 +231,6 @@ private fun ProfileHeaderCard(
 
 @Composable
 private fun AcademicRecordsCard(
-    title: String,
     items: List<AcademicRecordItem>,
     downloadStates: Map<String, DownloadState>,
     onDownload: (documentId: String) -> Unit,
@@ -237,33 +241,34 @@ private fun AcademicRecordsCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
+            .border(
+                width = 1.dp, color = Color(0xFFE5E7EB),
+                shape = RoundedCornerShape(16.dp)
+            )
             .background(Color.White)
-            .padding(16.dp),
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-        )
-        Spacer(modifier = Modifier.height(12.dp))
 
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            items.forEach { item ->
-                val dlState = downloadStates[item.id] ?: DownloadState.Idle
-                DocumentRow(
-                    label = item.label,
-                    status = item.status,
-                    downloadState = dlState,
-                    onDownload = {
-                        when (item.status) {
-                            DocumentStatus.InProgress,
-                            DocumentStatus.Verified,
-                            -> onDownload(item.id)
+        items.forEachIndexed { index, item ->
+            val dlState = downloadStates[item.id] ?: DownloadState.Idle
+            DocumentRow(
+                label = item.label,
+                status = item.status,
+                downloadState = dlState,
+                onDownload = {
+                    when (item.status) {
+                        DocumentStatus.InProgress,
+                        DocumentStatus.Verified -> onDownload(item.id)
 
-                            DocumentStatus.Rejected -> onReUpload()
-                        }
-                    },
-                    onCancel = { onCancelDownload(item.id) },
+                        DocumentStatus.Rejected -> onReUpload()
+                    }
+                },
+                onCancel = { onCancelDownload(item.id) },
+            )
+            if (index < items.lastIndex) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    thickness = 1.dp,
+                    color = Color(0xFFE5E7EB),
                 )
             }
         }
