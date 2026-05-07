@@ -20,10 +20,11 @@ import org.getscol.gscol.feature.profile.domain.model.InfoField
 import org.getscol.gscol.feature.profile.domain.model.InfoSection
 
 fun EditProfileDtoResponse.toDomain(): EditProfile {
-    val student = student
-    val personal = student?.personalInformation
+    val profile = data
+    val personal = profile?.personalInformation
+
     val fullName = personal?.fields.orEmpty()
-        .firstOrNull { it.id == "full_name" }
+        .firstOrNull { it.label?.equals("Full Name", ignoreCase = true) == true }
         ?.value
         ?.toDisplayString()
         ?.ifBlank { null }
@@ -33,21 +34,21 @@ fun EditProfileDtoResponse.toDomain(): EditProfile {
     val imageUrl = personal?.imgUrl
 
     val sections = buildList {
-        student?.personalInformation?.let { add(it.toSectionDomain()) }
-        student?.academicBackground?.let { add(it.toSectionDomain()) }
-        student?.englishTestScores?.let { add(it.toSectionDomain()) }
-        student?.contactInformation?.let { add(it.toSectionDomain()) }
+        profile?.personalInformation?.let { add(it.toSectionDomain()) }
+        profile?.academicBackground?.let { add(it.toSectionDomain()) }
+        profile?.englishTestScore?.let { add(it.toSectionDomain()) }
+        profile?.contactInformation?.let { add(it.toSectionDomain()) }
     }
 
-    val academicRecords = student?.academicRecords
+    val academicRecord = profile?.academicRecord
     return EditProfile(
         fullName = fullName,
         subtitle = "Student",
         joined = joined,
         imageUrl = imageUrl,
         sections = sections,
-        academicRecordsTitle = academicRecords?.sectionTitle ?: "Academic Records",
-        academicRecords = academicRecords?.items.orEmpty().map { it.toDomain() },
+        academicRecordsTitle = academicRecord?.sectionTitle ?: "Academic Records",
+        academicRecords = academicRecord?.items.orEmpty().flatMap { it.toDomain() },
     )
 }
 
@@ -61,26 +62,30 @@ private fun ProfileSectionDto.toSectionDomain(): InfoSection {
 
 private fun FieldDto.toDomain(): InfoField {
     return InfoField(
-        id = id.orEmpty(),
+        id = id ?: label.orEmpty(),
         label = label.orEmpty(),
         value = value.toDisplayString().ifBlank { "-" },
     )
 }
 
-private fun AcademicRecordItemDto.toDomain(): AcademicRecordItem {
-    val code = status?.code?.trim().orEmpty().uppercase()
-    val mapped = when (code) {
-        "UPLOADED", "UNDER_REVIEW", "IN_PROGRESS" -> DocumentStatus.InProgress
-        "REJECTED" -> DocumentStatus.Rejected
-        "VERIFIED" -> DocumentStatus.Verified
-        else -> DocumentStatus.InProgress
+private fun AcademicRecordItemDto.toDomain(): List<AcademicRecordItem> {
+    val typeName = documentType?.documentTypeName.orEmpty()
+    val typeCode = documentType?.documentTypeCode.orEmpty()
+    return uploadedDocuments.orEmpty().map { doc ->
+        val statusCode = doc.overallStatus?.trim().orEmpty().uppercase()
+        val status = when (statusCode) {
+            "UPLOADED", "UNDER_REVIEW", "IN_PROGRESS" -> DocumentStatus.InProgress
+            "REJECTED" -> DocumentStatus.Rejected
+            "VERIFIED" -> DocumentStatus.Verified
+            else -> DocumentStatus.InProgress
+        }
+        AcademicRecordItem(
+            id = doc.documentId.orEmpty(),
+            label = typeName,
+            type = typeCode,
+            status = status,
+        )
     }
-    return AcademicRecordItem(
-        id = id.orEmpty(),
-        label = label.orEmpty(),
-        type = type.orEmpty(),
-        status = mapped,
-    )
 }
 
 private fun JsonElement?.toDisplayString(): String {
@@ -92,16 +97,12 @@ private fun JsonElement?.toDisplayString(): String {
                 booleanOrNull != null -> boolean.toString()
                 intOrNull != null -> int.toString()
                 doubleOrNull != null -> {
-                    // keep API precision but avoid trailing .0 for ints
                     val d = double
                     if (d % 1.0 == 0.0) d.toInt().toString() else d.toString()
                 }
-
                 else -> content
             }
         }
-
         else -> toString()
     }
 }
-
