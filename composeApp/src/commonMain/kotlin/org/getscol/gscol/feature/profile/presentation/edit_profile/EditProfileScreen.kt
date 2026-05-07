@@ -29,13 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.feature.profile.domain.download.DownloadState
 import org.getscol.gscol.feature.profile.domain.model.AcademicRecordItem
 import org.getscol.gscol.feature.profile.domain.model.DocumentStatus
 import org.getscol.gscol.feature.profile.presentation.edit_profile.components.DocumentRow
@@ -50,16 +50,22 @@ fun EditProfileScreenRoute(
 ) {
     val viewModel: EditProfileViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
-    EditProfileScreen(uiState = uiState, onBack = navigator::navigateBack)
+    EditProfileScreen(
+        uiState = uiState,
+        onBack = navigator::navigateBack,
+        onDownload = viewModel::onDownloadClick,
+        onCancelDownload = viewModel::onCancelDownload,
+    )
 }
 
 @Composable
 fun EditProfileScreen(
     uiState: EditProfileUiState,
     onBack: () -> Unit,
+    onDownload: (documentId: String) -> Unit,
+    onCancelDownload: (documentId: String) -> Unit,
 ) {
     val colors = appColors()
-    val uriHandler = LocalUriHandler.current
 
     var consultantDialog by remember { mutableStateOf(false) }
     var reuploadDialog by remember { mutableStateOf(false) }
@@ -107,9 +113,11 @@ fun EditProfileScreen(
                 AcademicRecordsCard(
                     title = profile.academicRecordsTitle,
                     items = profile.academicRecords,
-                    onDownload = { url ->
-                        if (url.isNotBlank()) uriHandler.openUri(url)
+                    downloadStates = uiState.downloadStates,
+                    onDownload = { docId ->
+                        onDownload(docId)
                     },
+                    onCancelDownload = onCancelDownload,
                     onReUpload = { reuploadDialog = true },
                 )
             } else if (!uiState.errorMessage.isNullOrBlank()) {
@@ -220,7 +228,9 @@ private fun ProfileHeaderCard(
 private fun AcademicRecordsCard(
     title: String,
     items: List<AcademicRecordItem>,
-    onDownload: (String) -> Unit,
+    downloadStates: Map<String, DownloadState>,
+    onDownload: (documentId: String) -> Unit,
+    onCancelDownload: (documentId: String) -> Unit,
     onReUpload: () -> Unit,
 ) {
     Column(
@@ -239,23 +249,21 @@ private fun AcademicRecordsCard(
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             items.forEach { item ->
+                val dlState = downloadStates[item.id] ?: DownloadState.Idle
                 DocumentRow(
                     label = item.label,
                     status = item.status,
-                    actionText = when (item.status) {
-                        DocumentStatus.InProgress -> "Download"
-                        DocumentStatus.Verified -> "Download"
-                        DocumentStatus.Rejected -> "Re-upload"
-                    },
-                    onActionClick = {
+                    downloadState = dlState,
+                    onDownload = {
                         when (item.status) {
                             DocumentStatus.InProgress,
                             DocumentStatus.Verified,
-                                -> onDownload(item.downloadUrl.orEmpty())
+                            -> onDownload(item.id)
 
                             DocumentStatus.Rejected -> onReUpload()
                         }
                     },
+                    onCancel = { onCancelDownload(item.id) },
                 )
             }
         }
@@ -281,4 +289,3 @@ private fun InfoDialog(
         },
     )
 }
-

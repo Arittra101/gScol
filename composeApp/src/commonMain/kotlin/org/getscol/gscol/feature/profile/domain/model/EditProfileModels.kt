@@ -26,7 +26,6 @@ data class AcademicRecordItem(
     val id: String,
     val label: String,
     val type: String,
-    val downloadUrl: String?,
     val status: DocumentStatus,
 )
 

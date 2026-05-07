@@ -79,7 +79,6 @@ private fun AcademicRecordItemDto.toDomain(): AcademicRecordItem {
         id = id.orEmpty(),
         label = label.orEmpty(),
         type = type.orEmpty(),
-        downloadUrl = downloadUrl,
         status = mapped,
     )
 }
