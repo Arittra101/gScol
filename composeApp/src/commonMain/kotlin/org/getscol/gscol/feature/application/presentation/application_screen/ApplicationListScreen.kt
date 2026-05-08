@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.getscol.gscol.core.helper.ObserveEffect
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.EmptyView
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationInfo
 import org.getscol.gscol.feature.application.presentation.components.ApplicationRowItem
 import org.getscol.gscol.feature.application.presentation.components.ApplicationRowItemShimmer
@@ -65,14 +66,13 @@ fun ApplicationListScreenRoute(
         title = "Applications",
         isTopLevelScreen = true,
         showBackButton = false,
-        isEmpty = state.showEmptyView,
-        emptyMessage = "You have no active university applications.",
         onBackPress = { navigator.navigateBack() }) {
         ApplicationTrackerContent(
             state.applications.orEmpty(),
             action,
             state.isRefreshing,
-            state.isLoading
+            state.isLoading,
+            state.showEmptyView
         )
     }
 }
@@ -83,11 +83,19 @@ fun ApplicationTrackerContent(
     action: (ApplicationListAction) -> Unit,
     isRefreshing: Boolean,
     isLoading: Boolean,
+    isEmpty: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val refreshState = rememberPullToRefreshState()
 
+    if (isEmpty) {
+        EmptyView(message = "You have no active university applications.", paddingValues = PaddingValues())
+        return
+    }
+
+
+    val refreshState = rememberPullToRefreshState()
     PullToRefreshBox(
+        modifier = Modifier.fillMaxSize(),
         state = refreshState,
         isRefreshing = isRefreshing,
         onRefresh = { action(ApplicationListAction.OnRefreshApplicationList) },
@@ -97,7 +105,7 @@ fun ApplicationTrackerContent(
             val isThresholdCrossed = rawFraction >= 1f
             val rubberFraction = sqrt(rawFraction.coerceAtLeast(0f))
 
-            // ✅ Replace BoxWithConstraints — no subcomposition overhead
+            // Replace BoxWithConstraints — no subcomposition overhead
             var containerHeightPx by remember { mutableStateOf(0) }
 
             val arrowRotation by animateFloatAsState(
@@ -122,7 +130,7 @@ fun ApplicationTrackerContent(
             )
 
             val animatedOffsetY by animateFloatAsState(
-                // ✅ centerOffset derived directly from measured px — no BoxWithConstraints
+                // centerOffset derived directly from measured px — no BoxWithConstraints
                 targetValue = if (isRefreshing) {
                     with(LocalDensity.current) { (containerHeightPx / 2f).toDp().value - 20f }
                 } else {
@@ -138,11 +146,11 @@ fun ApplicationTrackerContent(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    // ✅ Scrim via drawBehind — draw phase only, no extra composable node
+                    // Scrim via drawBehind — draw phase only, no extra composable node
                     .drawBehind {
                         drawRect(color = Color.Black.copy(alpha = scrimAlpha))
                     }
-                    // ✅ Captures parent height for centering without subcomposition
+                    // Captures parent height for centering without subcomposition
                     .onSizeChanged { containerHeightPx = it.height }
             ) {
                 Box(
@@ -153,7 +161,7 @@ fun ApplicationTrackerContent(
                             translationY = animatedOffsetY.dp.toPx()
                             scaleX = scale
                             scaleY = scale
-                            // ✅ Alpha read here in draw phase — no recomposition on finger drag
+                            // Alpha read here in draw phase — no recomposition on finger drag
                             alpha = (clampedFraction / 0.4f).coerceIn(0f, 1f)
                         }
                         .shadow(elevation = 6.dp, shape = CircleShape, clip = false)

@@ -25,8 +25,6 @@ fun BaseScreen(
     onBackPress: (() -> Unit)? = null,
     topBar: @Composable (() -> Unit)? = null,
     showLoader: Boolean? = false,
-    isEmpty: Boolean = false,
-    emptyMessage: String = "No data available",
     content: @Composable ((PaddingValues) -> Unit),
 ) {
     Scaffold(
@@ -54,11 +52,8 @@ fun BaseScreen(
         {
             if (showLoader == true) {
                 LoadingDialog()
-            } else if (isEmpty) {
-                EmptyView(message = emptyMessage, paddingValues = PaddingValues())
-            } else {
-                content(PaddingValues())
             }
+            content(PaddingValues())
         }
     }
 }

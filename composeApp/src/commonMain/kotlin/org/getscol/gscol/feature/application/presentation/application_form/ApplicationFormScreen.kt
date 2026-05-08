@@ -49,13 +49,13 @@ fun ApplicationFormScreenRoute(
     ObserveEffect(viewmodel.applicationFormUiEffect) { effect ->
         when (effect) {
             is ApplicationFormUIEffect.NavigateToApplicationJourney -> {
-                navigator.navigateTo(Route.Application(effect.applicationId))
+                navigator.navigateTo(route = Route.Application(effect.applicationId),true)
             }
         }
     }
 
 
-    BaseScreen(title = "Applications Form") { AddApplicationContent(state,navigator,action) }
+    BaseScreen(title = "Applications Form", showLoader = state?.isLoading) { AddApplicationContent(state,navigator,action) }
 }
 
 @Composable
@@ -115,7 +115,7 @@ fun AddApplicationContent(
         // Submit button
         PrimaryButton(
             text = "Create Application",
-            onClick = { },
+            onClick = { action(ApplicationFormScreenAction.OnCreateApplication)},
             modifier = Modifier.padding(bottom = 10.dp),
         )
     }

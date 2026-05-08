@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.getscol.gscol.theme.appColors
 
 @Composable
 fun EmptyView(
@@ -35,7 +36,7 @@ fun EmptyView(
         Icon(
             imageVector = Icons.Default.Inbox,
             contentDescription = null,
-            tint = Color.Gray.copy(alpha = 0.5f),
+            tint = appColors().customPrimary.copy(alpha = 0.15f),
             modifier = Modifier.size(64.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -43,7 +44,7 @@ fun EmptyView(
             text = message,
             fontSize = 16.sp,
             color = Color.Gray.copy(alpha = 0.7f),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
