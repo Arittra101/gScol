@@ -6,6 +6,8 @@ import org.getscol.gscol.feature.application.data.dto.response.UploadedDocumentD
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationDetails
 import org.getscol.gscol.feature.application.domain.model.response.DocumentCheckList
 import org.getscol.gscol.feature.application.domain.model.response.UploadedDocument
+import org.getscol.gscol.feature.application.presentation.ApplicationStageState
+import org.getscol.gscol.feature.application.presentation.DocumentCategoryState
 
 fun ApplicationDetailsResponseDto.toDomain(): ApplicationDetails =
     ApplicationDetails(
@@ -15,7 +17,7 @@ fun ApplicationDetailsResponseDto.toDomain(): ApplicationDetails =
         intakeYear = data?.applicationOverview?.intakeInfo?.intakeYear,
         courseName = data?.applicationOverview?.courseInfo?.courseName,
         applicationSerialNumber = data?.applicationSerialNumber,
-        documentCheckLists = data?.documentCheckLists?.map { it.toDomain() },
+        documentCheckLists = data?.documentCheckLists?.map { it.toDomain() }.orEmpty(),
     )
 
 fun DocumentCheckListDto.toDomain(): DocumentCheckList =
@@ -24,10 +26,10 @@ fun DocumentCheckListDto.toDomain(): DocumentCheckList =
         documentTypeName = documentType?.documentTypeName,
         isRequired = isRequired,
         isMultipleAllowed = isMultipleAllowed,
-        overallStatus = overallStatus,
-        allowedMimeTypes = allowedMimeTypes?.split(",")?.map { it.trim() },
+        overallStatus = overallStatus.toDocumentCategoryState(),
+        allowedMimeTypes = allowedMimeTypes?.split(",")?.map { it.trim() }.orEmpty(),
         maxFileSizeBytes = maxFileSizeBytes,
-        uploadedDocuments = uploadedDocuments?.map { it.toDomain() },
+        uploadedDocuments = uploadedDocuments?.map { it.toDomain() }.orEmpty(),
     )
 
 fun UploadedDocumentDto.toDomain(): UploadedDocument =
@@ -36,3 +38,13 @@ fun UploadedDocumentDto.toDomain(): UploadedDocument =
         fileName = fileName,
         overallStatus = overallStatus,
     )
+
+
+fun String?.toDocumentCategoryState(): DocumentCategoryState {
+    return when (this?.uppercase()) {
+        "PENDING" -> DocumentCategoryState.PENDING
+        "IN_PROGRESS" -> DocumentCategoryState.IN_PROGRESS
+        "VERIFIED" -> DocumentCategoryState.VERIFIED
+        else -> DocumentCategoryState.PENDING
+    }
+}

@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 import org.getscol.gscol.feature.application.domain.model.response.ProgressItems
-import org.getscol.gscol.feature.application.domain.model.response.StageState
+import org.getscol.gscol.feature.application.presentation.ApplicationStageState
 
 class ApplicationStatusViewmodel(
     private val applicationId: String = "",
@@ -35,7 +35,7 @@ class ApplicationStatusViewmodel(
                                 progressPercentage = result.data.getProgressPercentage(),
                                 applicationProgressItem = result.data.progressItems.orEmpty(),
                                 nestProgressItem = result.data.progressItems?.find { it
-                                    .state == StageState.UPCOMING
+                                    .state == ApplicationStageState.UPCOMING
                                 } ?: ProgressItems(),
                                 isLoading = false
                             )

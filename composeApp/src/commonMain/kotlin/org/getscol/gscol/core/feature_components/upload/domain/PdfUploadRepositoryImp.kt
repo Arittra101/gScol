@@ -9,20 +9,29 @@ import org.getscol.gscol.core.feature_components.upload.data.service.PdfUploader
 
 class PdfUploadRepositoryImp(private val service: PdfUploaderService) : PdfUploadRepository {
 
-    override suspend fun getPdfUploadUrl(urlRequestBody: UploadUrlRequestBody): Result<UploadUrlResponse, DataError> {
-        return service.getPdfUploadUrl(urlRequestBody)
+    override suspend fun getPdfUploadUrl(
+        applicationId: String,
+        documentTypeId: String,
+        urlRequestBody: UploadUrlRequestBody
+    ): Result<UploadUrlResponse, DataError> {
+        return service.getPdfUploadUrl(applicationId, documentTypeId, urlRequestBody)
     }
 
     override suspend fun uploadToS3(
         uploadUrl: String,
         fileBytes: ByteArray,
-        uploadProgress: (Long) -> Unit
+        uploadProgress: (Float) -> Unit
     ): Result<Unit, DataError> {
-        return service.uploadToS3(uploadUrl, fileBytes,uploadProgress)
+        return service.uploadToS3(uploadUrl, fileBytes, uploadProgress)
     }
 
-    override suspend fun confirmUpload(versionId: String): Result<Unit, DataError> {
-        return service.confirmUpload(versionId)
+    override suspend fun confirmUpload(
+        applicationId: String,
+        documentTypeId: String,
+        documentId: String,
+        documentVersionId: String
+    ): Result<Unit, DataError> {
+        return service.confirmUpload(applicationId, documentTypeId, documentId, documentVersionId)
     }
 
 }

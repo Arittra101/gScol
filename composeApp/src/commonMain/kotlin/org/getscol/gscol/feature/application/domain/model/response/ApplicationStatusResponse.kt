@@ -1,11 +1,6 @@
 package org.getscol.gscol.feature.application.domain.model.response
 
-enum class StageState {
-    COMPLETED,
-    CURRENT,
-    UPCOMING,
-    UNKNOWN
-}
+import org.getscol.gscol.feature.application.presentation.ApplicationStageState
 
 data class ApplicationStage(
     val totalStages: Int? = null,
@@ -28,5 +23,5 @@ data class ProgressItems(
     val stageCode: String? = null,
     val stageName: String? = null,
     val order: Int? = null,
-    val state: StageState? = null
+    val state: ApplicationStageState? = null
 )

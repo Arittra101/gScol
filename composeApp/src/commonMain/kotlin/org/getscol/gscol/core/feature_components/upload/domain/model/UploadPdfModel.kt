@@ -4,5 +4,6 @@ import org.getscol.gscol.core.presentation.components.PickedFile
 
 data class UploadPdfModel(
     val documentTypeId: String,
+    val applicationId: String,
     val pickedFile : PickedFile,
 )

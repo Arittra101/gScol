@@ -1,6 +1,7 @@
 package org.getscol.gscol.feature.application.domain.model.response
 
 import org.getscol.gscol.core.helper.orFalse
+import org.getscol.gscol.feature.application.presentation.DocumentCategoryState
 
 data class ApplicationDetails(
     val universityCoverImageUrl: String? = null,
@@ -9,7 +10,7 @@ data class ApplicationDetails(
     val intakeYear: String? = null,
     val courseName: String? = null,
     val applicationSerialNumber: String? = null,
-    val documentCheckLists: List<DocumentCheckList?>? = null,
+    val documentCheckLists: List<DocumentCheckList> = emptyList(),
 )
 
 data class DocumentCheckList(
@@ -17,35 +18,34 @@ data class DocumentCheckList(
     val documentTypeName: String? = null,
     val isRequired: Boolean? = null,
     val isMultipleAllowed: Boolean? = null,
-    val overallStatus: String? = null,
-    val allowedMimeTypes: List<String?>? = null,
+    val overallStatus: DocumentCategoryState,
+    val allowedMimeTypes: List<String> = emptyList(),
     val maxFileSizeBytes: Long? = null,
-    private var uploadedDocuments: List<UploadedDocument?>? = null,
-
+    val uploadedDocuments: List<UploadedDocument> = emptyList(),
     var isExpandable: Boolean = false,
+    var canDocumentUpload: Boolean = true,
+    var isShowExpandIcon: Boolean= true,
+    var documentUploadErrorMsg: String = "",
+    var showDltIcon: Boolean = true
 ) {
     fun canUploadDocument(): Boolean {
-        return isMultipleAllowed.orFalse()
+        val pendingState = overallStatus.name == DocumentCategoryState.PENDING.name
+        val canAddMore = isMultipleAllowed.orFalse() || uploadedDocuments.isEmpty()
+        return pendingState && canAddMore
     }
 
-    fun addFileOnList(uploadedDocument: List<UploadedDocument>) {
-        uploadedDocuments = uploadedDocument
+    fun documentErrorMsg(): String {
+        return if (overallStatus.name != DocumentCategoryState.PENDING.name) {
+            "Document is in verification process, you can not upload."
+        } else if (!canUploadDocument()) {
+            "Multiple documents not allowed."
+        } else {
+            ""
+        }
     }
 
-    fun totalDocumentsSize(): Int {
-        return uploadedDocuments?.size ?: 0
-    }
-
-    fun getUploadedDocuments(): List<UploadedDocument> {
-        return uploadedDocuments?.mapNotNull { it } ?: emptyList()
-    }
+    fun shouldShowDltIcon() = (overallStatus.name == DocumentCategoryState.PENDING.name)
 }
-
-data class DocumentType(
-    val documentTypeId: String? = null,
-    val documentTypeCode: String? = null,
-    val documentTypeName: String? = null,
-)
 
 data class UploadedDocument(
     val applicationDocumentId: String? = null,

@@ -1,7 +1,6 @@
 package org.getscol.gscol.feature.application.presentation
 
 import androidx.compose.ui.graphics.Color
-import org.getscol.gscol.feature.application.domain.model.response.StageState
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ColorCompleted
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ColorInProgress
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ColorPending
@@ -14,6 +13,20 @@ enum class ApplicationStageStatus {
     VISA,
     COMPLETED
 }
+
+enum class DocumentCategoryState {
+    PENDING,
+    IN_PROGRESS,
+    VERIFIED
+}
+
+enum class ApplicationStageState {
+    COMPLETED,
+    CURRENT,
+    UPCOMING,
+    UNKNOWN
+}
+
 
 data class StatusStyle1(
     val label: String,
@@ -44,23 +57,23 @@ fun ApplicationStageStatus.toStyle(): StatusStyle1 = when (this) {
 }
 
 
-fun StageState.label(): String = when (this) {
-    StageState.COMPLETED -> "Completed"
-    StageState.CURRENT -> "Current"
-    StageState.UPCOMING -> "Upcoming"
-    StageState.UNKNOWN -> "Unknown"
+fun ApplicationStageState.label(): String = when (this) {
+    ApplicationStageState.COMPLETED -> "Completed"
+    ApplicationStageState.CURRENT -> "Current"
+    ApplicationStageState.UPCOMING -> "Upcoming"
+    ApplicationStageState.UNKNOWN -> "Unknown"
 }
 
-fun StageState.labelColor(): Color = when (this) {
-    StageState.COMPLETED -> ColorCompleted
-    StageState.CURRENT -> ColorInProgress
-    StageState.UPCOMING -> ColorPending
-    StageState.UNKNOWN -> ColorPending
+fun ApplicationStageState.labelColor(): Color = when (this) {
+    ApplicationStageState.COMPLETED -> ColorCompleted
+    ApplicationStageState.CURRENT -> ColorInProgress
+    ApplicationStageState.UPCOMING -> ColorPending
+    ApplicationStageState.UNKNOWN -> ColorPending
 }
 
-fun StageState.progressStateIcon(): String = when (this) {
-    StageState.COMPLETED -> "files/ic_complete.svg"
-    StageState.CURRENT -> "files/ic_in_progress.svg"
-    StageState.UPCOMING -> "files/ic_upcoming.svg"
-    StageState.UNKNOWN -> "files/ic_upcoming.svg"
+fun ApplicationStageState.progressStateIcon(): String = when (this) {
+    ApplicationStageState.COMPLETED -> "files/ic_complete.svg"
+    ApplicationStageState.CURRENT -> "files/ic_in_progress.svg"
+    ApplicationStageState.UPCOMING -> "files/ic_upcoming.svg"
+    ApplicationStageState.UNKNOWN -> "files/ic_upcoming.svg"
 }

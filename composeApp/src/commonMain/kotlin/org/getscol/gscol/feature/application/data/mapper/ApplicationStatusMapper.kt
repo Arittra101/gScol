@@ -6,7 +6,7 @@ import org.getscol.gscol.feature.application.data.dto.response.ApplicationStageI
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationStage
 import org.getscol.gscol.feature.application.domain.model.response.ProgressItems
 import org.getscol.gscol.feature.application.domain.model.response.StageItem
-import org.getscol.gscol.feature.application.domain.model.response.StageState
+import org.getscol.gscol.feature.application.presentation.ApplicationStageState
 
 
 fun ApplicationStageDataDto.toDomain(): ApplicationStage {
@@ -34,11 +34,11 @@ fun ApplicationProgressBarItemDto.toDomain(): ProgressItems {
     )
 }
 
-fun String?.toStageState(): StageState {
+fun String?.toStageState(): ApplicationStageState {
     return when (this?.uppercase()) {
-        "COMPLETED" -> StageState.COMPLETED
-        "CURRENT" -> StageState.CURRENT
-        "UPCOMING" -> StageState.UPCOMING
-        else -> StageState.UNKNOWN
+        "COMPLETED" -> ApplicationStageState.COMPLETED
+        "CURRENT" -> ApplicationStageState.CURRENT
+        "UPCOMING" -> ApplicationStageState.UPCOMING
+        else -> ApplicationStageState.UNKNOWN
     }
 }

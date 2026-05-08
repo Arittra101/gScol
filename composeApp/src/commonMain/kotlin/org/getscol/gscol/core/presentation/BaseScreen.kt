@@ -55,7 +55,7 @@ fun BaseScreen(
             if (showLoader == true) {
                 LoadingDialog()
             } else if (isEmpty) {
-                EmptyView(message = emptyMessage)
+                EmptyView(message = emptyMessage, paddingValues = PaddingValues())
             } else {
                 content(PaddingValues())
             }

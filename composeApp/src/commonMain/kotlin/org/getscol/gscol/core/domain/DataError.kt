@@ -12,3 +12,8 @@ sealed interface DataError : Error {
 
     data class RemoteMessage(val message: String?, val statusCode: Int?) : DataError
 }
+
+sealed interface DocumentError : Error {
+    data object PdfUploadError : DocumentError
+    data object PdfDownloadError : DocumentError
+}

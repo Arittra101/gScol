@@ -4,6 +4,7 @@ import org.getscol.gscol.feature.application.data.api_service.ApplicationApiServ
 import org.getscol.gscol.feature.application.data.api_service.ApplicationApiServiceImp
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 import org.getscol.gscol.feature.application.domain.repository.ApplicationRepositoryImp
+import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailsViewmodel
 import org.getscol.gscol.feature.application.presentation.application_form.ApplicationFormViewmodel
 import org.getscol.gscol.feature.application.presentation.application_screen.ApplicationListViewmodel
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ApplicationStatusViewmodel

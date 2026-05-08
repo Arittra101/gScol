@@ -11,7 +11,7 @@ data class UploadUrlResponse(
 
 @Serializable
 data class UploadUrlData(
-    @SerialName("uploadUrl") val uploadUrl: String? = null,
-    @SerialName("versionId") val versionId: String? = null,
     @SerialName("documentId") val documentId: String? = null,
+    @SerialName("documentVersionId") val documentVersionId: String? = null,
+    @SerialName("uploadUrl") val uploadUrl: String? = null,
 )

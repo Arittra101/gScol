@@ -2,9 +2,11 @@ package org.getscol.gscol.core.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Inbox
@@ -22,9 +24,11 @@ import androidx.compose.ui.unit.sp
 fun EmptyView(
     modifier: Modifier = Modifier,
     message: String = "No data available",
+    paddingValues: PaddingValues
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
+            .padding(bottom = paddingValues.calculateBottomPadding() + 56.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

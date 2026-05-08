@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.feature.application.domain.model.response.ProgressItems
-import org.getscol.gscol.feature.application.domain.model.response.StageState
+import org.getscol.gscol.feature.application.presentation.ApplicationStageState
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.CardBackground
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.GrayPending
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.GreenActive
@@ -59,7 +59,7 @@ fun StepProgressBar(
     val extraScrollOffset = 0
 
     LaunchedEffect(steps) {
-        val activeIndex = steps.indexOfFirst { it.state == StageState.CURRENT }
+        val activeIndex = steps.indexOfFirst { it.state == ApplicationStageState.CURRENT }
         if (activeIndex > 2) {
             itemOffsets[activeIndex]?.let { offset ->
                 scrollState.animateScrollTo(offset + extraScrollOffset)
@@ -99,15 +99,15 @@ fun StepProgressBar(
                 ) {
                     steps.forEachIndexed { index, step ->
                         StepCircle(
-                            state = step.state ?: StageState.UPCOMING,
+                            state = step.state ?: ApplicationStageState.UPCOMING,
                             size = stepSize,
                             modifier = Modifier.onGloballyPositioned { coordinates ->
                                 itemOffsets[index] = coordinates.positionInParent().x.toInt()
                             })
                         if (index < steps.lastIndex) {
                             StepConnector(
-                                fromState = step.state ?: StageState.UPCOMING,
-                                toState = steps[index + 1].state ?: StageState.UPCOMING,
+                                fromState = step.state ?: ApplicationStageState.UPCOMING,
+                                toState = steps[index + 1].state ?: ApplicationStageState.UPCOMING,
                                 height = lineHeight
                             )
                         }
@@ -119,9 +119,9 @@ fun StepProgressBar(
 }
 
 @Composable
-private fun StepCircle(state: StageState, size: Dp, modifier: Modifier = Modifier) {
+private fun StepCircle(state: ApplicationStageState, size: Dp, modifier: Modifier = Modifier) {
     when (state) {
-        StageState.COMPLETED -> {
+        ApplicationStageState.COMPLETED -> {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = modifier
@@ -138,7 +138,7 @@ private fun StepCircle(state: StageState, size: Dp, modifier: Modifier = Modifie
             }
         }
 
-        StageState.CURRENT -> {
+        ApplicationStageState.CURRENT -> {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = modifier
@@ -166,7 +166,7 @@ private fun StepCircle(state: StageState, size: Dp, modifier: Modifier = Modifie
             }
         }
 
-        StageState.UPCOMING -> {
+        ApplicationStageState.UPCOMING -> {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = modifier
@@ -194,7 +194,7 @@ private fun StepCircle(state: StageState, size: Dp, modifier: Modifier = Modifie
             }
         }
 
-        StageState.UNKNOWN -> {
+        ApplicationStageState.UNKNOWN -> {
             Box(
                 modifier = modifier
                     .size(size)
@@ -208,14 +208,14 @@ private fun StepCircle(state: StageState, size: Dp, modifier: Modifier = Modifie
 
 @Composable
 fun StepConnector(
-    fromState: StageState,
-    toState: StageState,
+    fromState: ApplicationStageState,
+    toState: ApplicationStageState,
     height: Dp,
     width: Dp = 40.dp
 ) {
     val color = when {
-        fromState == StageState.COMPLETED && toState == StageState.COMPLETED -> GreenCompleted
-        fromState == StageState.COMPLETED && toState == StageState.CURRENT -> GreenCompleted
+        fromState == ApplicationStageState.COMPLETED && toState == ApplicationStageState.COMPLETED -> GreenCompleted
+        fromState == ApplicationStageState.COMPLETED && toState == ApplicationStageState.CURRENT -> GreenCompleted
         else -> GrayPending
     }
 
