@@ -24,5 +24,7 @@ data class LoginData(
 data class User(
     @SerialName("userId") val userId: String? = null,
     @SerialName("academicFormStatus") val academicFormStatus: String? = null,
+    @SerialName("fullName") val fullName: String? = null,
+    @SerialName("joinedAt") val joinedAt: Int? = null,
 )
 

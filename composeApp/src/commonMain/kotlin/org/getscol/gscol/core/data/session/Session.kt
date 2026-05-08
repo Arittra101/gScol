@@ -8,8 +8,9 @@ interface Session {
     val academicFormSubmitTrigger: Flow<Int>
     suspend fun triggerAcademicFormSubmission()
 
+    val userFullName: Flow<String?>
+    val userJoinedAt: Flow<Int?>
+    suspend fun setUserProfile(fullName: String?, joinedAt: Int?)
 
     suspend fun resetUserPref()
 }
-
-

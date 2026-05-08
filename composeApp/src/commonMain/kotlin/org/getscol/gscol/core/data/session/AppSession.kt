@@ -15,14 +15,20 @@ class AppSession(
 
     private val _isUserLoggedIn = MutableStateFlow(false)
     private val _academicFormSubmitTrigger = MutableStateFlow(0)
+    private val _userFullName = MutableStateFlow<String?>(null)
+    private val _userJoinedAt = MutableStateFlow<Int?>(null)
 
     override val isUserLoggedIn: Flow<Boolean> = _isUserLoggedIn
     override val academicFormSubmitTrigger: Flow<Int> = _academicFormSubmitTrigger
+    override val userFullName: Flow<String?> = _userFullName
+    override val userJoinedAt: Flow<Int?> = _userJoinedAt
 
     init {
         appScope.launch(Dispatchers.Default) {
             _isUserLoggedIn.value = localStorage.getBoolean(StorageKeys.IS_USER_LOGGED_IN) ?: false
             _academicFormSubmitTrigger.value = localStorage.getInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT) ?: 0
+            _userFullName.value = localStorage.getString(StorageKeys.USER_FULL_NAME)
+            _userJoinedAt.value = localStorage.getInt(StorageKeys.USER_JOINED_AT)
         }
     }
 
@@ -37,9 +43,28 @@ class AppSession(
         localStorage.setInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT, current + 1)
     }
 
+    override suspend fun setUserProfile(fullName: String?, joinedAt: Int?) {
+        _userFullName.value = fullName
+        _userJoinedAt.value = joinedAt
+
+        if (fullName.isNullOrBlank()) {
+            localStorage.remove(StorageKeys.USER_FULL_NAME)
+        } else {
+            localStorage.setString(StorageKeys.USER_FULL_NAME, fullName)
+        }
+
+        if (joinedAt == null) {
+            localStorage.remove(StorageKeys.USER_JOINED_AT)
+        } else {
+            localStorage.setInt(StorageKeys.USER_JOINED_AT, joinedAt)
+        }
+    }
+
     override suspend fun resetUserPref() {
         _isUserLoggedIn.value = false
         _academicFormSubmitTrigger.value = 0
+        _userFullName.value = null
+        _userJoinedAt.value = null
         localStorage.clear()
     }
 

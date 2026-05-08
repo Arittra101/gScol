@@ -85,13 +85,13 @@ fun ProfileScreenRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    userName: String = "Sophia Carter",
-    joinYear: String = "2023",
     navigator: Navigator? = null,
     viewmodel: ProfileViewmodel = koinViewModel()
 ) {
     val onAction = viewmodel::onAction
     val isUserLogin by viewmodel.session.isUserLoggedIn.collectAsState(false)
+    val fullName by viewmodel.session.userFullName.collectAsState(initial = null)
+    val joinedAt by viewmodel.session.userJoinedAt.collectAsState(initial = null)
 
     // Bottom sheet visibility + state
     var showLogoutSheet by remember { mutableStateOf(false) }
@@ -114,8 +114,8 @@ fun ProfileScreen(
                 .then(if (!isUserLogin) Modifier.blur(20.dp) else Modifier)
         ) {
             ProfileHeader(
-                userName = userName,
-                joinYear = joinYear,
+                userName = fullName ?: "—",
+                joinYear = joinedAt?.toString() ?: "—",
                 onEditInformation = { navigator?.navigateTo(Route.EditProfile) }
             )
 
