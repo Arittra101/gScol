@@ -27,6 +27,10 @@ fun CourseItemView(
     values: PaddingValues,
     isUsedForTopLevelScreen: Boolean = false
 ) {
+    val paddingValue = if (isUsedForTopLevelScreen) {
+        PaddingValues(bottom = values.calculateBottomPadding() + 80.dp)
+    } else PaddingValues(bottom = 0.dp)
+
     when (val refreshState = courses.loadState.refresh) {
         is LoadState.Loading -> {
             FullScreenLoader()
@@ -51,9 +55,7 @@ fun CourseItemView(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = if (isUsedForTopLevelScreen) PaddingValues(bottom = values.calculateBottomPadding() + 80.dp) else PaddingValues(
-                        bottom = 0.dp
-                    )
+                    contentPadding = paddingValue
                 ) {
                     items(count = courses.itemCount) { index ->
                         courses[index]?.let {
