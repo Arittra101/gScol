@@ -18,7 +18,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.getscol.gscol.core.helper.ObserveEffect
+import org.getscol.gscol.core.helper.orFalse
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.ApiResponseBottomSheet
 import org.getscol.gscol.core.presentation.components.MaterialDropdown
 import org.getscol.gscol.core.presentation.components.PrimaryButton
 import org.getscol.gscol.feature.academic_form.presentation.DropDownUiModel
@@ -49,19 +51,38 @@ fun ApplicationFormScreenRoute(
     ObserveEffect(viewmodel.applicationFormUiEffect) { effect ->
         when (effect) {
             is ApplicationFormUIEffect.NavigateToApplicationJourney -> {
-                navigator.navigateTo(route = Route.Application(effect.applicationId),true)
+                navigator.navigateTo(route = Route.Application(effect.applicationId), true)
             }
         }
     }
 
 
-    BaseScreen(title = "Applications Form", showLoader = state?.isLoading) { AddApplicationContent(state,navigator,action) }
+    BaseScreen(title = "Applications Form", showLoader = state.isLoading) {
+        AddApplicationContent(state, action)
+    }
+
+    ApiResponseBottomSheet(
+        showBottomSheet = state.showApiResponseBottomSheet.orFalse(),
+        isSuccess = state.isApiSuccess.orFalse(),
+        message = if (state.isApiSuccess) state.successMsg else state.errorMsg,
+        onDismiss = {
+            if (state.isApiSuccess) {
+                action(ApplicationFormScreenAction.OnNavigateToApplicationJourney)
+            }
+            action(ApplicationFormScreenAction.OnDismissApiResponseSheet)
+        },
+        onConfirm = {
+            if (state.isApiSuccess) {
+                action(ApplicationFormScreenAction.OnNavigateToApplicationJourney)
+            }
+            action(ApplicationFormScreenAction.OnDismissApiResponseSheet)
+        }
+    )
 }
 
 @Composable
 fun AddApplicationContent(
     state: ApplicationFormUiState?,
-    navigator: Navigator,
     action: (ApplicationFormScreenAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {

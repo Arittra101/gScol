@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import org.getscol.gscol.core.domain.toData
+import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.core.helper.toMonthNumber
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 import org.getscol.gscol.feature.application.domain.model.request.ApplicationCreateRequestBody
@@ -22,11 +22,13 @@ class ApplicationFormViewmodel(
     private val repository: ApplicationRepository
 ) : ViewModel() {
 
-    private val _applicationFormUiState = MutableStateFlow<ApplicationFormUiState?>(null)
-    val applicationFormUiState: StateFlow<ApplicationFormUiState?> = _applicationFormUiState
+    private val _applicationFormUiState = MutableStateFlow(ApplicationFormUiState())
+    val applicationFormUiState: StateFlow<ApplicationFormUiState> = _applicationFormUiState
 
     private val _applicationFormUiEffect = Channel<ApplicationFormUIEffect>(Channel.BUFFERED)
     val applicationFormUiEffect = _applicationFormUiEffect.receiveAsFlow()
+
+    private var applicationId: String? = null
 
     init {
         _applicationFormUiState.value = ApplicationFormUiState(
@@ -42,11 +44,24 @@ class ApplicationFormViewmodel(
         when (action) {
             is ApplicationFormScreenAction.OnIntakeSelection -> {
                 _applicationFormUiState.value =
-                    _applicationFormUiState.value?.copy(selectedIntake = action.intake)
+                    _applicationFormUiState.value.copy(selectedIntake = action.intake)
             }
 
-            ApplicationFormScreenAction.OnCreateApplication -> {
+            is ApplicationFormScreenAction.OnCreateApplication -> {
                 createApplication()
+            }
+
+            is ApplicationFormScreenAction.OnNavigateToApplicationJourney -> {
+                viewModelScope.launch {
+                    _applicationFormUiEffect.send(
+                        ApplicationFormUIEffect.NavigateToApplicationJourney(
+                            applicationId.orEmpty()
+                        )
+                    )
+                }
+            }
+            is ApplicationFormScreenAction.OnDismissApiResponseSheet -> {
+                _applicationFormUiState.value = _applicationFormUiState.value.copy(showApiResponseBottomSheet = false)
             }
         }
     }
@@ -59,7 +74,7 @@ class ApplicationFormViewmodel(
             universityId = courseDetails.university.uniId,
             courseId = courseDetails.courseId,
             intake = IntakeRequest(
-                intakeMonth = _applicationFormUiState.value?.selectedIntake?.toMonthNumber(),
+                intakeMonth = _applicationFormUiState.value.selectedIntake?.toMonthNumber(),
                 intakeYear = currentYear
             )
         )
@@ -67,13 +82,26 @@ class ApplicationFormViewmodel(
         viewModelScope.launch {
             repository.createApplication(requestBody)
                 .onStart {
-                    _applicationFormUiState.value = _applicationFormUiState.value?.copy(isLoading = true)
-                }
-                .collect {
-                    _applicationFormUiState.value = _applicationFormUiState.value?.copy(isLoading = false)
-                    val applicationId = it.toData() ?: return@collect
+                    _applicationFormUiState.value = _applicationFormUiState.value.copy(isLoading = true)
+                }.collect {result ->
+                    when(result) {
+                        is Result.Success -> {
+                            _applicationFormUiState.value = _applicationFormUiState.value.copy(
+                                isLoading = false,
+                                showApiResponseBottomSheet = true,
+                                isApiSuccess = true
+                            )
+                            applicationId = result.data
+                        }
 
-                    _applicationFormUiEffect.send(ApplicationFormUIEffect.NavigateToApplicationJourney(applicationId))
+                        is Result.Error -> {
+                            _applicationFormUiState.value = _applicationFormUiState.value.copy(
+                                isLoading = false,
+                                showApiResponseBottomSheet = true,
+                                isApiSuccess = false
+                            )
+                        }
+                    }
                 }
         }
     }
@@ -81,11 +109,15 @@ class ApplicationFormViewmodel(
 }
 
 data class ApplicationFormUiState(
-    val universityName: String,
-    val courseName: String,
-    val intakes: List<String>,
+    val universityName: String = "",
+    val courseName: String = "",
+    val intakes: List<String> = listOf(),
     val selectedIntake: String? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showApiResponseBottomSheet: Boolean = false,
+    val isApiSuccess: Boolean = false,
+    val successMsg: String = "Application created successfully",
+    val errorMsg: String = "Something went wrong"
 )
 
 sealed interface ApplicationFormUIEffect {
@@ -95,4 +127,7 @@ sealed interface ApplicationFormUIEffect {
 sealed interface ApplicationFormScreenAction {
     data class OnIntakeSelection(val intake: String) : ApplicationFormScreenAction
     data object OnCreateApplication : ApplicationFormScreenAction
+    data object OnNavigateToApplicationJourney : ApplicationFormScreenAction
+    data object OnDismissApiResponseSheet : ApplicationFormScreenAction
+
 }
