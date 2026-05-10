@@ -60,5 +60,9 @@ class ConsultantDetailsViewModel(
             )
         }
     }
+
+    fun onBookSession() {
+
+    }
 }
 

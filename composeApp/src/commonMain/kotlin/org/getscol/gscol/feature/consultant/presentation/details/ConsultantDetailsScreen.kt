@@ -21,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -63,6 +65,7 @@ fun ConsultantDetailsScreenRoot(
     ConsultantDetailsScreen(
         state = state,
         onBack = navigator::navigateBack,
+        onBookSession = viewModel::onBookSession
     )
 }
 
@@ -70,6 +73,7 @@ fun ConsultantDetailsScreenRoot(
 fun ConsultantDetailsScreen(
     state: ConsultantDetailsState,
     onBack: () -> Unit,
+    onBookSession: () -> Unit
 ) {
     val colors = appColors()
     BaseScreen(
@@ -242,7 +246,20 @@ fun ConsultantDetailsScreen(
                 label = "OFFICE HOURS",
                 value = consultant.officeHours
             )
-
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = onBookSession,
+                modifier = Modifier.height(50.dp).fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = appColors().customPrimary)
+            ) {
+                Text(
+                    "Book Consultation",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
         }
     }

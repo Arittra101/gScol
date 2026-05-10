@@ -20,6 +20,7 @@ fun LoginScreenPreview() {
                 isLoading = false,
                 errorMessage = null
             ),
+            onBookSession = {},
             onBack = {},
         )
     }
