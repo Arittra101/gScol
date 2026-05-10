@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -19,6 +20,12 @@ import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 
+// Memoize the divider color to avoid recreation on every frame
+private val DIVIDER_COLOR = Color(0xFFE8E8E8)
+
+// Memoize default bottom padding to avoid recreation
+private val DEFAULT_PADDING = PaddingValues(bottom = 0.dp)
+
 @Composable
 fun CourseItemView(
     navigator: Navigator,
@@ -27,9 +34,12 @@ fun CourseItemView(
     values: PaddingValues,
     isUsedForTopLevelScreen: Boolean = false
 ) {
-    val paddingValue = if (isUsedForTopLevelScreen) {
+    // Simple conditional - don't need remember for lightweight operation
+    val contentPadding = if (isUsedForTopLevelScreen) {
         PaddingValues(bottom = values.calculateBottomPadding() + 80.dp)
-    } else PaddingValues(bottom = 0.dp)
+    } else {
+        DEFAULT_PADDING
+    }
 
     when (val refreshState = courses.loadState.refresh) {
         is LoadState.Loading -> {
@@ -55,41 +65,47 @@ fun CourseItemView(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = paddingValue
+                    contentPadding = contentPadding
                 ) {
-                    items(count = courses.itemCount) { index ->
-                        courses[index]?.let {
-                            CourseInfoCard(
-                                courseId = it.courseId,
-                                courseName = it.courseName,
-                                city = it.city,
-                                country = it.country,
-                                universityName = it.universityName,
-                                universityLogo = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg" /*it.imageUrl*/,
-                                backgroundImage = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg" /*it.imageUrl*/,
-                                intake = it.intake.toShortDate(),
-                                tuitionFees = it.tuitionFee.toString().toDollar(),
-                                duration = it.duration,
-                                scholarship = it.scholarship.toString(),
-                                initialDeposit = "12333",
-                                ieltsBand = it.ieltsOverallRequired,
-                                ieltsSingleBand = it.ieltsBandRequired,
-                                isFavorite = it.isWishlisted,
-                                action = action,
-                                onCourseClick = {
+                    items(
+                        count = courses.itemCount,
+                        key = { index -> courses[index]?.courseId ?: index }
+                    ) { index ->
+                        courses[index]?.let { course ->
+                            // Only memoize expensive callback creation
+                            val onCourseClick: () -> Unit = remember(course.courseId, navigator) {
+                                {
                                     navigator.navigateToOtherScreen(
-                                        route = Route.CourseDetails(
-                                            courseId = it.courseId,
-                                        )
+                                        route = Route.CourseDetails(courseId = course.courseId)
                                     )
                                 }
+                            }
+
+                            CourseInfoCard(
+                                courseId = course.courseId,
+                                courseName = course.courseName,
+                                city = course.city,
+                                country = course.country,
+                                universityName = course.universityName,
+                                universityLogo = course.imageUrl,
+                                backgroundImage = course.imageUrl,
+                                intake = course.intake.toShortDate(),
+                                tuitionFees = course.tuitionFee.toString().toDollar(),
+                                duration = course.duration,
+                                scholarship = course.scholarship.toString(),
+                                initialDeposit = "12333",
+                                ieltsBand = course.ieltsOverallRequired,
+                                ieltsSingleBand = course.ieltsBandRequired,
+                                isFavorite = course.isWishlisted,
+                                action = action,
+                                onCourseClick = onCourseClick
                             )
                         }
                         // Add divider after each item except the last
                         if (index < courses.itemCount - 1) {
                             HorizontalDivider(
                                 thickness = 9.dp,
-                                color = Color(0xFFE8E8E8)
+                                color = DIVIDER_COLOR
                             )
                         }
                     }
