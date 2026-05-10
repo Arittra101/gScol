@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.core.helper.toMonthNumber
+import org.getscol.gscol.core.utils.DateTimeFormat
+import org.getscol.gscol.core.utils.DateTimeProvider
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 import org.getscol.gscol.feature.application.domain.model.request.ApplicationCreateRequestBody
 import org.getscol.gscol.feature.application.domain.model.request.IntakeRequest
@@ -68,7 +70,7 @@ class ApplicationFormViewmodel(
 
 
     private fun createApplication() {
-        val currentYear = 2026 //this should be dynamic
+        val currentYear = DateTimeProvider.now(DateTimeFormat.YearOnly).toIntOrNull() ?: 0
 
         val requestBody = ApplicationCreateRequestBody(
             universityId = courseDetails.university.uniId,
