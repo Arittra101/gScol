@@ -1,7 +1,5 @@
 package org.getscol.gscol.feature.consultant.domain.model
 
-import org.jetbrains.compose.resources.DrawableResource
-
 data class Certification(
     val issuedBy: String,
     val title: String,
@@ -20,6 +18,8 @@ data class ConsultantModel(
     val isCertified: Boolean,
     val email: String,
     val phone: String,
+    /** Calendly or other scheduling URL for this consultant. */
+    val bookingUrl: String,
     val officeHours: String,
     val education: String,
     val bio: String,

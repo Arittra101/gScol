@@ -20,10 +20,6 @@ class ConsultantDetailsViewModel(
         load()
     }
 
-    fun retry() {
-        load()
-    }
-
     private fun load() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, errorMessage = null) }
@@ -59,10 +55,6 @@ class ConsultantDetailsViewModel(
                 }
             )
         }
-    }
-
-    fun onBookSession() {
-
     }
 }
 

@@ -1,6 +1,7 @@
 package org.getscol.gscol.feature.consultant.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,9 +40,10 @@ import scol.composeapp.generated.resources.shafayat_jamil
 @Composable
 fun ConsultantCard(
     consultant: ConsultantModel,
-    avatarColor: Color,
     onViewProfile: () -> Unit,
-    onBookSession: () -> Unit
+    onBookSession: () -> Unit,
+    onEmailClick: () -> Unit = {},
+    onPhoneClick: () -> Unit = {},
 ) {
     /// get image resource
     val imageResource = when (consultant.image) {
@@ -76,7 +78,10 @@ fun ConsultantCard(
                     )
                     Text(text = consultant.title, fontSize = 13.sp, color = colors.customInfo)
                     Spacer(modifier = Modifier.height(6.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.clickable(onClick = onEmailClick),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Icon(
                             Icons.Default.Email,
                             null,
@@ -87,7 +92,10 @@ fun ConsultantCard(
                         Text(text = consultant.email, fontSize = 12.sp, color = Color.DarkGray)
                     }
                     Spacer(modifier = Modifier.height(2.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.clickable(onClick = onPhoneClick),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Icon(
                             Icons.Default.Phone,
                             null,

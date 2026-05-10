@@ -34,7 +34,16 @@ class ConsultantViewModel(
                 }
             }
             is ConsultantAction.BookSession -> {
-               ///implement later
+                viewModelScope.launch {
+                    val url = _state.value.items
+                        .firstOrNull { it.id == action.consultantId }
+                        ?.bookingUrl
+                        ?.trim()
+                        .orEmpty()
+                    if (url.isNotEmpty()) {
+                        _uiEffect.emit(ConsultantUiEffect.OpenBookingUrl(url))
+                    }
+                }
             }
         }
     }
