@@ -9,12 +9,13 @@ import kotlinx.serialization.json.Json
 import org.getscol.gscol.DesireScreen
 import org.getscol.gscol.auth.presentation.application.ApplicationScreen
 import org.getscol.gscol.auth.presentation.compare.CompareScreen
-import org.getscol.gscol.auth.presentation.consultant.ConsultantScreen
 import org.getscol.gscol.auth.presentation.profile.ProfileScreenRoute
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
 import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
+import org.getscol.gscol.feature.consultant.presentation.consultant.ConsultantScreenRoot
+import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreenRoot
 import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
 import org.getscol.gscol.feature.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.feature.auth.presentation.login.LoginScreenRoot
@@ -83,7 +84,14 @@ fun ScolNavHost(
             ProfileScreenRoute(navigator = navigator)
         }
         composableNoAnimation<Route.Consultant> {
-            ConsultantScreen()
+            ConsultantScreenRoot(navigator = navigator)
+        }
+        composableNoAnimation<Route.ConsultantDetails> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.ConsultantDetails>()
+            ConsultantDetailsScreenRoot(
+                consultantId = args.consultantId,
+                navigator = navigator,
+            )
         }
         composableNoAnimation<Route.Desire> {
             DesireScreen()

@@ -17,6 +17,9 @@ sealed interface Route {
     object Consultant : Route
 
     @Serializable
+    data class ConsultantDetails(val consultantId: String) : Route
+
+    @Serializable
     object Profile : Route
 
     @Serializable
