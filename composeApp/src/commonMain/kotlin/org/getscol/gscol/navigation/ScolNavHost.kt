@@ -14,10 +14,6 @@ import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.core.helper.fromNavJson
 import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
-import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
-import org.getscol.gscol.feature.consultant.presentation.consultant.ConsultantScreenRoot
-import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreenRoot
-import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
 import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailsRoute
 import org.getscol.gscol.feature.application.presentation.application_screen.ApplicationListScreenRoute
 import org.getscol.gscol.feature.application.presentation.application_screen.ApplicationListViewmodel
@@ -28,10 +24,13 @@ import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
+import org.getscol.gscol.feature.consultant.presentation.consultant.ConsultantScreenRoot
+import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreenRoot
 import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
 import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
 import org.getscol.gscol.feature.home.presentation.HomeScreenRoot
 import org.getscol.gscol.feature.home.presentation.InEligibleScreenRoute
+import org.getscol.gscol.feature.profile.presentation.edit_profile.EditProfileScreenRoute
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
 import org.getscol.gscol.feature.search.presentation.advance_search.AdvancedSearchScreenRoot
 import org.getscol.gscol.feature.search.presentation.search.SearchScreenRoot
@@ -89,6 +88,9 @@ fun ScolNavHost(
         composableNoAnimation<Route.Profile> {
             ProfileScreenRoute(navigator = navigator)
         }
+        composableNoAnimation<Route.EditProfile> {
+            EditProfileScreenRoute(navigator = navigator)
+        }
         composableNoAnimation<Route.Consultant> {
             ConsultantScreenRoot(navigator = navigator)
         }
@@ -143,7 +145,7 @@ fun ScolNavHost(
             ApplicationFormScreenRoute(courseDetails = courseDetails, navigator = navigator)
         }
 
-        composableNoAnimation<Route.ApplicationStatusTrackerRoute> { backStackEntry->
+        composableNoAnimation<Route.ApplicationStatusTrackerRoute> { backStackEntry ->
             val args = backStackEntry.toRoute<Route.ApplicationStatusTrackerRoute>()
             ApplicationStatusScreenRoute(navigator = navigator, applicationId = args.applicationId)
         }
@@ -162,7 +164,7 @@ fun ScolNavHost(
                 viewModelStoreOwner = homeEntry
             ) else koinViewModel()
 
-            ApplicationListScreenRoute(navigator,viewModel)
+            ApplicationListScreenRoute(navigator, viewModel)
         }
 
         composableNoAnimation<Route.Application> {

@@ -2,6 +2,7 @@ package org.getscol.gscol.core.data.session
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -17,10 +18,14 @@ class AppSession(
 
 
     private val _isUserLoggedIn = MutableStateFlow(false)
-    override val isUserLoggedIn= _isUserLoggedIn.asStateFlow()
+    override val isUserLoggedIn = _isUserLoggedIn.asStateFlow()
 
     private val _academicFormSubmitTrigger = MutableStateFlow(0)
-    override val academicFormSubmitTrigger= _academicFormSubmitTrigger.asStateFlow()
+    override val academicFormSubmitTrigger = _academicFormSubmitTrigger.asStateFlow()
+    private val _userFullName = MutableStateFlow<String?>(null)
+    override val userFullName: Flow<String?> = _userFullName
+    private val _userJoinedAt = MutableStateFlow<Int?>(null)
+    override val userJoinedAt: Flow<Int?> = _userJoinedAt
 
     private val _triggerApplicationListScreen = MutableSharedFlow<Unit>()
     override val triggerApplicationListScreen = _triggerApplicationListScreen.asSharedFlow()
@@ -28,7 +33,10 @@ class AppSession(
     init {
         appScope.launch(Dispatchers.Default) {
             _isUserLoggedIn.value = localStorage.getBoolean(StorageKeys.IS_USER_LOGGED_IN) ?: false
-            _academicFormSubmitTrigger.value = localStorage.getInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT) ?: 0
+            _academicFormSubmitTrigger.value =
+                localStorage.getInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT) ?: 0
+            _userFullName.value = localStorage.getString(StorageKeys.USER_FULL_NAME)
+            _userJoinedAt.value = localStorage.getInt(StorageKeys.USER_JOINED_AT)
         }
     }
 
@@ -47,10 +55,29 @@ class AppSession(
         _triggerApplicationListScreen.emit(Unit)
     }
 
+    override suspend fun setUserProfile(fullName: String?, joinedAt: Int?) {
+        _userFullName.value = fullName
+        _userJoinedAt.value = joinedAt
+
+        if (fullName.isNullOrBlank()) {
+            localStorage.remove(StorageKeys.USER_FULL_NAME)
+        } else {
+            localStorage.setString(StorageKeys.USER_FULL_NAME, fullName)
+        }
+
+        if (joinedAt == null) {
+            localStorage.remove(StorageKeys.USER_JOINED_AT)
+        } else {
+            localStorage.setInt(StorageKeys.USER_JOINED_AT, joinedAt)
+        }
+    }
+
     override suspend fun resetUserPref() {
         _isUserLoggedIn.value = false
         _academicFormSubmitTrigger.value = 0
 
+        _userFullName.value = null
+        _userJoinedAt.value = null
         localStorage.clear()
     }
 

@@ -13,7 +13,9 @@ interface Session {
     val academicFormSubmitTrigger: StateFlow<Int>
     suspend fun triggerAcademicFormSubmission()
 
+    val userFullName: Flow<String?>
+    val userJoinedAt: Flow<Int?>
+    suspend fun setUserProfile(fullName: String?, joinedAt: Int?)
+
     suspend fun resetUserPref()
 }
-
-
