@@ -2,9 +2,9 @@ package org.getscol.gscol.core.data.session
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -22,19 +22,20 @@ class AppSession(
 
     private val _academicFormSubmitTrigger = MutableStateFlow(0)
     override val academicFormSubmitTrigger = _academicFormSubmitTrigger.asStateFlow()
-    private val _userFullName = MutableStateFlow<String?>(null)
-    override val userFullName: Flow<String?> = _userFullName
-    private val _userJoinedAt = MutableStateFlow<Int?>(null)
-    override val userJoinedAt: Flow<Int?> = _userJoinedAt
 
     private val _triggerApplicationListScreen = MutableSharedFlow<Unit>()
     override val triggerApplicationListScreen = _triggerApplicationListScreen.asSharedFlow()
 
+    private val _userFullName = MutableStateFlow<String?>(null)
+    override val userFullName: StateFlow<String?> = _userFullName.asStateFlow()
+
+    private val _userJoinedAt = MutableStateFlow<Int?>(null)
+    override val userJoinedAt: StateFlow<Int?> = _userJoinedAt.asStateFlow()
+
     init {
         appScope.launch(Dispatchers.Default) {
             _isUserLoggedIn.value = localStorage.getBoolean(StorageKeys.IS_USER_LOGGED_IN) ?: false
-            _academicFormSubmitTrigger.value =
-                localStorage.getInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT) ?: 0
+            _academicFormSubmitTrigger.value = localStorage.getInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT) ?: 0
             _userFullName.value = localStorage.getString(StorageKeys.USER_FULL_NAME)
             _userJoinedAt.value = localStorage.getInt(StorageKeys.USER_JOINED_AT)
         }

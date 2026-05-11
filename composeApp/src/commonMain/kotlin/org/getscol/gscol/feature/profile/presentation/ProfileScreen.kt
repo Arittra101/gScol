@@ -1,4 +1,4 @@
-package org.getscol.gscol.auth.presentation.profile
+package org.getscol.gscol.feature.profile.presentation
 
 
 import androidx.compose.foundation.background
@@ -52,10 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.presentation.BaseScreen
-import org.getscol.gscol.feature.profile.presentation.ProfileAction
-import org.getscol.gscol.feature.profile.presentation.ProfileViewmodel
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
+import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -77,7 +76,9 @@ fun ProfileScreenRoute(
 ) {
     BaseScreen(
         title = stringResource(Res.string.profile),
-        onBackPress = { navigator?.navigateBack() }) {
+        showBackButton = false,
+        isTopLevelScreen = true
+    ) {
         ProfileScreen(navigator = navigator, viewmodel = viewmodel)
     }
 
@@ -441,7 +442,7 @@ private fun ProfileMenuItem(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(LightPink, CircleShape),
+                .background(appColors().customPrimary.copy(alpha = 0.10f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
