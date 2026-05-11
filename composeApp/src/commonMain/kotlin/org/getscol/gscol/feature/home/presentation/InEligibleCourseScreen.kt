@@ -1,6 +1,8 @@
 package org.getscol.gscol.feature.home.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.course.CourseItemView
@@ -15,11 +17,13 @@ fun InEligibleScreenRoute(
 ) {
 
     val action = viewmodel::onAction
-    // Instead of the function reference...
-    /*  val action: (HomeAction) -> Unit = { data ->
-          viewmodel.onAction(data)
-      }*/
-    BaseScreen(title = "In Eligible Courses", onBackPress = { navigator.navigateBack() }) {
+    val wishlistUi by viewmodel.wishlistMutationUiState.collectAsState()
+
+    BaseScreen(
+        title = "In Eligible Courses",
+        onBackPress = { navigator.navigateBack() },
+        showLoader = wishlistUi.isMutating
+    ) {
         CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it)
     }
 }

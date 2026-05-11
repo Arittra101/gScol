@@ -8,7 +8,7 @@ import androidx.navigation.toRoute
 import kotlinx.serialization.json.Json
 import org.getscol.gscol.DesireScreen
 import org.getscol.gscol.auth.presentation.application.ApplicationScreen
-import org.getscol.gscol.auth.presentation.compare.CompareScreen
+import org.getscol.gscol.feature.compare.presentation.CompareScreenRoot
 import org.getscol.gscol.auth.presentation.consultant.ConsultantScreen
 import org.getscol.gscol.auth.presentation.profile.ProfileScreenRoute
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
@@ -74,7 +74,7 @@ fun ScolNavHost(
             AdvancedSearchScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.CompareRoute> {
-            CompareScreen()
+            CompareScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.Application> {
             ApplicationScreen()

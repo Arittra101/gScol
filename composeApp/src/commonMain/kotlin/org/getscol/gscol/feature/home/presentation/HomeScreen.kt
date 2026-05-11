@@ -29,13 +29,17 @@ fun HomeScreenRoot(
         viewmodel.onAction(data)
     }
 
-    val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(initial = 0)
+    val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(
+        initial = 0
+    )
 
     val isUserLogin by viewmodel.session.isUserLoggedIn.collectAsState(initial = false)
     val isUserFillupAcademicForm: Boolean = academicFormSubmitTrigger > 0
     var showExitDialog by remember { mutableStateOf(false) }
 
     BackHandler { showExitDialog = true }
+
+    val wishlistUi by viewmodel.wishlistMutationUiState.collectAsState()
 
     BaseScreen(topBar = {
         HomeAppBar(
@@ -44,7 +48,7 @@ fun HomeScreenRoot(
             isUserFillupAcademicForm,
             isUserLogin
         )
-    }, isTopLevelScreen = true) {
+    }, isTopLevelScreen = true, showLoader = wishlistUi.isMutating) {
         CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it, true)
     }
 

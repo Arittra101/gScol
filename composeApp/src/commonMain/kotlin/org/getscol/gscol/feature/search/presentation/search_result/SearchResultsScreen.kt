@@ -2,6 +2,8 @@ package org.getscol.gscol.feature.search.presentation.search_result
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.course.CourseItemView
@@ -25,8 +27,13 @@ fun SearchResultsScreenRoot(
 
     val courses = viewModel.courses.collectAsLazyPagingItems()
     val action = viewModel::onAction
+    val wishlistUi by viewModel.wishlistMutationUiState.collectAsState()
 
-    BaseScreen(title = "Search Result", onBackPress = { navigator.navigateBack() }) {
+    BaseScreen(
+        title = "Search Result",
+        onBackPress = { navigator.navigateBack() },
+        showLoader = wishlistUi.isMutating
+    ) {
         CourseItemView(navigator, action, courses, it)
     }
 }
