@@ -9,13 +9,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.domain.repository.HomeRepository
-import kotlin.collections.plus
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class InEligibleCourseViewmodel(private val homeRepository: HomeRepository, val session: Session) :
@@ -33,7 +31,7 @@ class InEligibleCourseViewmodel(private val homeRepository: HomeRepository, val 
     }
 
     private val baseCourses = triggerApiCall.flatMapLatest {
-        val isLogin = session.isUserLoggedIn.first()
+        val isLogin = session.isUserLoggedIn.value
         homeRepository.getHomeCoursesStream(isLogin, INELIGIBLE_ONLY)
     }.cachedIn(viewModelScope)
 
