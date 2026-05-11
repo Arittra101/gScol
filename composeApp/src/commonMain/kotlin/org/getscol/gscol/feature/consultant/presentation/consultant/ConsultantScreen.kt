@@ -66,6 +66,7 @@ fun ConsultantScreen(
     BaseScreen(
         title = "Consultations",
         isTopLevelScreen = true,
+        showBackButton = false,
         showLoader = state.isLoading,
         bgColorContent = colors.customSurface,
     ) {
