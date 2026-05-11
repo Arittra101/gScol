@@ -1,33 +1,42 @@
 package org.getscol.gscol.navigation
 
+import ApplicationFormScreenRoute
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.toRoute
 import kotlinx.serialization.json.Json
-import org.getscol.gscol.DesireScreen
-import org.getscol.gscol.auth.presentation.application.ApplicationScreen
 import org.getscol.gscol.auth.presentation.compare.CompareScreen
 import org.getscol.gscol.auth.presentation.profile.ProfileScreenRoute
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
+import org.getscol.gscol.core.helper.fromNavJson
 import org.getscol.gscol.feature.academic_form.presentation.AcademicFormRoute
 import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
 import org.getscol.gscol.feature.consultant.presentation.consultant.ConsultantScreenRoot
 import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreenRoot
 import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
+import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailsRoute
+import org.getscol.gscol.feature.application.presentation.application_screen.ApplicationListScreenRoute
+import org.getscol.gscol.feature.application.presentation.application_screen.ApplicationListViewmodel
+import org.getscol.gscol.feature.application.presentation.application_status_tracker.ApplicationStatusScreenRoute
 import org.getscol.gscol.feature.auth.presentation.forgotpassword.ForgotPasswordScreenRoot
 import org.getscol.gscol.feature.auth.presentation.login.LoginScreenRoot
 import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
+import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
+import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
+import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
 import org.getscol.gscol.feature.home.presentation.HomeScreenRoot
 import org.getscol.gscol.feature.home.presentation.InEligibleScreenRoute
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
 import org.getscol.gscol.feature.search.presentation.advance_search.AdvancedSearchScreenRoot
 import org.getscol.gscol.feature.search.presentation.search.SearchScreenRoot
 import org.getscol.gscol.feature.search.presentation.search_result.SearchResultsScreenRoot
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ScolNavHost(
@@ -77,9 +86,6 @@ fun ScolNavHost(
         composableNoAnimation<Route.CompareRoute> {
             CompareScreen()
         }
-        composableNoAnimation<Route.Application> {
-            ApplicationScreen()
-        }
         composableNoAnimation<Route.Profile> {
             ProfileScreenRoute(navigator = navigator)
         }
@@ -92,9 +98,6 @@ fun ScolNavHost(
                 consultantId = args.consultantId,
                 navigator = navigator,
             )
-        }
-        composableNoAnimation<Route.Desire> {
-            DesireScreen()
         }
         composableNoAnimation<Route.Login> {
             LoginScreenRoot(navigator = navigator)
@@ -129,6 +132,43 @@ fun ScolNavHost(
         }
         composableNoAnimation<Route.InEligibleScreen> {
             InEligibleScreenRoute(navigator = navigator)
+        }
+        composableNoAnimation<Route.InEligibleScreen> {
+            InEligibleScreenRoute(navigator = navigator)
+
+        }
+        composableNoAnimation<Route.ApplicationFormRoute> {
+            val args = it.toRoute<Route.ApplicationFormRoute>()
+            val courseDetails = args.courseDetails.fromNavJson<CourseDetails>()
+            ApplicationFormScreenRoute(courseDetails = courseDetails, navigator = navigator)
+        }
+
+        composableNoAnimation<Route.ApplicationStatusTrackerRoute> { backStackEntry->
+            val args = backStackEntry.toRoute<Route.ApplicationStatusTrackerRoute>()
+            ApplicationStatusScreenRoute(navigator = navigator, applicationId = args.applicationId)
+        }
+
+        composableNoAnimation<Route.ApplicationList> { backStackEntry ->
+            // Scope ViewModel to HomeRoute entry (always alive)
+            val homeEntry = remember(backStackEntry) {
+                try {
+                    navController.getBackStackEntry<Route.HomeRoute>()
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            // Koin handles repo injection automatically
+            val viewModel: ApplicationListViewmodel = if (homeEntry != null) koinViewModel(
+                viewModelStoreOwner = homeEntry
+            ) else koinViewModel()
+
+            ApplicationListScreenRoute(navigator,viewModel)
+        }
+
+        composableNoAnimation<Route.Application> {
+            val args = it.toRoute<Route.Application>()
+            val applicationId = args.applicationId
+            ApplicationDetailsRoute(navigator, applicationId)
         }
     }
 }

@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +43,14 @@ import scol.composeapp.generated.resources.Res
 import scol.composeapp.generated.resources.duration_icon
 import scol.composeapp.generated.resources.intake_icon
 import scol.composeapp.generated.resources.tution_fee_icon
+
+// Memoize constant colors and styles to avoid recreation
+private val DIVIDER_COLOR_CARD = Color(0xFFF0F0F0)
+private val BUTTON_CONTENT_PADDING = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+private val BUTTON_SHAPE = RoundedCornerShape(4.dp)
+private val ICON_BUTTON_SIZE = 24.dp
+private val FAVORITE_TINT_FAVORITED = Color.Red
+private val FAVORITE_TINT_UNFAVORITED = Color.White
 
 @Composable
 fun CourseInfoCard(
@@ -64,11 +73,24 @@ fun CourseInfoCard(
     onCourseClick: () -> Unit,
 ) {
     val colors = appColors()
-    val favoriteIcon = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+
+    // Only memoize expensive callback - simple conditionals don't need remember
+    val onWishlistClick = remember(courseId, isFavorite, action) {
+        {
+            action(
+                HomeAction.AddToWishlist(
+                    courseId = courseId,
+                    isWishListed = isFavorite
+                )
+            )
+        }
+    }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column {
+            // Header Row with Logo and Course Info
             Row(
                 modifier = Modifier.fillMaxWidth().padding(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -111,10 +133,11 @@ fun CourseInfoCard(
                     )
                 }
             }
+
+            // Background Image with Favorite Button
             Box(
                 modifier = Modifier.fillMaxWidth().height(200.dp)
             ) {
-                // Placeholder for actual image - use AsyncImage or coil in real app
                 Box(
                     modifier = Modifier.fillMaxSize()
                         .background(colors.customBackground)
@@ -128,26 +151,22 @@ fun CourseInfoCard(
                 }
 
                 IconButton(
-                    onClick = {
-                        action(
-                            HomeAction.AddToWishlist(
-                                courseId = courseId,
-                                isWishListed = isFavorite
-                            )
-                        )
-                    },
+                    onClick = onWishlistClick,
                     modifier = Modifier.align(Alignment.TopEnd)
                         .padding(16.dp)
-                        .size(24.dp)
+                        .size(ICON_BUTTON_SIZE)
                 ) {
                     Icon(
-                        favoriteIcon,
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Favorite",
-                        tint = if (isFavorite) Color.Red else Color.White
+                        tint = if (isFavorite) FAVORITE_TINT_FAVORITED else FAVORITE_TINT_UNFAVORITED
                     )
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
+
+            // First Info Chips Row
             Row(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -175,14 +194,15 @@ fun CourseInfoCard(
                     shouldFade = true,
                 )
             }
+
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Second Info Chips Row
             Row(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-
                 InfoChip(
                     modifier = Modifier.weight(1f),
                     iconPath = Res.drawable.intake_icon,
@@ -201,12 +221,16 @@ fun CourseInfoCard(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                color = Color(0xFFF0F0F0),
+                color = DIVIDER_COLOR_CARD,
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
+            // Footer Row with IELTS Score and Apply Button
             Row(
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp),
@@ -232,8 +256,8 @@ fun CourseInfoCard(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colors.customPrimary.copy(alpha = 0.15f)
                     ),
-                    shape = RoundedCornerShape(4.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    shape = BUTTON_SHAPE,
+                    contentPadding = BUTTON_CONTENT_PADDING
                 ) {
                     Text(
                         text = "Apply Now",
@@ -243,6 +267,7 @@ fun CourseInfoCard(
                     )
                 }
             }
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

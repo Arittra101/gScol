@@ -9,7 +9,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
@@ -45,7 +44,6 @@ class SearchResultsViewModel(
     val baseCourses: Flow<PagingData<Course>> = params.flatMapLatest { p ->
         if (p == null) flow<PagingData<Course>> { }
         else session.isUserLoggedIn
-            .distinctUntilChanged()
             .flatMapLatest { isLoggedIn ->
                 searchRepository.getSearchResultsStream(
                     searchText = p.searchText,

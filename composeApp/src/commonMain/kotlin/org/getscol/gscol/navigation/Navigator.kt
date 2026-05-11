@@ -1,8 +1,13 @@
 package org.getscol.gscol.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation.NavController
+import org.getscol.gscol.core.data.session.Session
+import org.koin.compose.koinInject
+import kotlin.reflect.KClass
 
 /*
    ---------
@@ -12,38 +17,62 @@ import androidx.navigation.NavController
 */
 
 
-class Navigator(private val navController: NavController) {
+class Navigator(
+    private val navController: NavController,
+    val session: Session,
+    private val onAuthRequired: (String) -> Unit = {}
+) {
 
     private val authRoute = mutableListOf<Route>()
     private val startDestinationRoute = Route.HomeRoute
 
-     fun navigateToTopLevel(destination: TopLevelDestination) {
-        navController.navigate(destination.route) {
-            popUpTo(Route.HomeRoute) {
-                saveState = true
-                inclusive = false
-            }
-            // Avoid multiple copies
-            launchSingleTop = true
+    private val protectedRoutes: Map<KClass<out Route>, String> = mapOf(
+        Route.Profile::class          to "Please login to access your profile",
+        Route.ApplicationList::class  to "Please login to view applications",
+        Route.CompareRoute::class     to "Please login to compare colleges",
+        Route.Consultant::class       to "Please login to contact consultants",
+    )
 
-            // Restore state when reselection
-            restoreState = true
-
+    private fun guardedNavigate(route: KClass<out Route>, navigationBlock: () -> Unit) {
+        val message = protectedRoutes[route]
+        if (message != null && !session.isUserLoggedIn.value) {
+            onAuthRequired(message)
+        } else {
+            navigationBlock()
         }
     }
 
-    // From now try to use this method if possible
-    fun navigateTo(route: Route, popUpToStartDestinationRoute: Boolean = false) {
-        navController.navigate(route) {
-            if (popUpToStartDestinationRoute) {
-                popUpTo(startDestinationRoute) { inclusive = false }
+    fun navigateToTopLevel(destination: TopLevelDestination) {
+        val route = destination.route as? Route ?: return
+        guardedNavigate(route::class) {
+            navController.navigate(destination.route) {
+                popUpTo(Route.HomeRoute) {
+                    saveState = true
+                    inclusive = false
+                }
                 // Avoid multiple copies
                 launchSingleTop = true
 
                 // Restore state when reselection
                 restoreState = true
-            }
 
+            }
+        }
+    }
+
+    // From now try to use this method if possible
+    fun navigateTo(route: Route, popUpToStartDestinationRoute: Boolean = false) {
+        guardedNavigate(route::class) {
+            navController.navigate(route) {
+                if (popUpToStartDestinationRoute) {
+                    popUpTo(startDestinationRoute) { inclusive = false }
+                    // Avoid multiple copies
+                    launchSingleTop = true
+
+                    // Restore state when reselection
+                    restoreState = true
+                }
+            }
         }
     }
 
@@ -94,8 +123,15 @@ class Navigator(private val navController: NavController) {
 }
 
 @Composable
-fun rememberNavigator(navController: NavController): Navigator {
-    return remember(navController) {
-        Navigator(navController)
+fun rememberNavigator(
+    navController: NavController,
+    onAuthRequired: (String) -> Unit = {}
+): Navigator {
+    val session = koinInject<Session>()
+    val updatedOnAuthRequired by rememberUpdatedState(onAuthRequired)
+    return remember(navController, session) {
+        Navigator(navController, session, onAuthRequired = { msg ->
+            updatedOnAuthRequired(msg)
+        })
     }
 }

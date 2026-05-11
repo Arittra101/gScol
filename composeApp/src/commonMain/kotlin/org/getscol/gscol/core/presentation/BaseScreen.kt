@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.getscol.gscol.core.helper.ScolDefaultTopBar
+import org.getscol.gscol.core.presentation.components.EmptyView
 import org.getscol.gscol.theme.appColors
 
 @Composable
@@ -33,6 +34,7 @@ fun BaseScreen(
                 title != null -> ScolDefaultTopBar(
                     title = title,
                     onBackPress = onBackPress,
+                    isIOSAlignment = isTopLevelScreen,
                     showBackButton = showBackButton
                 )
             }
@@ -44,11 +46,13 @@ fun BaseScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = bgColorContent)
-                .padding(innerPadding)
+                .padding(innerPadding)  /*it provide bottom and top system padding*/
                 .then(modifier)
         )
         {
-            if (showLoader == true) LoadingDialog()
+            if (showLoader == true) {
+                LoadingDialog()
+            }
             content(PaddingValues())
         }
     }

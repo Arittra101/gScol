@@ -1,12 +1,17 @@
 package org.getscol.gscol.bottombar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -17,6 +22,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -80,51 +86,48 @@ fun ScolBottomBar(
                 .windowInsetsPadding(WindowInsets.navigationBars)
         )
 
-        // Sharp content layer on top
-        NavigationBar(
-            windowInsets = WindowInsets(0, 0, 0, 0),
-            containerColor = Color.Transparent,
-            contentColor = unselectedColor
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             destinations.forEach { destination ->
                 val routeClass = destination.route::class.qualifiedName
                 val isSelected = currentRoute?.substringBefore("?").equals(routeClass)
 
-                NavigationBarItem(
-                    selected = isSelected,
-                    onClick = { onNavigateDestination(destination) },
-                    icon = {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(vertical = 10.dp)
+                val interactionSource = remember { MutableInteractionSource() }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null // No ripple
                         ) {
-                            AsyncImage(
-                                model = destination.getIconUri(),
-                                contentDescription = destination.label,
-                                modifier = Modifier.size(24.dp),
-                                colorFilter = ColorFilter.tint(
-                                    if (isSelected) appColors().customPrimary else unselectedColor
-                                )
-                            )
-                            Spacer(modifier = Modifier.height(1.dp))
-                            Text(
-                                text = destination.label,
-                                fontSize = 11.sp,
-                                color = if (isSelected) appColors().customPrimary else unselectedColor
-                            )
+                            if (!isSelected) {
+                                onNavigateDestination(destination)
+                            }
                         }
-                    },
-                    label = null,
-                    alwaysShowLabel = true,
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent,
-                        selectedIconColor = appColors().customPrimary,
-                        selectedTextColor = appColors().customPrimary,
-                        unselectedIconColor = unselectedColor,
-                        unselectedTextColor = unselectedColor
+                        .padding(vertical = 4.dp)
+                ) {
+                    AsyncImage(
+                        model = destination.getIconUri(),
+                        contentDescription = destination.label,
+                        modifier = Modifier.size(24.dp),
+                        colorFilter = ColorFilter.tint(
+                            if (isSelected) appColors().customPrimary else unselectedColor
+                        )
                     )
-                )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = destination.label,
+                        fontSize = 11.sp,
+                        color = if (isSelected) appColors().customPrimary else unselectedColor
+                    )
+                }
             }
         }
     }
