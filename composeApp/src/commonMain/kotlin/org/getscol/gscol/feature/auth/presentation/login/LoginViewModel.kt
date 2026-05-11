@@ -70,6 +70,7 @@ class LoginViewModel(
                     }
                     val isUserFillUpAcademicForm = session.academicFormSubmitTrigger.first()
                     _uiEffect.emit(LoginUiEffect.LoginSuccess(isUserFillUpAcademicForm))
+                    session.applicationApplyTrigger()
                 }
 
                 is Result.Error -> {

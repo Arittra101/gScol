@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.core.helper.toMonthNumber
 import org.getscol.gscol.core.utils.DateTimeFormat
@@ -21,7 +22,8 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 class ApplicationFormViewmodel(
     private val courseDetails: CourseDetails,
-    private val repository: ApplicationRepository
+    private val repository: ApplicationRepository,
+    private val session: Session
 ) : ViewModel() {
 
     private val _applicationFormUiState = MutableStateFlow(ApplicationFormUiState())
@@ -94,6 +96,7 @@ class ApplicationFormViewmodel(
                                 isApiSuccess = true
                             )
                             applicationId = result.data
+                            session.applicationApplyTrigger()
                         }
 
                         is Result.Error -> {

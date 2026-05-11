@@ -2,17 +2,23 @@ package org.getscol.gscol.feature.application.presentation.application_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationInfo
 
-class ApplicationListViewmodel(private val repository: ApplicationRepository) : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ApplicationListViewmodel(
+    private val repository: ApplicationRepository,
+    private val session: Session
+) : ViewModel() {
 
     private val _applicationListUiState = MutableStateFlow(ApplicationListUiState())
     val applicationListUiState: StateFlow<ApplicationListUiState> = _applicationListUiState
@@ -20,8 +26,14 @@ class ApplicationListViewmodel(private val repository: ApplicationRepository) : 
     private val _applicationListUiEffect = Channel<ApplicationListUiEffect>(Channel.BUFFERED)
     val applicationListUiEffect = _applicationListUiEffect.receiveAsFlow()
 
+
     init {
         getApplicationList()
+        viewModelScope.launch {
+            session.triggerApplicationListScreen.collect {
+                getApplicationList()
+            }
+        }
     }
 
     private fun getApplicationList(isRefresh: Boolean = false) {
@@ -33,12 +45,12 @@ class ApplicationListViewmodel(private val repository: ApplicationRepository) : 
                     } else ApplicationListUiState(
                         isLoading = true,
                     )
-                }
-                .collect { result ->
+                }.collect { result ->
                     when (result) {
                         is Result.Success -> {
                             if (result.data.applications.isEmpty()) {
-                                _applicationListUiState.value = ApplicationListUiState(showEmptyView = true, isLoading = false)
+                                _applicationListUiState.value =
+                                    ApplicationListUiState(showEmptyView = true, isLoading = false)
                                 return@collect
                             }
 
@@ -62,10 +74,6 @@ class ApplicationListViewmodel(private val repository: ApplicationRepository) : 
         }
     }
 
-    private fun refresh() {
-        getApplicationList(true)
-    }
-
     fun onAction(action: ApplicationListAction) {
         when (action) {
             is ApplicationListAction.OnClickApplication -> {
@@ -75,9 +83,8 @@ class ApplicationListViewmodel(private val repository: ApplicationRepository) : 
                     )
                 }
             }
-
-            ApplicationListAction.OnRefreshApplicationList -> {
-                refresh()
+            is ApplicationListAction.OnRefreshApplicationList -> {
+                getApplicationList(true)
             }
         }
     }

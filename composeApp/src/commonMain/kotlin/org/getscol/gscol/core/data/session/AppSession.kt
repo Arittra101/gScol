@@ -2,22 +2,28 @@ package org.getscol.gscol.core.data.session
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.data.storage.LocalStorage
 import org.getscol.gscol.core.data.storage.StorageKeys
 
 class AppSession(
     private val localStorage: LocalStorage,
-    private val appScope: CoroutineScope
+    appScope: CoroutineScope
 ) : Session {
 
-    private val _isUserLoggedIn = MutableStateFlow(false)
-    private val _academicFormSubmitTrigger = MutableStateFlow(0)
 
-    override val isUserLoggedIn: Flow<Boolean> = _isUserLoggedIn
-    override val academicFormSubmitTrigger: Flow<Int> = _academicFormSubmitTrigger
+    private val _isUserLoggedIn = MutableStateFlow(false)
+    override val isUserLoggedIn= _isUserLoggedIn.asStateFlow()
+
+    private val _academicFormSubmitTrigger = MutableStateFlow(0)
+    override val academicFormSubmitTrigger= _academicFormSubmitTrigger.asStateFlow()
+
+    private val _triggerApplicationListScreen = MutableSharedFlow<Unit>()
+    override val triggerApplicationListScreen = _triggerApplicationListScreen.asSharedFlow()
 
     init {
         appScope.launch(Dispatchers.Default) {
@@ -37,9 +43,14 @@ class AppSession(
         localStorage.setInt(StorageKeys.ACADEMIC_FORM_SUBMIT_COUNT, current + 1)
     }
 
+    override suspend fun applicationApplyTrigger() {
+        _triggerApplicationListScreen.emit(Unit)
+    }
+
     override suspend fun resetUserPref() {
         _isUserLoggedIn.value = false
         _academicFormSubmitTrigger.value = 0
+
         localStorage.clear()
     }
 

@@ -16,8 +16,8 @@ val applicationModule = module {
     single<ApplicationApiService> { ApplicationApiServiceImp(get()) }
     single<ApplicationRepository> { ApplicationRepositoryImp(get()) }
 
-    viewModel { ApplicationListViewmodel(get()) }
-    viewModel { params -> ApplicationFormViewmodel(courseDetails = params.get(), get()) }
+    viewModel { ApplicationListViewmodel(get(),get()) }
+    viewModel { params -> ApplicationFormViewmodel(courseDetails = params.get(), get(),get()) }
     viewModel { params -> ApplicationStatusViewmodel(applicationId = params.get(), get()) }
     viewModel { params -> ApplicationDetailsViewmodel(applicationId = params.get(), get(), get()) }
 }
