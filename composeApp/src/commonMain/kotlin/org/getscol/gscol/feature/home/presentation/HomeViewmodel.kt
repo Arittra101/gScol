@@ -39,7 +39,6 @@ class HomeViewmodel(private val homeRepository: HomeRepository, val session: Ses
         combine(session.isUserLoggedIn, session.academicFormSubmitTrigger) { isLoggedIn, _ ->
             isLoggedIn
         }.flatMapLatest { isLoggedIn ->
-            /* favoriteUpdates.value = emptyMap()*/
             homeRepository.getHomeCoursesStream(isLoggedIn)
         }.cachedIn(viewModelScope)
 
