@@ -60,7 +60,14 @@ fun HomeScreenRoot(
             isUserLogin
         )
     }, isTopLevelScreen = true) {
-        CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it, true,listState)
+        CourseItemView(
+            navigator,
+            action,
+            viewmodel.courses.collectAsLazyPagingItems(),
+            it,
+            true,
+            listState = listState
+        )
     }
 
     if (showExitDialog) {

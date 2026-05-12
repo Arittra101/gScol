@@ -29,4 +29,5 @@
     <string name="search_universities">Search Universities</string>
     <string name="academic_form_bottom_sheet_msg">Please review your details carefully. Once submitted,they cannot be changed without contacting SCOL support.</string>
     <string name="no_search_results_found">We couldn't find any courses matching your search.\nTry different keywords or clear your search.</string>
+    <string name="no_ineligible_courses">Great news — none of your courses are ineligible.\nYou qualify for everything available to you.</string>
 </resources>

@@ -15,16 +15,13 @@ fun InEligibleScreenRoute(
 ) {
 
     val action = viewmodel::onAction
-    // Instead of the function reference...
-    /*  val action: (HomeAction) -> Unit = { data ->
-          viewmodel.onAction(data)
-      }*/
-    BaseScreen(title = "In Eligible Courses", onBackPress = { navigator.navigateBack() }) {
+    BaseScreen(title = "Ineligible Courses", onBackPress = { navigator.navigateBack() }) {
         CourseItemView(
             navigator,
             action,
             viewmodel.courses.collectAsLazyPagingItems(),
-            it
+            it,
+            isIneligibleScreen = true
         )
     }
 }

@@ -19,6 +19,7 @@ import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
+import org.getscol.gscol.feature.home.presentation.components.NoIneligibleCoursesFound
 import org.getscol.gscol.feature.home.presentation.components.NoSearchResultsFound
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
@@ -36,7 +37,9 @@ fun CourseItemView(
     courses: LazyPagingItems<Course>,
     values: PaddingValues,
     isUsedForTopLevelScreen: Boolean = false,
-    listState: LazyListState = rememberLazyListState()
+    listState: LazyListState = rememberLazyListState(),
+    isSearchResultScreen: Boolean = false,
+    isIneligibleScreen: Boolean = false
 ) {
     // Simple conditional - don't need remember for lightweight operation
     val contentPadding = if (isUsedForTopLevelScreen) {
@@ -58,9 +61,14 @@ fun CourseItemView(
         }
 
         is LoadState.NotLoading -> {
-
             if (courses.itemCount <= 0) {
-                NoSearchResultsFound{ navigator.navigateBack() }
+                if (isSearchResultScreen) {
+                    NoSearchResultsFound { navigator.navigateBack() }
+                } else if (isIneligibleScreen) {
+                    NoIneligibleCoursesFound()
+                } else {
+                    NoCoursesFound { navigator.navigateTo(Route.Consultant) }
+                }
             } else {
                 LazyColumn(state = listState,
                     modifier = Modifier.fillMaxSize(),

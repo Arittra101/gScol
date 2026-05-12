@@ -27,6 +27,6 @@ fun SearchResultsScreenRoot(
     val action = viewModel::onAction
 
     BaseScreen(title = "Search Result", onBackPress = { navigator.navigateBack() }) {
-        CourseItemView(navigator, action, courses, it)
+        CourseItemView(navigator, action, courses, it, isSearchResultScreen = true)
     }
 }
