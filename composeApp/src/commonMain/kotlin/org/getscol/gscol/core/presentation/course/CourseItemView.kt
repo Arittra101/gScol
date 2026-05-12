@@ -69,8 +69,11 @@ fun CourseItemView(
                 ) {
                     items(
                         count = courses.itemCount,
-                        key = { index -> courses[index]?.courseId ?: index }
-                    ) { index ->
+                        key = { index ->
+                            val courseId = courses.peek(index)?.courseId
+                            if (courseId != null) "$courseId-$index"
+                            else "placeholder_$index"
+                        }) { index ->
                         courses[index]?.let { course ->
                             // Only memoize expensive callback creation
                             val onCourseClick: () -> Unit = remember(course.courseId, navigator) {
