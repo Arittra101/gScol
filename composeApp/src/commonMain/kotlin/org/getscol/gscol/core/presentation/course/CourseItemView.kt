@@ -3,6 +3,8 @@ package org.getscol.gscol.core.presentation.course
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -32,7 +34,8 @@ fun CourseItemView(
     action: (HomeAction) -> Unit,
     courses: LazyPagingItems<Course>,
     values: PaddingValues,
-    isUsedForTopLevelScreen: Boolean = false
+    isUsedForTopLevelScreen: Boolean = false,
+    listState: LazyListState = rememberLazyListState()
 ) {
     // Simple conditional - don't need remember for lightweight operation
     val contentPadding = if (isUsedForTopLevelScreen) {
@@ -63,7 +66,7 @@ fun CourseItemView(
                 )
 
             } else {
-                LazyColumn(
+                LazyColumn(state = listState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = contentPadding
                 ) {

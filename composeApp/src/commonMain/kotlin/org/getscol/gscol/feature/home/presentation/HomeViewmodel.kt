@@ -6,18 +6,33 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import app.cash.paging.PagingData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.domain.repository.HomeRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewmodel(private val homeRepository: HomeRepository, val session: Session) :
-    ViewModel() {
+class HomeViewmodel(private val homeRepository: HomeRepository, val session: Session) : ViewModel() {
+
+    private val _scrollResetEvent = Channel<Unit>(capacity = Channel.BUFFERED)
+    val scrollResetEvent = _scrollResetEvent.receiveAsFlow()
+
+    init {
+        viewModelScope.launch {
+            combine(session.isUserLoggedIn, session.academicFormSubmitTrigger) { _, _ -> }
+                .drop(1)
+                .collect { _scrollResetEvent.send(Unit) }
+        }
+    }
+
 
     private val favoriteUpdates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     private val baseCourses: Flow<PagingData<Course>> =

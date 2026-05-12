@@ -20,6 +20,11 @@ fun InEligibleScreenRoute(
           viewmodel.onAction(data)
       }*/
     BaseScreen(title = "In Eligible Courses", onBackPress = { navigator.navigateBack() }) {
-        CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it)
+        CourseItemView(
+            navigator,
+            action,
+            viewmodel.courses.collectAsLazyPagingItems(),
+            it
+        )
     }
 }

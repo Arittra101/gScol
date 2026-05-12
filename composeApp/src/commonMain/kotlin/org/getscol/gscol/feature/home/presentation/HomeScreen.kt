@@ -1,6 +1,8 @@
 package org.getscol.gscol.feature.home.presentation
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +32,13 @@ fun HomeScreenRoot(
         { data -> viewmodel.onAction(data) }
     }
 
+    val listState = rememberLazyListState()
+    LaunchedEffect(Unit) {
+        viewmodel.scrollResetEvent.collect {
+            listState.scrollToItem(0)
+        }
+    }
+
     val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(initial = 0)
 
     val isUserLogin by viewmodel.session.isUserLoggedIn.collectAsState(initial = false)
@@ -51,7 +60,7 @@ fun HomeScreenRoot(
             isUserLogin
         )
     }, isTopLevelScreen = true) {
-        CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it, true)
+        CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it, true,listState)
     }
 
     if (showExitDialog) {
