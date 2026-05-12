@@ -19,6 +19,7 @@ import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
+import org.getscol.gscol.feature.home.presentation.components.NoSearchResultsFound
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 
@@ -59,12 +60,7 @@ fun CourseItemView(
         is LoadState.NotLoading -> {
 
             if (courses.itemCount <= 0) {
-                NoCoursesFound(
-                    onContactConsultant = {
-                        // navigate or launch intent
-                    }
-                )
-
+                NoSearchResultsFound{ navigator.navigateBack() }
             } else {
                 LazyColumn(state = listState,
                     modifier = Modifier.fillMaxSize(),
