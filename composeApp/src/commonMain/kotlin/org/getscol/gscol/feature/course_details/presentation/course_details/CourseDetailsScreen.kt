@@ -163,16 +163,21 @@ fun CourseDetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
                 .background(colors.customSurface),
         ) {
-            BannerImage(imageUrl = details.university.uniCoverImageUrl.orEmpty())
             Column(
                 modifier = Modifier
+                    .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .offset(y = (-80).dp),
+                    .verticalScroll(scrollState),
             ) {
+                BannerImage(imageUrl = details.university.uniCoverImageUrl.orEmpty())
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .offset(y = (-80).dp),
+                ) {
                 CourseOverviewCard(
                     courseName = details.courseName,
                     ranking = details.ranking,
@@ -344,12 +349,15 @@ fun CourseDetailsScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
-                PrimaryButton(
-                    text = "Apply Now",
-                    onClick = { onAction(CourseDetailsAction.ApplyNow) },
-                    modifier = Modifier.padding(bottom = 24.dp),
-                )
+                }
             }
+            PrimaryButton(
+                text = "Apply Now",
+                onClick = { onAction(CourseDetailsAction.ApplyNow) },
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 8.dp, bottom = 24.dp),
+            )
         }
         InfoMetaDialog(
             meta = selectedInfoMeta.value,
