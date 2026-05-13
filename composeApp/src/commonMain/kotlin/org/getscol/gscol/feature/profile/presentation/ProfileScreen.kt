@@ -122,8 +122,8 @@ fun ProfileScreen(
             ProfileMenuItem(
                 icon = Icons.Default.Tune,
                 title = "Preferences",
-                subtitle = "Manage your app experience",
-                onClick = {}
+                subtitle = "Manage your course preferences",
+                onClick = { navigator?.navigateTo(Route.AcademicForm) }
             )
 
             HorizontalDivider(color = DividerColor, thickness = 1.dp)
