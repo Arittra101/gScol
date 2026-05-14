@@ -40,6 +40,10 @@ class AuthRepositoryImpl(
                 val isUserFillUpAcademicForm = resultData?.user?.academicFormStatus?.lowercase() == "completed"
 
                 authTokenProvider.saveTokens(accessToken = resultData?.accessToken, refreshToken = resultData?.refreshToken)
+                session.setUserProfile(
+                    fullName = resultData?.user?.fullName,
+                    joinedAt = resultData?.user?.joinedAt,
+                )
 
                 if(isUserFillUpAcademicForm) {
                     session.triggerAcademicFormSubmission()
@@ -59,6 +63,10 @@ class AuthRepositoryImpl(
                 val isUserFillUpAcademicForm = resultData?.user?.academicFormStatus?.lowercase() == "completed"
 
                 authTokenProvider.saveTokens(accessToken = resultData?.accessToken, refreshToken = resultData?.refreshToken)
+                session.setUserProfile(
+                    fullName = resultData?.user?.fullName,
+                    joinedAt = resultData?.user?.joinedAt,
+                )
                 if(isUserFillUpAcademicForm) {
                     session.triggerAcademicFormSubmission()
                 }

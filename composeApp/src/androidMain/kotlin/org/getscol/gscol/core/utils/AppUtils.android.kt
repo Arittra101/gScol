@@ -12,3 +12,4 @@ fun setContext(context: Context) {
 actual fun closeApp() {
     (appContext as? Activity)?.finish()
 }
+

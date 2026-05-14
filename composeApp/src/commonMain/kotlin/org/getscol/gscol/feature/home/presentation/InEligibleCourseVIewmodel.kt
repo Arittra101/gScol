@@ -48,7 +48,7 @@ class InEligibleCourseViewmodel(
     }
 
     private val baseCourses = triggerApiCall.flatMapLatest {
-        val isLogin = session.isUserLoggedIn.first()
+        val isLogin = session.isUserLoggedIn.value
         homeRepository.getHomeCoursesStream(isLogin, INELIGIBLE_ONLY)
     }.cachedIn(viewModelScope)
 

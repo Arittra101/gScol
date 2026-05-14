@@ -5,11 +5,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.getscol.gscol.bottombar.ScolBottomBar
+import org.getscol.gscol.core.presentation.components.LoginPromptBottomSheet
 import org.getscol.gscol.navigation.NavigationAction
+import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.navigation.ScolNavHost
 import org.getscol.gscol.navigation.TopLevelDestination
 import org.getscol.gscol.navigation.rememberNavigator
@@ -20,7 +25,22 @@ fun ScolApp(
     onLogoutHandler: () -> Unit = {}
 ) {
     val navController = rememberNavController()
-    val navigator = rememberNavigator(navController)
+
+    var authMessage by remember { mutableStateOf<String?>(null) }
+    val navigator = rememberNavigator(navController) { msg ->
+        authMessage = msg
+    }
+
+    authMessage?.let { message ->
+        LoginPromptBottomSheet(
+            message = message,
+            onDismiss = { authMessage = null },
+            onLoginClick = {
+                authMessage = null
+                navigator.navigateTo(Route.Login)
+            }
+        )
+    }
 
     // Get the current showing screen
     val navBackStackEntry by navController.currentBackStackEntryAsState()

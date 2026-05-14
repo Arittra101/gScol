@@ -3,8 +3,11 @@ package org.getscol.gscol.core.presentation.course
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -16,10 +19,18 @@ import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
+import org.getscol.gscol.feature.home.presentation.components.NoIneligibleCoursesFound
+import org.getscol.gscol.feature.home.presentation.components.NoSearchResultsFound
 import org.getscol.gscol.feature.home.presentation.components.heroImageForCard
 import org.getscol.gscol.feature.home.presentation.components.universityLogoForCard
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
+
+// Memoize the divider color to avoid recreation on every frame
+private val DIVIDER_COLOR = Color(0xFFE8E8E8)
+
+// Memoize default bottom padding to avoid recreation
+private val DEFAULT_PADDING = PaddingValues(bottom = 0.dp)
 
 @Composable
 fun CourseItemView(
@@ -27,8 +38,18 @@ fun CourseItemView(
     action: (HomeAction) -> Unit,
     courses: LazyPagingItems<Course>,
     values: PaddingValues,
-    isUsedForTopLevelScreen: Boolean = false
+    isUsedForTopLevelScreen: Boolean = false,
+    listState: LazyListState = rememberLazyListState(),
+    isSearchResultScreen: Boolean = false,
+    isIneligibleScreen: Boolean = false
 ) {
+    // Simple conditional - don't need remember for lightweight operation
+    val contentPadding = if (isUsedForTopLevelScreen) {
+        PaddingValues(bottom = values.calculateBottomPadding() + 80.dp)
+    } else {
+        DEFAULT_PADDING
+    }
+
     when (val refreshState = courses.loadState.refresh) {
         is LoadState.Loading -> {
             FullScreenLoader()
@@ -42,23 +63,36 @@ fun CourseItemView(
         }
 
         is LoadState.NotLoading -> {
-
             if (courses.itemCount <= 0) {
-                NoCoursesFound(
-                    onContactConsultant = {
-                        // navigate or launch intent
-                    }
-                )
-
+                if (isSearchResultScreen) {
+                    NoSearchResultsFound { navigator.navigateBack() }
+                } else if (isIneligibleScreen) {
+                    NoIneligibleCoursesFound()
+                } else {
+                    NoCoursesFound { navigator.navigateTo(Route.Consultant) }
+                }
             } else {
-                LazyColumn(
+                LazyColumn(state = listState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = if (isUsedForTopLevelScreen) PaddingValues(bottom = values.calculateBottomPadding() + 80.dp) else PaddingValues(
-                        bottom = 0.dp
-                    )
+                    contentPadding = contentPadding
                 ) {
-                    items(count = courses.itemCount) { index ->
-                        courses[index]?.let {
+                    items(
+                        count = courses.itemCount,
+                        key = { index ->
+                            val courseId = courses.peek(index)?.courseId
+                            if (courseId != null) "$courseId-$index"
+                            else "placeholder_$index"
+                        }) { index ->
+                        courses[index]?.let { course ->
+                            // Only memoize expensive callback creation
+                            val onCourseClick: () -> Unit = remember(course.courseId, navigator) {
+                                {
+                                    navigator.navigateToOtherScreen(
+                                        route = Route.CourseDetails(courseId = course.courseId)
+                                    )
+                                }
+                            }
+
                             CourseInfoCard(
                                 courseId = it.courseId,
                                 courseName = it.courseName,
@@ -76,20 +110,14 @@ fun CourseItemView(
                                 ieltsSingleBand = it.ieltsBandRequired,
                                 isFavorite = it.isWishlisted,
                                 action = action,
-                                onCourseClick = {
-                                    navigator.navigateToOtherScreen(
-                                        route = Route.CourseDetails(
-                                            courseId = it.courseId,
-                                        )
-                                    )
-                                }
+                                onCourseClick = onCourseClick
                             )
                         }
                         // Add divider after each item except the last
                         if (index < courses.itemCount - 1) {
                             HorizontalDivider(
                                 thickness = 9.dp,
-                                color = Color(0xFFE8E8E8)
+                                color = DIVIDER_COLOR
                             )
                         }
                     }

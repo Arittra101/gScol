@@ -1,6 +1,8 @@
 package org.getscol.gscol.feature.home.presentation
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,8 +27,16 @@ fun HomeScreenRoot(
     navigator: Navigator
 ) {
 
-    val action: (HomeAction) -> Unit = { data ->
-        viewmodel.onAction(data)
+    // Memoize the action callback to prevent recreation on every recomposition
+    val action: (HomeAction) -> Unit = remember(viewmodel) {
+        { data -> viewmodel.onAction(data) }
+    }
+
+    val listState = rememberLazyListState()
+    LaunchedEffect(Unit) {
+        viewmodel.scrollResetEvent.collect {
+            listState.scrollToItem(0)
+        }
     }
 
     val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(
@@ -37,7 +47,12 @@ fun HomeScreenRoot(
     val isUserFillupAcademicForm: Boolean = academicFormSubmitTrigger > 0
     var showExitDialog by remember { mutableStateOf(false) }
 
-    BackHandler { showExitDialog = true }
+    // Memoize the back handler callback
+    val onBackPressed = remember {
+        { showExitDialog = true }
+    }
+
+    BackHandler(onBack = onBackPressed)
 
     val wishlistUi by viewmodel.wishlistMutationUiState.collectAsState()
 
@@ -49,7 +64,14 @@ fun HomeScreenRoot(
             isUserLogin
         )
     }, isTopLevelScreen = true, showLoader = wishlistUi.isMutating) {
-        CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it, true)
+        CourseItemView(
+            navigator,
+            action,
+            viewmodel.courses.collectAsLazyPagingItems(),
+            it,
+            true,
+            listState = listState
+        )
     }
 
     if (showExitDialog) {

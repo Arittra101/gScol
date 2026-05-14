@@ -34,6 +34,6 @@ fun SearchResultsScreenRoot(
         onBackPress = { navigator.navigateBack() },
         showLoader = wishlistUi.isMutating
     ) {
-        CourseItemView(navigator, action, courses, it)
+        CourseItemView(navigator, action, courses, it, isSearchResultScreen = true)
     }
 }

@@ -18,12 +18,17 @@ fun InEligibleScreenRoute(
 
     val action = viewmodel::onAction
     val wishlistUi by viewmodel.wishlistMutationUiState.collectAsState()
-
     BaseScreen(
-        title = "In Eligible Courses",
+        title = "Ineligible Courses",
         onBackPress = { navigator.navigateBack() },
         showLoader = wishlistUi.isMutating
     ) {
-        CourseItemView(navigator, action, viewmodel.courses.collectAsLazyPagingItems(), it)
+        CourseItemView(
+            navigator,
+            action,
+            viewmodel.courses.collectAsLazyPagingItems(),
+            it,
+            isIneligibleScreen = true
+        )
     }
 }

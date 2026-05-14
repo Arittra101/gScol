@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.Flow
 import org.getscol.gscol.theme.appColors
 
 
@@ -78,4 +80,12 @@ fun ScolDefaultTopBar(
             containerColor = appColors().customSecondaryContainer
         )
     )
+}
+
+
+@Composable
+fun <T> ObserveEffect(flow: Flow<T>, onEffect: suspend (T) -> Unit) {
+    LaunchedEffect(Unit) {
+        flow.collect { onEffect(it) }
+    }
 }

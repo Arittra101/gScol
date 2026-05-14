@@ -1,27 +1,10 @@
 package org.getscol.gscol
 
 import androidx.compose.runtime.Composable
-import org.getscol.gscol.feature.course_details.domain.model.AboutUs
-import org.getscol.gscol.feature.course_details.domain.model.AcademicRequirements
-import org.getscol.gscol.feature.course_details.domain.model.CampusLife
-import org.getscol.gscol.feature.course_details.domain.model.Coordinates
-import org.getscol.gscol.feature.course_details.domain.model.DegreeRequirement
-import org.getscol.gscol.feature.course_details.domain.model.EnglishRequirement
-import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
-import org.getscol.gscol.feature.course_details.domain.model.CourseLocation
-import org.getscol.gscol.feature.course_details.domain.model.CourseRanking
-import org.getscol.gscol.feature.course_details.domain.model.CourseTab
-import org.getscol.gscol.feature.course_details.domain.model.CourseTag
-import org.getscol.gscol.feature.course_details.domain.model.InfoBlock
-import org.getscol.gscol.feature.course_details.domain.model.InfoMetaData
-import org.getscol.gscol.feature.course_details.domain.model.IntakeDates
-import org.getscol.gscol.feature.course_details.domain.model.TuitionFees
-import org.getscol.gscol.feature.course_details.domain.model.FeeItems
-import org.getscol.gscol.feature.course_details.domain.model.FeesAndScholarships
-import org.getscol.gscol.feature.course_details.domain.model.Requirements
-import org.getscol.gscol.feature.course_details.domain.model.University
-import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreen
-import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsState
+import org.getscol.gscol.feature.consultant.domain.model.Certification
+import org.getscol.gscol.feature.consultant.domain.model.ConsultantModel
+import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreen
+import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsState
 import org.getscol.gscol.theme.ScolTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -29,150 +12,90 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun LoginScreenPreview() {
     ScolTheme {
-        CourseDetailsScreen(
-            state = CourseDetailsState(
-                courseDetails = sampleCourseDetails
+        ConsultantDetailsScreen(
+            state = ConsultantDetailsState(
+                consultant = consultants[0],
+                isLoading = false,
+                errorMessage = null
             ),
-            onAction = {},
-            onBack = {}
+            onBookSession = {},
+            onBack = {},
         )
     }
 }
 
-val sampleCourseDetails = CourseDetails(
-    courseId = "1",
-    courseName = "International Business Management",
-    ranking = CourseRanking(position = 42, hasInfo = true, infoKey = "rankingMetaData"),
-    university = University(
-        uniId = "u1",
-        uniName = "University of Leicester",
-        uniLogoUrl = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg",
-        uniCoverImageUrl = "https://images.pexels.com/photos/12610210/pexels-photo-12610210.jpeg",
-    ),
-    tags = listOf(
-        CourseTag(label = "Estd. 1921", type = "established"),
-        CourseTag(label = "PUBLIC", type = "type"),
-        CourseTag(label = "Leicester, UK", type = "location"),
-    ),
-    tabs = listOf(
-        CourseTab(key = "aboutUs", label = "About Us"),
-        CourseTab(key = "campusLife", label = "Campus Life"),
-        CourseTab(key = "location", label = "Location"),
-        CourseTab(key = "academicRequirements", label = "Academic Info"),
-        CourseTab(key = "feesAndScholarships", label = "Fees & Scholarships"),
-        CourseTab(key = "intakeDates", label = "Intake Dates"),
-    ),
-    aboutUs = AboutUs(
-        description = listOf(
-            "Founded in 1921 as a living memorial to those who lost their lives in the First World War, the University of Leicester is a world-leading research-intensive university. We deliver high-quality education and research that changes the world."
+private val consultants: List<ConsultantModel> = listOf(
+    ConsultantModel(
+        id = "1",
+        name = "Md. Raihan Ul Islam",
+        image = "raihan_ul_islam",
+        title = "Education Consultant",
+        organization = "SCOL",
+        initials = "MR",
+        isCertified = true,
+        email = "raihan.getscol@gmail.com",
+        phone = "+8801403024105",
+        bookingUrl = "https://calendly.com/erf-me4/30min",
+        officeHours = "Sat–Thu, 10:00 AM – 6:00 PM",
+        education = "BSc in EEE, East West University",
+        bio = "Md. Raihan specializes in guiding students through the application process for top-tier universities in the UK and Australia. He is fluent in Bangla, Hindi, and English, enabling him to communicate effectively with students from diverse backgrounds and provide personalized support throughout their academic journey.",
+        languages = listOf("Bangla", "Hindi", "English"),
+        destinations = listOf("UK", "Australia"),
+        certification = Certification(
+            issuedBy = "British Council",
+            title = "UK Agent & Counsellor Training Certificate",
+            issuedDate = "09 April 2026",
+            role = "Agent",
+            certificateCode = "104930"
         )
     ),
-    campusLife = CampusLife(
-        videoUrls = listOf(
-            "https://youtu.be/hgiY64CKGUs?si=eQiTzKj88PcKYVra",
-            "https://youtu.be/hgiY64CKGUs?si=eQiTzKj88PcKYVra",
+    ConsultantModel(
+        id = "2",
+        name = "Sheikh Fardeen Ishaque",
+        image = "fardeen_ishaque",
+        title = "Education Consultant",
+        organization = "SCOL",
+        initials = "SF",
+        isCertified = true,
+        email = "fardeen.getscol@gmail.com",
+        phone = "+8801845238996",
+        bookingUrl = "https://calendly.com/erf-me4/30min",
+        officeHours = "Sat–Thu, 10:00 AM – 6:00 PM",
+        education = "BSc in CSE, Ahsanullah University of Science & Technology",
+        bio = "Sheikh Fardeen Ishaque is a British Council certified expert specializing in guiding students through the application process for top-tier universities in the UK, Australia, and New Zealand. He is fluent in English, Bangla, and Hindi, enabling him to communicate effectively with students from diverse backgrounds and provide personalized support throughout their academic journey.",
+        languages = listOf("English", "Bangla", "Hindi"),
+        destinations = listOf("UK", "Australia", "New Zealand"),
+        certification = Certification(
+            issuedBy = "British Council",
+            title = "UK Agent & Counsellor Training Certificate",
+            issuedDate = "04 April 2026",
+            role = "Agent",
+            certificateCode = "103315"
         )
     ),
-    location = CourseLocation(
-        city = "Leicester",
-        country = "UK",
-        state = "Leicestershire",
-        address = "University Road, Leicester LE1 7RH, United Kingdom",
-        coordinates = Coordinates(latitude = 52.6196, longitude = -1.1266),
-    ),
-    academicRequirements = AcademicRequirements(
-        hasInfo = true,
-        infoKey = "academicRequirementsMetaData",
-        requirements = Requirements(
-            degreeRequirements = listOf(
-                DegreeRequirement(degreeName = "Bachelor's", label = "GPA | CGPA", minValue = "3.5"),
-                DegreeRequirement(degreeName = "Master's", label = "GPA | CGPA", minValue = "3.5"),
-            ),
-            englishRequirements = listOf(
-                EnglishRequirement(testName = "IELTS", minOverallValue = "7.0", minSectionValue = "7.0"),
-                EnglishRequirement(testName = "TOEFL", minOverallValue = "100", minSectionValue = "20"),
-            ),
-        ),
-    ),
-    feesAndScholarships = FeesAndScholarships(
-        hasInfo = true,
-        infoKey = "feesAndScholarshipsMetaData",
-        items = FeeItems(
-            tuitionFees = TuitionFees(amount = "45000", currency = "USD", frequency = "yearly"),
-            scholarshipsText = "Available",
-        ),
-    ),
-    intakeDates = IntakeDates(
-        hasInfo = true,
-        infoKey = "intakeDatesMetaData",
-        intakes = listOf("September", "March"),
-    ),
-    meta = listOf(
-        InfoMetaData(
-            infoKey = "rankingMetaData",
-            title = "Ranking",
-            information = listOf(
-                InfoBlock(
-                    description = listOf(
-                        "Ranked #42 globally for International Business Management based on research output, student satisfaction, and graduate employability.",
-                        "Consistently ranked in the top 20 universities across the United Kingdom.",
-                    )
-                )
-            ),
-        ),
-        InfoMetaData(
-            infoKey = "academicRequirementsMetaData",
-            title = "Academic Requirements",
-            information = listOf(
-                InfoBlock(
-                    subtitle = "GPA",
-                    description = listOf(
-                        "A minimum GPA of 3.5 out of 4.0 is required for consideration into the program."
-                    )
-                ),
-                InfoBlock(
-                    subtitle = "English Proficiency",
-                    description = listOf(
-                        "Non-native English speakers must submit TOEFL scores of 100+ or IELTS scores of 7.0 or above."
-                    )
-                ),
-            ),
-        ),
-        InfoMetaData(
-            infoKey = "feesAndScholarshipsMetaData",
-            title = "Fees & Scholarships",
-            information = listOf(
-                InfoBlock(
-                    subtitle = "Tuition Fees",
-                    description = listOf(
-                        "The annual tuition fee is $45,000, covering all core modules and university facilities."
-                    )
-                ),
-                InfoBlock(
-                    subtitle = "Scholarships",
-                    description = listOf(
-                        "Merit-based and need-based scholarships are available. Students can apply during the admissions process."
-                    )
-                ),
-            ),
-        ),
-        InfoMetaData(
-            infoKey = "intakeDatesMetaData",
-            title = "Intake Dates",
-            information = listOf(
-                InfoBlock(
-                    subtitle = "Fall Intake",
-                    description = listOf(
-                        "The Fall intake begins in September. Application deadline is typically June 30th."
-                    )
-                ),
-                InfoBlock(
-                    subtitle = "Spring Intake",
-                    description = listOf(
-                        "The Spring intake begins in March. Application deadline is typically December 15th."
-                    )
-                ),
-            ),
-        ),
-    ),
+    ConsultantModel(
+        id = "3",
+        name = "Md. Shafayat Jamil",
+        image = "shafayat_jamil",
+        title = "Founder & CEO",
+        organization = "SCOL",
+        initials = "MS",
+        isCertified = true,
+        email = "contact@getscol.com",
+        phone = "+8801872111917",
+        bookingUrl = "https://calendly.com/erf-me4/30min",
+        officeHours = "Sat–Thu, 10:00 AM – 6:00 PM",
+        education = "BSc in CSE, Ahsanullah University of Science & Technology",
+        bio = "Md. Shafayat Jamil is the Founder & CEO of SCOL and a British Council certified expert specializing in student admissions for top-tier universities in the UK, Australia, and New Zealand. Passionate about global education and student success, he guides students through university admissions, visas, and career pathways abroad.",
+        languages = listOf("Bangla", "Hindi", "English"),
+        destinations = listOf("UK", "Australia", "New Zealand"),
+        certification = Certification(
+            issuedBy = "British Council",
+            title = "UK Agent & Counsellor Training Certificate",
+            issuedDate = "07 February 2026",
+            role = "Agent",
+            certificateCode = "96243"
+        )
+    )
 )
+

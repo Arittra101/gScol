@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.getscol.gscol.BuildKonfig
 import org.getscol.gscol.core.helper.iso4217CurrencySymbol
+import org.getscol.gscol.core.helper.toNavJson
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.components.HorizontalPaddingBleed
 import org.getscol.gscol.core.presentation.components.KeyValueRow
@@ -84,18 +85,19 @@ fun CourseDetailsScreenRoot(
         parameters = { parametersOf(courseId) }
     ),
 ) {
+    val state by viewModel.state.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
             when (effect) {
-                CourseDetailsUiEffect.NavigateBack -> navigator.navigateBack()
-                is CourseDetailsUiEffect.ApplyNow -> {
-                    // TODO: Navigate to application flow when ready
-                    navigator.navigateBack()
+                is CourseDetailsUiEffect.NavigateBack -> navigator.navigateBack()
+                is CourseDetailsUiEffect.ApplyNow ->  {
+                    navigator.navigateTo(Route.ApplicationFormRoute(courseDetails = state.courseDetails.toNavJson()))
                 }
             }
         }
     }
-    val state by viewModel.state.collectAsState()
+
     val uriHandler = LocalUriHandler.current
     CourseDetailsScreen(
         state = state,
@@ -163,16 +165,21 @@ fun CourseDetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
                 .background(colors.customSurface),
         ) {
-            BannerImage(imageUrl = details.university.uniCoverImageUrl.orEmpty())
             Column(
                 modifier = Modifier
+                    .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .offset(y = (-80).dp),
+                    .verticalScroll(scrollState),
             ) {
+                BannerImage(imageUrl = details.university.uniCoverImageUrl.orEmpty())
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .offset(y = (-80).dp),
+                ) {
                 CourseOverviewCard(
                     courseName = details.courseName,
                     ranking = details.ranking,
@@ -344,12 +351,15 @@ fun CourseDetailsScreen(
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
-                PrimaryButton(
-                    text = "Apply Now",
-                    onClick = { onAction(CourseDetailsAction.ApplyNow) },
-                    modifier = Modifier.padding(bottom = 24.dp),
-                )
+                }
             }
+            PrimaryButton(
+                text = "Apply Now",
+                onClick = { onAction(CourseDetailsAction.ApplyNow) },
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 8.dp, bottom = 24.dp),
+            )
         }
         InfoMetaDialog(
             meta = selectedInfoMeta.value,

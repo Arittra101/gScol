@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.data.session.Session
@@ -68,8 +67,9 @@ class LoginViewModel(
                             errorMessage = null
                         )
                     }
-                    val isUserFillUpAcademicForm = session.academicFormSubmitTrigger.first()
+                    val isUserFillUpAcademicForm = session.academicFormSubmitTrigger.value
                     _uiEffect.emit(LoginUiEffect.LoginSuccess(isUserFillUpAcademicForm))
+                    session.applicationApplyTrigger()
                 }
 
                 is Result.Error -> {

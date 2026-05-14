@@ -63,10 +63,7 @@ fun HomeAppBar(
                     painter = painterResource(Res.drawable.scol_text_logo_2),
                     contentDescription = "Logo",
                     tint = Color.Unspecified,
-                    modifier = Modifier.width(50.dp)
-                        .padding(bottom = 2.dp).clickable {
-                            navigator.navigateToOtherScreen(Route.AcademicForm)
-                        },
+                    modifier = Modifier.width(50.dp).padding(bottom = 2.dp)
                 )
                 HomeSearchBar(
                     modifier = Modifier.weight(1f),

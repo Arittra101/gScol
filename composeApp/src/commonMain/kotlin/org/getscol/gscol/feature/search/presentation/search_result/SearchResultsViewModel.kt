@@ -58,7 +58,6 @@ class SearchResultsViewModel(
     val baseCourses: Flow<PagingData<Course>> = params.flatMapLatest { p ->
         if (p == null) flow<PagingData<Course>> { }
         else session.isUserLoggedIn
-            .distinctUntilChanged()
             .flatMapLatest { isLoggedIn ->
                 searchRepository.getSearchResultsStream(
                     searchText = p.searchText,

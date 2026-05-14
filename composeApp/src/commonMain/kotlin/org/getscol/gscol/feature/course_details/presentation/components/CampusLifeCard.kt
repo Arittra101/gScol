@@ -65,25 +65,28 @@ fun CampusLifeCard(
             if (thumbnail != null) {
                 AsyncImage(
                     model = thumbnail,
-                    contentDescription = item.title,
+                    contentDescription = item.title.ifBlank { "Campus life video" },
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                 )
             }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.72f),
+            val hasBottomCaption = item.title.isNotBlank() || metaLine != null
+            if (hasBottomCaption) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth()
+                        .height(88.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Black.copy(alpha = 0.72f),
+                                ),
                             ),
                         ),
-                    ),
-            )
+                )
+            }
             if (item.isVideo) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
@@ -92,24 +95,28 @@ fun CampusLifeCard(
                     tint = Color.White,
                 )
             }
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 12.dp),
-            ) {
-                Text(
-                    text = item.title,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White,
-                    maxLines = 2,
-                )
-                if (metaLine != null) {
-                    Text(
-                        text = metaLine,
-                        fontSize = 12.sp,
-                        color = Color.White.copy(alpha = 0.85f),
-                    )
+            if (hasBottomCaption) {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 12.dp),
+                ) {
+                    if (item.title.isNotBlank()) {
+                        Text(
+                            text = item.title,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White,
+                            maxLines = 2,
+                        )
+                    }
+                    if (metaLine != null) {
+                        Text(
+                            text = metaLine,
+                            fontSize = 12.sp,
+                            color = Color.White.copy(alpha = 0.85f),
+                        )
+                    }
                 }
             }
         }

@@ -1,9 +1,7 @@
-package org.getscol.gscol.auth.presentation.profile
-
+package org.getscol.gscol.feature.profile.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Headset
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -52,10 +48,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.presentation.BaseScreen
-import org.getscol.gscol.feature.profile.presentation.ProfileAction
-import org.getscol.gscol.feature.profile.presentation.ProfileViewmodel
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
+import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -77,7 +72,9 @@ fun ProfileScreenRoute(
 ) {
     BaseScreen(
         title = stringResource(Res.string.profile),
-        onBackPress = { navigator?.navigateBack() }) {
+        showBackButton = false,
+        isTopLevelScreen = true
+    ) {
         ProfileScreen(navigator = navigator, viewmodel = viewmodel)
     }
 
@@ -85,13 +82,13 @@ fun ProfileScreenRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    userName: String = "Sophia Carter",
-    joinYear: String = "2023",
     navigator: Navigator? = null,
     viewmodel: ProfileViewmodel = koinViewModel()
 ) {
     val onAction = viewmodel::onAction
     val isUserLogin by viewmodel.session.isUserLoggedIn.collectAsState(false)
+    val fullName by viewmodel.session.userFullName.collectAsState(initial = null)
+    val joinedAt by viewmodel.session.userJoinedAt.collectAsState(initial = null)
 
     // Bottom sheet visibility + state
     var showLogoutSheet by remember { mutableStateOf(false) }
@@ -114,9 +111,9 @@ fun ProfileScreen(
                 .then(if (!isUserLogin) Modifier.blur(20.dp) else Modifier)
         ) {
             ProfileHeader(
-                userName = userName,
-                joinYear = joinYear,
-                onEditInformation = {}
+                userName = fullName ?: "—",
+                joinYear = joinedAt?.toString() ?: "—",
+                onEditInformation = { navigator?.navigateTo(Route.EditProfile) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -125,8 +122,8 @@ fun ProfileScreen(
             ProfileMenuItem(
                 icon = Icons.Default.Tune,
                 title = "Preferences",
-                subtitle = "Manage your app experience",
-                onClick = {}
+                subtitle = "Manage your course preferences",
+                onClick = { navigator?.navigateTo(Route.AcademicForm) }
             )
 
             HorizontalDivider(color = DividerColor, thickness = 1.dp)
@@ -150,13 +147,6 @@ fun ProfileScreen(
             )
 
             HorizontalDivider(color = DividerColor, thickness = 1.dp)
-        }
-
-        // ── Logged-out overlay ──────────────────────────────────────────
-        if (!isUserLogin) {
-            LoggedOutOverlay(
-                onLoginClick = { navigator?.navigateTo(Route.Login) }
-            )
         }
     }
 
@@ -282,87 +272,7 @@ private fun LogoutConfirmationSheet(
     }
 }
 
-// ── Logged-out overlay ───────────────────────────────────────────────────────
-
-@Composable
-private fun LoggedOutOverlay(onLoginClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.10f),
-                        Color.White.copy(alpha = 0.85f),
-                        Color.White.copy(alpha = 0.97f),
-                    )
-                )
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(horizontal = 40.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(72.dp)
-                    .background(LightPink, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null,
-                    tint = PrimaryRed,
-                    modifier = Modifier.size(34.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                text = "Please Login",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "You need to be logged in to view your profile and settings.",
-                fontSize = 14.sp,
-                color = TextSecondary,
-                textAlign = TextAlign.Center,
-                lineHeight = 20.sp
-            )
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            Button(
-                onClick = onLoginClick,
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PrimaryRed,
-                    contentColor = Color.White
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-            ) {
-                Text(
-                    text = "Login",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-}
-
 // ── Profile sub-composables ──────────────────────────────────────────────────
-
 @Composable
 private fun ProfileHeader(
     userName: String,
@@ -441,7 +351,7 @@ private fun ProfileMenuItem(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(LightPink, CircleShape),
+                .background(appColors().customPrimary.copy(alpha = 0.10f), CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(

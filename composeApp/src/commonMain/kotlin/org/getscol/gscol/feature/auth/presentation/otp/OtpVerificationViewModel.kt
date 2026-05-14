@@ -7,7 +7,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.getscol.gscol.core.data.session.Session
@@ -120,7 +119,7 @@ class OtpVerificationViewModel(
                             isVerifying = false,
                             isVerificationSuccessful = true,
                             errorMessage = null,
-                            isAcademicFormFillup = session.academicFormSubmitTrigger.first() > 0
+                            isAcademicFormFillup = session.academicFormSubmitTrigger.value > 0
                         )
                     }
 

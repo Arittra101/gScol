@@ -8,4 +8,6 @@ object StorageKeys {
     const val SEARCH_HISTORY = "search_history"
     const val IS_USER_LOGGED_IN = "IS_USER_LOGGED_IN"
     const val ACADEMIC_FORM_SUBMIT_COUNT = "ACADEMIC_FORM_SUBMIT_COUNT"
+    const val USER_FULL_NAME = "USER_FULL_NAME"
+    const val USER_JOINED_AT = "USER_JOINED_AT"
 }
