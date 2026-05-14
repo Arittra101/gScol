@@ -14,7 +14,7 @@ class WishlistRepositoryImpl(
     override suspend fun getWishlists(): Result<List<Course>, DataError.Remote> {
         return when (val r = api.getWishlists()) {
             is Result.Success -> Result.Success(
-                r.data.wishlists.orEmpty().map { dto ->
+                r.data.payload?.wishlists.orEmpty().map { dto ->
                     dto.toCourse().copy(isWishlisted = true)
                 }
             )
