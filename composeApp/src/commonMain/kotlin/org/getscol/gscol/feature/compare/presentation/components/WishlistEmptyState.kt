@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,20 +17,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.getscol.gscol.theme.appColors
 
 @Composable
 fun WishlistEmptyState(modifier: Modifier = Modifier) {
-    val colors = appColors()
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 32.dp)
-            .padding(top = 72.dp),
+            .padding(top = 80.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
@@ -42,7 +40,7 @@ fun WishlistEmptyState(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(96.dp)
                     .background(
-                        color = colors.customBackground,
+                        color = Color(0xFFF5E8EA),
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
@@ -50,8 +48,8 @@ fun WishlistEmptyState(modifier: Modifier = Modifier) {
                 Icon(
                     imageVector = Icons.Filled.FavoriteBorder,
                     contentDescription = null,
-                    tint = colors.customPrimaryText,
-                    modifier = Modifier.size(44.dp)
+                    tint = Color(0xFFB05068),
+                    modifier = Modifier.size(40.dp)
                 )
             }
 
@@ -61,7 +59,7 @@ fun WishlistEmptyState(modifier: Modifier = Modifier) {
                 text = "No favourites yet",
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = colors.customPrimaryText,
+                color = Color(0xFF1A1A1A),
                 textAlign = TextAlign.Center
             )
 
@@ -70,10 +68,9 @@ fun WishlistEmptyState(modifier: Modifier = Modifier) {
             Text(
                 text = "Browse courses from Home or Search, then tap the heart on any course card to save it here. Your wishlist stays in sync across the app.",
                 fontSize = 14.sp,
-                color = colors.customSecondaryText,
+                color = Color(0xFF666666),
                 textAlign = TextAlign.Center,
-                lineHeight = 22.sp,
-                modifier = Modifier.fillMaxWidth()
+                lineHeight = 20.sp
             )
         }
     }
