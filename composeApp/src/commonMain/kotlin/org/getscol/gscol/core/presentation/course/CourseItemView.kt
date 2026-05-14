@@ -21,6 +21,8 @@ import org.getscol.gscol.feature.home.presentation.components.CourseInfoCard
 import org.getscol.gscol.feature.home.presentation.components.NoCoursesFound
 import org.getscol.gscol.feature.home.presentation.components.NoIneligibleCoursesFound
 import org.getscol.gscol.feature.home.presentation.components.NoSearchResultsFound
+import org.getscol.gscol.feature.home.presentation.components.heroImageForCard
+import org.getscol.gscol.feature.home.presentation.components.universityLogoForCard
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 
@@ -97,13 +99,13 @@ fun CourseItemView(
                                 city = course.city,
                                 country = course.country,
                                 universityName = course.universityName,
-                                universityLogo = course.imageUrl,
-                                backgroundImage = course.imageUrl,
+                                universityLogo = course.universityLogoForCard(),
+                                backgroundImage = course.heroImageForCard(),
                                 intake = course.intake.toShortDate(),
                                 tuitionFees = course.tuitionFee.toString().toDollar(),
                                 duration = course.duration,
                                 scholarship = course.scholarship.toString(),
-                                initialDeposit = "12333",
+                                initialDeposit = course.deposit.toString().toDollar(),
                                 ieltsBand = course.ieltsOverallRequired,
                                 ieltsSingleBand = course.ieltsBandRequired,
                                 isFavorite = course.isWishlisted,

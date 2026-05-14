@@ -8,6 +8,7 @@ data class Course(
     val universityName: String,
     val country: String,
     val imageUrl: String,
+    val universityLogoUrl: String,
     val intake: String,
     val tuitionFee: Int,
     val currency: String,

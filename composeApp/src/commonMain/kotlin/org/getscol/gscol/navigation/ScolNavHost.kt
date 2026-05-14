@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.toRoute
 import kotlinx.serialization.json.Json
-import org.getscol.gscol.auth.presentation.compare.CompareScreen
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.core.helper.fromNavJson
@@ -23,6 +22,7 @@ import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
+import org.getscol.gscol.feature.compare.presentation.CompareScreenRoot
 import org.getscol.gscol.feature.consultant.presentation.consultant.ConsultantScreenRoot
 import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreenRoot
 import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
@@ -83,7 +83,7 @@ fun ScolNavHost(
             AdvancedSearchScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.CompareRoute> {
-            CompareScreen()
+            CompareScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.Profile> {
             ProfileScreenRoute(navigator = navigator)

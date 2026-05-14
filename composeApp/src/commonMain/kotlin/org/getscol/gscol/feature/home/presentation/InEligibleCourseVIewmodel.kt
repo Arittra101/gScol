@@ -9,15 +9,32 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.getscol.gscol.core.data.session.Session
+import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.domain.repository.HomeRepository
+import org.getscol.gscol.feature.wishlist.WishlistMutationUiState
+import org.getscol.gscol.feature.wishlist.domain.repository.WishlistRepository
+import kotlin.collections.plus
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class InEligibleCourseViewmodel(private val homeRepository: HomeRepository, val session: Session) :
+class InEligibleCourseViewmodel(
+    private val homeRepository: HomeRepository,
+    private val wishlistRepository: WishlistRepository,
+    val session: Session,
+) :
     ViewModel() {
+
+    private val wishlistMutationMutex = Mutex()
+    private val _wishlistMutationUiState = MutableStateFlow(WishlistMutationUiState())
+    val wishlistMutationUiState = _wishlistMutationUiState.asStateFlow()
 
     private val favoriteUpdates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
     private val triggerApiCall = MutableStateFlow(Unit)
@@ -45,8 +62,30 @@ class InEligibleCourseViewmodel(private val homeRepository: HomeRepository, val 
         }
 
     fun onAction(action: HomeAction) {
-        when(action){
-            is HomeAction.AddToWishlist -> favoriteUpdates.update { current -> current + ((action.courseId to !action.isWishListed)) }
+        when (action) {
+            is HomeAction.AddToWishlist -> {
+                viewModelScope.launch {
+                    if (!session.isUserLoggedIn.first()) return@launch
+                    wishlistMutationMutex.withLock {
+                        _wishlistMutationUiState.update { it.copy(isMutating = true) }
+                        try {
+                            if (action.isWishListed) {
+                                when (wishlistRepository.removeFromWishlist(action.courseId)) {
+                                    is Result.Success -> favoriteUpdates.update { it + (action.courseId to false) }
+                                    is Result.Error -> Unit
+                                }
+                            } else {
+                                when (wishlistRepository.addToWishlist(action.courseId)) {
+                                    is Result.Success -> favoriteUpdates.update { it + (action.courseId to true) }
+                                    is Result.Error -> Unit
+                                }
+                            }
+                        } finally {
+                            _wishlistMutationUiState.update { it.copy(isMutating = false) }
+                        }
+                    }
+                }
+            }
         }
     }
 

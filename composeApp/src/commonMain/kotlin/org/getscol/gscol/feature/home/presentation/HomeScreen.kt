@@ -39,7 +39,9 @@ fun HomeScreenRoot(
         }
     }
 
-    val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(initial = 0)
+    val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(
+        initial = 0
+    )
 
     val isUserLogin by viewmodel.session.isUserLoggedIn.collectAsState(initial = false)
     val isUserFillupAcademicForm: Boolean = academicFormSubmitTrigger > 0
@@ -52,6 +54,8 @@ fun HomeScreenRoot(
 
     BackHandler(onBack = onBackPressed)
 
+    val wishlistUi by viewmodel.wishlistMutationUiState.collectAsState()
+
     BaseScreen(topBar = {
         HomeAppBar(
             navigator = navigator,
@@ -59,7 +63,7 @@ fun HomeScreenRoot(
             isUserFillupAcademicForm,
             isUserLogin
         )
-    }, isTopLevelScreen = true) {
+    }, isTopLevelScreen = true, showLoader = wishlistUi.isMutating) {
         CourseItemView(
             navigator,
             action,

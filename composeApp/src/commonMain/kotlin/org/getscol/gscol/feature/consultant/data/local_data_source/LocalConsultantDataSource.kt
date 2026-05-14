@@ -16,9 +16,6 @@ import org.getscol.gscol.feature.consultant.domain.model.ConsultantModel
  */
 object LocalConsultantDataSource {
 
-    /** Default scheduling link; replace per-consultant in each [ConsultantModel] when URLs differ. */
-    private const val DEFAULT_BOOKING_URL = "https://calendly.com/erf-me4/30min"
-
     private val consultants: List<ConsultantModel> = listOf(
         ConsultantModel(
             id = "1",
@@ -30,7 +27,7 @@ object LocalConsultantDataSource {
             isCertified = true,
             email = "raihan.getscol@gmail.com",
             phone = "+8801403024105",
-            bookingUrl = DEFAULT_BOOKING_URL,
+            bookingUrl = "https://calendar.app.google/xWXicqPn8E1BrqhJ6",
             officeHours = "Sat–Thu, 10:00 AM – 6:00 PM",
             education = "BSc in EEE, East West University",
             bio = "Md. Raihan specializes in guiding students through the application process for top-tier universities in the UK and Australia. He is fluent in Bangla, Hindi, and English, enabling him to communicate effectively with students from diverse backgrounds and provide personalized support throughout their academic journey.",
@@ -54,7 +51,7 @@ object LocalConsultantDataSource {
             isCertified = true,
             email = "fardeen.getscol@gmail.com",
             phone = "+8801845238996",
-            bookingUrl = DEFAULT_BOOKING_URL,
+            bookingUrl = "https://calendar.app.google/EdNE9EM26DhAeonQ7",
             officeHours = "Sat–Thu, 10:00 AM – 6:00 PM",
             education = "BSc in CSE, Ahsanullah University of Science & Technology",
             bio = "Sheikh Fardeen Ishaque is a British Council certified expert specializing in guiding students through the application process for top-tier universities in the UK, Australia, and New Zealand. He is fluent in English, Bangla, and Hindi, enabling him to communicate effectively with students from diverse backgrounds and provide personalized support throughout their academic journey.",
@@ -78,7 +75,7 @@ object LocalConsultantDataSource {
             isCertified = true,
             email = "contact@getscol.com",
             phone = "+8801872111917",
-            bookingUrl = DEFAULT_BOOKING_URL,
+            bookingUrl = "https://calendar.app.google/2XvfNP6W26JbXGjP8",
             officeHours = "Sat–Thu, 10:00 AM – 6:00 PM",
             education = "BSc in CSE, Ahsanullah University of Science & Technology",
             bio = "Md. Shafayat Jamil is the Founder & CEO of SCOL and a British Council certified expert specializing in student admissions for top-tier universities in the UK, Australia, and New Zealand. Passionate about global education and student success, he guides students through university admissions, visas, and career pathways abroad.",

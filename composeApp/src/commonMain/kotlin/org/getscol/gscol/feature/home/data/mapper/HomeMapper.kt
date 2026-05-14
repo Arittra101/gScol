@@ -4,7 +4,11 @@ import org.getscol.gscol.feature.home.data.dto.CourseDto
 import org.getscol.gscol.feature.home.domain.model.Course
 
 fun CourseDto.toCourse(): Course {
-    val ieltsReq = engRequirements?.find { it.testName?.contains("IELTS", ignoreCase = true) == true }
+    val ieltsReq =
+        engRequirements?.find { it.testName?.contains("IELTS", ignoreCase = true) == true }
+    val universityHero = university?.imgUrl?.takeIf { it.isNotBlank() }
+    val heroImage = universityHero.orEmpty()
+    val logo = university?.logoUrl?.takeIf { it.isNotBlank() }.orEmpty()
 
     return Course(
         universityId = university?.id.orEmpty(),
@@ -13,7 +17,8 @@ fun CourseDto.toCourse(): Course {
         courseName = courseName.orEmpty(),
         universityName = university?.name.orEmpty(),
         country = university?.country.orEmpty(),
-        imageUrl = imgUrl.orEmpty(),
+        imageUrl = heroImage,
+        universityLogoUrl = logo,
         intake = intake?.name.orEmpty(),
         tuitionFee = tuitionFee ?: 0,
         currency = currency.orEmpty(),
@@ -25,6 +30,7 @@ fun CourseDto.toCourse(): Course {
         isWishlisted = isWishlisted ?: false
     )
 }
+
 fun List<CourseDto>.toCourses(): List<Course> {
     return map { it.toCourse() }
 }

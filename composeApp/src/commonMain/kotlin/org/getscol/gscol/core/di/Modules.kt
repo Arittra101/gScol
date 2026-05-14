@@ -9,6 +9,7 @@ import org.getscol.gscol.feature.course_details.di.courseDetailsModule
 import org.getscol.gscol.feature.home.di.homeModule
 import org.getscol.gscol.feature.profile.di.profileModule
 import org.getscol.gscol.feature.search.di.searchModule
+import org.getscol.gscol.feature.wishlist.di.wishlistModule
 import org.koin.core.module.Module
 
 expect val platformModule: Module
@@ -19,6 +20,7 @@ fun appModules() = listOf(
     storageModule,
     authModule,
     sessionModule,
+    wishlistModule,
     homeModule,
     searchModule,
     academicModule,
