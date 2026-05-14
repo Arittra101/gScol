@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.toRoute
 import kotlinx.serialization.json.Json
-import org.getscol.gscol.auth.presentation.profile.ProfileScreenRoute
 import org.getscol.gscol.auth.presentation.splash.SplashScreen
 import org.getscol.gscol.core.helper.composableNoAnimation
 import org.getscol.gscol.core.helper.fromNavJson
@@ -30,6 +29,7 @@ import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
 import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
 import org.getscol.gscol.feature.home.presentation.HomeScreenRoot
 import org.getscol.gscol.feature.home.presentation.InEligibleScreenRoute
+import org.getscol.gscol.feature.profile.presentation.ProfileScreenRoute
 import org.getscol.gscol.feature.profile.presentation.edit_profile.EditProfileScreenRoute
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
 import org.getscol.gscol.feature.search.presentation.advance_search.AdvancedSearchScreenRoot
