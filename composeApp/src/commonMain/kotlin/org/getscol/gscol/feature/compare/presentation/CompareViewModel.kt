@@ -55,31 +55,14 @@ class CompareViewModel(
             is HomeAction.AddToWishlist -> {
                 viewModelScope.launch {
                     if (!session.isUserLoggedIn.first()) return@launch
+                    // Wishlist screen only lists saved courses; user can only remove, not add.
+                    if (!action.isWishListed) return@launch
                     wishlistMutationMutex.withLock {
                         setWishlistMutating(true)
                         try {
-                            val currentlyFavorite = action.isWishListed
-                            if (currentlyFavorite) {
-                                when (wishlistRepository.removeFromWishlist(action.courseId)) {
-                                    is Result.Success -> {
-                                        _uiState.update { state ->
-                                            if (state is CompareUiState.Content) {
-                                                state.copy(
-                                                    courses = state.courses.filter {
-                                                        it.courseId != action.courseId
-                                                    },
-                                                    isWishlistMutating = false,
-                                                )
-                                            } else state
-                                        }
-                                    }
-                                    is Result.Error -> Unit
-                                }
-                            } else {
-                                when (wishlistRepository.addToWishlist(action.courseId)) {
-                                    is Result.Success -> refreshWishlistsPreservingScreen()
-                                    is Result.Error -> Unit
-                                }
+                            when (wishlistRepository.removeFromWishlist(action.courseId)) {
+                                is Result.Success -> refetchWishlistsFromApi()
+                                is Result.Error -> Unit
                             }
                         } finally {
                             setWishlistMutating(false)
@@ -90,11 +73,12 @@ class CompareViewModel(
         }
     }
 
-    /** Refetch list without switching to full-screen loading (used after add). */
-    private suspend fun refreshWishlistsPreservingScreen() {
+    /** GET /wishlists after a mutation; keeps list visible under the overlay loader (no full-screen Loading). */
+    private suspend fun refetchWishlistsFromApi() {
         when (val r = wishlistRepository.getWishlists()) {
-            is Result.Success -> _uiState.value =
-                CompareUiState.Content(courses = r.data, isWishlistMutating = false)
+            is Result.Success ->
+                _uiState.value = CompareUiState.Content(courses = r.data, isWishlistMutating = false)
+
             is Result.Error -> Unit
         }
     }
