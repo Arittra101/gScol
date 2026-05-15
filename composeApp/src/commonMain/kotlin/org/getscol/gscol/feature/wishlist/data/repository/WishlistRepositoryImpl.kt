@@ -15,7 +15,7 @@ class WishlistRepositoryImpl(
         return when (val r = api.getWishlists()) {
             is Result.Success -> Result.Success(
                 r.data.payload?.wishlists.orEmpty().map { dto ->
-                    dto.toCourse().copy(isWishlisted = true)
+                    dto.toCourse().copy(isWishListed = true)
                 }
             )
             is Result.Error -> Result.Error(r.error)

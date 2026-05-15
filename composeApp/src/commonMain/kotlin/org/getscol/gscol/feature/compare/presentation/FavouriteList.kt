@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.getscol.gscol.core.helper.toDollar
 import org.getscol.gscol.core.helper.toShortDate
 import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.home.presentation.HomeAction
@@ -45,13 +44,13 @@ fun FavouriteList(
                     universityLogo = course.universityLogoForCard(),
                     backgroundImage = course.heroImageForCard(),
                     intake = course.intake.toShortDate(),
-                    tuitionFees = course.tuitionFee.toString().toDollar(),
+                    tuitionFees = course.tuitionFee,
                     duration = course.duration,
-                    scholarship = course.scholarship.toString(),
-                    initialDeposit = course.deposit.toString().toDollar(),
+                    scholarship = course.scholarship,
+                    initialDeposit = course.deposit,
                     ieltsBand = course.ieltsOverallRequired,
                     ieltsSingleBand = course.ieltsBandRequired,
-                    isFavorite = course.isWishlisted,
+                    isFavorite = course.isWishListed,
                     action = action,
                     onCourseClick = {
                         navigator.navigateTo(route = Route.CourseDetails(courseId = course.courseId))
