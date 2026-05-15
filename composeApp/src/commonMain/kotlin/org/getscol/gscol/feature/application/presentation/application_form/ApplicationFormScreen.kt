@@ -57,7 +57,10 @@ fun ApplicationFormScreenRoute(
     }
 
 
-    BaseScreen(title = "Applications Form", showLoader = state.isLoading) {
+    BaseScreen(
+        title = "Applications Form",
+        showLoader = state.isLoading,
+        onBackPress = { navigator.navigateBack() }) {
         AddApplicationContent(state, action)
     }
 
