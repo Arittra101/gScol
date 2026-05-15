@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.ScolPullToRefreshBox
 import org.getscol.gscol.core.presentation.course.FullScreenError
 import org.getscol.gscol.feature.compare.presentation.components.WishlistEmptyState
 import org.getscol.gscol.navigation.Navigator
@@ -18,6 +19,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun CompareScreenRoot(navigator: Navigator) {
     val viewModel: CompareViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     val compareState = uiState
     val wishlistOverlayBusy =
         compareState is CompareUiState.Content && compareState.isWishlistMutating
@@ -26,6 +28,7 @@ fun CompareScreenRoot(navigator: Navigator) {
 
     BaseScreen(
         title = "Wishlist",
+        showBackButton = false,
         isTopLevelScreen = true,
         showLoader = initialOrMutationLoader
     ) { paddingValues ->
@@ -38,22 +41,32 @@ fun CompareScreenRoot(navigator: Navigator) {
             }
 
             is CompareUiState.Error -> {
-                FullScreenError(
-                    message = state.message,
-                    onRetry = viewModel::loadWishlists
-                )
+                ScolPullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = viewModel::onRefresh,
+                ) {
+                    FullScreenError(
+                        message = state.message,
+                        onRetry = viewModel::loadWishlists
+                    )
+                }
             }
 
             is CompareUiState.Content -> {
-                if (state.courses.isEmpty()) {
-                    WishlistEmptyState()
-                } else {
-                    CompareWishlistList(
-                        navigator = navigator,
-                        action = viewModel::onAction,
-                        courses = state.courses,
-                        contentPadding = listContentPadding,
-                    )
+                ScolPullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = viewModel::onRefresh,
+                ) {
+                    if (state.courses.isEmpty()) {
+                        WishlistEmptyState()
+                    } else {
+                        CompareWishlistList(
+                            navigator = navigator,
+                            action = viewModel::onAction,
+                            courses = state.courses,
+                            contentPadding = listContentPadding,
+                        )
+                    }
                 }
             }
         }

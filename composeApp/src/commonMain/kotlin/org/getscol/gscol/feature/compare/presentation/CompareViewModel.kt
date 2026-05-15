@@ -33,6 +33,9 @@ class CompareViewModel(
 
     private val wishlistMutationMutex = Mutex()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     private val _uiState = MutableStateFlow<CompareUiState>(CompareUiState.Loading)
     val uiState: StateFlow<CompareUiState> = _uiState.asStateFlow()
 
@@ -46,6 +49,32 @@ class CompareViewModel(
             when (val r = wishlistRepository.getWishlists()) {
                 is Result.Success -> _uiState.value = CompareUiState.Content(r.data)
                 is Result.Error -> _uiState.value = CompareUiState.Error(r.error.asWishlistUiMessage())
+            }
+        }
+    }
+
+    /**
+     * Pull-to-refresh: refetch wishlist without switching to full-screen [CompareUiState.Loading].
+     * Serialized with wishlist remove via [wishlistMutationMutex].
+     */
+    fun onRefresh() {
+        viewModelScope.launch {
+            wishlistMutationMutex.withLock {
+                _isRefreshing.value = true
+                try {
+                    when (val r = wishlistRepository.getWishlists()) {
+                        is Result.Success ->
+                            _uiState.value = CompareUiState.Content(courses = r.data)
+
+                        is Result.Error -> {
+                            if (_uiState.value !is CompareUiState.Content) {
+                                _uiState.value = CompareUiState.Error(r.error.asWishlistUiMessage())
+                            }
+                        }
+                    }
+                } finally {
+                    _isRefreshing.value = false
+                }
             }
         }
     }
