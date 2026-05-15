@@ -48,7 +48,10 @@ class ApplicationFormViewmodel(
         when (action) {
             is ApplicationFormScreenAction.OnIntakeSelection -> {
                 _applicationFormUiState.value =
-                    _applicationFormUiState.value.copy(selectedIntake = action.intake)
+                    _applicationFormUiState.value.copy(
+                        selectedIntake = action.intake,
+                        enableCreateBtn = true
+                    )
             }
 
             is ApplicationFormScreenAction.OnCreateApplication -> {
@@ -122,7 +125,8 @@ data class ApplicationFormUiState(
     val showApiResponseBottomSheet: Boolean = false,
     val isApiSuccess: Boolean = false,
     val successMsg: String = "Application created successfully",
-    val errorMsg: String = "Something went wrong"
+    val errorMsg: String = "Something went wrong",
+    val enableCreateBtn: Boolean = false
 )
 
 sealed interface ApplicationFormUIEffect {

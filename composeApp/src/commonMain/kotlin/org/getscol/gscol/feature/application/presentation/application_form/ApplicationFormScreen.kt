@@ -135,6 +135,7 @@ fun AddApplicationContent(
 
         // Submit button
         PrimaryButton(
+            enabled = state?.enableCreateBtn.orFalse(),
             text = "Create Application",
             onClick = { action(ApplicationFormScreenAction.OnCreateApplication)},
             modifier = Modifier.padding(bottom = 10.dp),
