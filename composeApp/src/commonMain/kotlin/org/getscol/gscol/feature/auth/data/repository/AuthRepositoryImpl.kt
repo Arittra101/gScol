@@ -37,7 +37,8 @@ class AuthRepositoryImpl(
         return when (val result = authApiService.login(phoneNumber, password)) {
             is Result.Success -> {
                 val resultData = result.data.data
-                val isUserFillUpAcademicForm = resultData?.user?.academicFormStatus?.lowercase() == "completed"
+                val academicFormStatus = resultData?.user?.academicFormStatus?.lowercase()
+                val isUserFillUpAcademicForm = academicFormStatus == "completed" || academicFormStatus == "partially_completed"
 
                 authTokenProvider.saveTokens(accessToken = resultData?.accessToken, refreshToken = resultData?.refreshToken)
                 session.setUserProfile(
