@@ -1,6 +1,5 @@
 package org.getscol.gscol.feature.course_details.presentation.course_details
 
-import org.getscol.gscol.feature.academic_form.di.academicModule
 import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
 
 data class CourseDetailsState(

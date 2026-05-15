@@ -13,7 +13,7 @@ import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.course_details.domain.repository.CourseDetailsRepository
 
 class CourseDetailsViewModel(
-    private val courseId: String,
+    courseId: String,
     private val repository: CourseDetailsRepository,
     private val session: Session
 ) : ViewModel() {
