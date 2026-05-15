@@ -87,7 +87,7 @@ fun CourseItemView(
                             // Only memoize expensive callback creation
                             val onCourseClick: () -> Unit = remember(course.courseId, navigator) {
                                 {
-                                    navigator.navigateToOtherScreen(
+                                    navigator.navigateTo(
                                         route = Route.CourseDetails(courseId = course.courseId)
                                     )
                                 }

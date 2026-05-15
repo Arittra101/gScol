@@ -11,7 +11,7 @@ sealed interface Route {
     object ApplicationList : Route
 
     @Serializable
-    object CompareRoute : Route
+    object FavouriteRoute : Route
 
     @Serializable
     object Consultant : Route

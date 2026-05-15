@@ -82,7 +82,7 @@ fun ScolNavHost(
         composableNoAnimation<Route.AdvancedSearch> {
             AdvancedSearchScreenRoot(navigator = navigator)
         }
-        composableNoAnimation<Route.CompareRoute> {
+        composableNoAnimation<Route.FavouriteRoute> {
             CompareScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.Profile> {

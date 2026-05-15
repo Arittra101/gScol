@@ -14,11 +14,6 @@ enum class TopLevelDestination(
         icon = "files/ic_home.svg",
         label = "Home"
     ),
-    COMPARE(
-        route = Route.CompareRoute,
-        icon = "files/ic_fav.svg",
-        label = "Compare"
-    ),
 
     APPLICATION(
         route = Route.ApplicationList,

@@ -20,7 +20,7 @@ import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 
 @Composable
-fun CompareWishlistList(
+fun FavouriteList(
     navigator: Navigator,
     action: (HomeAction) -> Unit,
     courses: List<Course>,
@@ -54,9 +54,7 @@ fun CompareWishlistList(
                     isFavorite = course.isWishlisted,
                     action = action,
                     onCourseClick = {
-                        navigator.navigateToOtherScreen(
-                            route = Route.CourseDetails(courseId = course.courseId)
-                        )
+                        navigator.navigateTo(route = Route.CourseDetails(courseId = course.courseId))
                     }
                 )
                 if (index < courses.size - 1) {

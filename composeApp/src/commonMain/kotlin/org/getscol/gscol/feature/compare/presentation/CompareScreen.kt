@@ -60,7 +60,7 @@ fun CompareScreenRoot(navigator: Navigator) {
                     if (state.courses.isEmpty()) {
                         WishlistEmptyState()
                     } else {
-                        CompareWishlistList(
+                        FavouriteList(
                             navigator = navigator,
                             action = viewModel::onAction,
                             courses = state.courses,

@@ -29,7 +29,7 @@ class Navigator(
     private val protectedRoutes: Map<KClass<out Route>, String> = mapOf(
         Route.Profile::class          to "Please login to access your profile",
         Route.ApplicationList::class  to "Please login to view applications",
-        Route.CompareRoute::class     to "Please login to compare colleges",
+        Route.FavouriteRoute::class     to "Please login to compare colleges",
         Route.Consultant::class       to "Please login to contact consultants",
     )
 
@@ -83,24 +83,6 @@ class Navigator(
     /** Push a route onto the back stack (e.g. Search from Home). */
     fun navigateToRoute(route: Route) {
         navController.navigate(route)
-    }
-
-    /* for reset password support & login screen support */
-    fun navigateToOtherScreen(route: Route?, dropScreen: Boolean? = null) {
-        val targetRoute = route
-        if (targetRoute == null) return
-
-        navController.navigate(targetRoute) {
-            if (dropScreen == true) {
-                val currentScreen = navController.currentBackStackEntry?.destination?.id ?: return@navigate
-                popUpTo(currentScreen) { inclusive = true }
-            }
-            else {
-                authRoute.firstOrNull()?.let { popUpTo(Route.HomeRoute) { inclusive = false } }
-                authRoute.clear()
-            }
-        }
-
     }
 
     // will be removed soon
