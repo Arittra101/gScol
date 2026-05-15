@@ -65,22 +65,6 @@ fun HomeAppBar(
                     modifier = Modifier.weight(1f),
                     onClick = { navigator.navigateToRoute(Route.Search) }
                 )
-                BadgedBox(
-                    badge = {
-                        Badge(
-                            containerColor = colors.customPrimary,
-                            modifier = Modifier.size(8.dp)
-                        )
-                    }
-                ) {
-                    IconButton(onClick = { navigator.navigateToTopLevel(TopLevelDestination.APPLICATION)
-                    }) {
-                        Icon(
-                            painterResource(Res.drawable.route),
-                            contentDescription = "Trace"
-                        )
-                    }
-                }
 
                 BadgedBox(
                     badge = {
@@ -97,6 +81,23 @@ fun HomeAppBar(
                             contentScale = ContentScale.Fit,
                             colorFilter = ColorFilter.tint(Color(0xFF0D171B)),
                             modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+
+                BadgedBox(
+                    badge = {
+                        Badge(
+                            containerColor = colors.customPrimary,
+                            modifier = Modifier.size(8.dp)
+                        )
+                    }
+                ) {
+                    IconButton(onClick = { navigator.navigateToTopLevel(TopLevelDestination.APPLICATION)
+                    }) {
+                        Icon(
+                            painterResource(Res.drawable.route),
+                            contentDescription = "Trace"
                         )
                     }
                 }
