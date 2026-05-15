@@ -4,6 +4,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import org.getscol.gscol.core.helper.orFalse
 import org.getscol.gscol.feature.course_details.data.dto.AboutUsDto
 import org.getscol.gscol.feature.course_details.data.dto.AcademicRequirementsDto
 import org.getscol.gscol.feature.course_details.data.dto.CampusLifeDto
@@ -61,6 +62,8 @@ fun CourseDetailsDto.toDomain(meta: List<InfoMetaDataDto>): CourseDetails {
         academicRequirements = academicRequirements?.toDomain(),
         feesAndScholarships = feesAndScholarships?.toDomain(),
         intakeDates = intakeDates?.toDomain(),
+        isEligible = isEligible.orFalse(),
+        isAlreadyApplied = alreadyApplied.orFalse(),
         meta = meta.toDomain(),
     )
 }

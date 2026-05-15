@@ -10,6 +10,8 @@ data class CourseDetails(
     val university: University,
     val tags: List<CourseTag> = emptyList(),
     val tabs: List<CourseTab> = emptyList(),
+    val isEligible : Boolean =  false,
+    val isAlreadyApplied: Boolean = false,
     val aboutUs: AboutUs? = null,
     val campusLife: CampusLife? = null,
     val location: CourseLocation? = null,

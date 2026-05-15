@@ -8,12 +8,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.course_details.domain.repository.CourseDetailsRepository
 
 class CourseDetailsViewModel(
     private val courseId: String,
     private val repository: CourseDetailsRepository,
+    private val session: Session
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CourseDetailsState())
@@ -36,6 +38,9 @@ class CourseDetailsViewModel(
                             isLoading = false,
                             courseDetails = result.data,
                             error = null,
+                            isEligible = result.data.isEligible,
+                            alreadyApplied = result.data.isAlreadyApplied,
+                            isLogin = session.isUserLoggedIn.value
                         )
                     }
                 }
@@ -57,17 +62,18 @@ class CourseDetailsViewModel(
             is CourseDetailsAction.TabSelected ->
                 _state.update { it.copy(selectedTabIndex = action.index) }
 
-            CourseDetailsAction.ApplyNow ->
+            is CourseDetailsAction.ApplyNow ->
                 viewModelScope.launch {
                     _uiEffect.emit(
-                        CourseDetailsUiEffect.ApplyNow(
-                            state.value.courseDetails?.courseId ?: ""
-                        )
+                        if (state.value.shouldRedirectToLogin()) {
+                            CourseDetailsUiEffect.RedirectToLogin
+                        } else {
+                            CourseDetailsUiEffect.ApplyNow(state.value.courseDetails?.courseId ?: "")
+                        }
                     )
                 }
 
-            CourseDetailsAction.ReadMoreClicked -> { /* expand about text handled in UI */
-            }
+            is CourseDetailsAction.ReadMoreClicked -> { /* expand about text handled in UI */ }
         }
     }
 

@@ -12,6 +12,6 @@ val courseDetailsModule = module {
     single<CourseDetailsApiService> { CourseDetailsApiServiceImpl(get()) }
     single<CourseDetailsRepository> { CourseDetailsRepositoryImpl(get()) }
     viewModel { params ->
-        CourseDetailsViewModel(courseId = params.get(), repository = get())
+        CourseDetailsViewModel(courseId = params.get(), repository = get(), session = get())
     }
 }
