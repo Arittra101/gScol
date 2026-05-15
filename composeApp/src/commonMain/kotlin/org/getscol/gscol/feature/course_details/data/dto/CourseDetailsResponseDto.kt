@@ -31,6 +31,8 @@ data class CourseDetailsDto(
     @SerialName("university") val university: UniversityDto? = null,
     @SerialName("tags") val tags: List<CourseTagDto>? = null,
     @SerialName("tabs") val tabs: List<CourseTabDto>? = null,
+    @SerialName("isEligible") val isEligible: Boolean? = null,
+    @SerialName("alreadyApplied") val alreadyApplied: Boolean? = null,
     @SerialName("aboutUs") val aboutUs: AboutUsDto? = null,
     @SerialName("campusLife") val campusLife: CampusLifeDto? = null,
     @SerialName("location") val location: CourseLocationDto? = null,

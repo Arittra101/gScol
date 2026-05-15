@@ -62,6 +62,8 @@ import org.getscol.gscol.feature.course_details.presentation.components.normaliz
 import org.getscol.gscol.feature.course_details.presentation.components.parseLatLngFromMapsUrl
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
+import org.getscol.gscol.navigation.Route.ApplicationFormRoute
+import org.getscol.gscol.navigation.Route.Login
 import org.getscol.gscol.theme.appColors
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -92,7 +94,11 @@ fun CourseDetailsScreenRoot(
             when (effect) {
                 is CourseDetailsUiEffect.NavigateBack -> navigator.navigateBack()
                 is CourseDetailsUiEffect.ApplyNow ->  {
-                    navigator.navigateTo(Route.ApplicationFormRoute(courseDetails = state.courseDetails.toNavJson()))
+                    navigator.navigateTo(ApplicationFormRoute(courseDetails = state.courseDetails.toNavJson()))
+                }
+
+                is CourseDetailsUiEffect.RedirectToLogin -> {
+                    navigator.navigateTo(Login)
                 }
             }
         }
@@ -354,7 +360,8 @@ fun CourseDetailsScreen(
                 }
             }
             PrimaryButton(
-                text = "Apply Now",
+                enabled = state.buttonShouldEnable(),
+                text = state.applyBtnTextMsg(),
                 onClick = { onAction(CourseDetailsAction.ApplyNow) },
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
