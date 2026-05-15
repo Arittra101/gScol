@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.launch
 import org.getscol.gscol.core.data.session.Session
 import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.home.domain.model.Course
@@ -62,7 +61,7 @@ class HomeViewmodel(
         combine(baseCourses, favoriteUpdates) { pagingData, favourite ->
             pagingData.map { course ->
                 favourite[course.courseId]?.let { newValue ->
-                    course.copy(isWishlisted = newValue)
+                    course.copy(isWishListed = newValue)
                 } ?: course
             }
         }

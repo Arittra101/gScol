@@ -76,13 +76,16 @@ private val Iso4217CurrencySymbols = mapOf(
     "TRY" to "₺",
 )
 
-fun String.toAbbreviatedTuitionAmount(): String {
+fun String?.toDollar(): String = this.toAbbreviatedTuitionAmount()
+
+fun String?.toAbbreviatedTuitionAmount(): String {
+    if(this == null) return "N/A"
     val amount = this.toDoubleOrNull() ?: 0.0
     val result = amount / 1000
     val rounded = (result * 10).roundToInt()
     val wholePart = rounded / 10
     val fractionalPart = rounded % 10
-    return "$wholePart.$fractionalPart"
+    return "$$wholePart.$fractionalPart"
 }
 
 /** Abbreviated tuition (÷1000, one decimal) with the correct currency symbol for [currencyCode]. */
@@ -91,8 +94,6 @@ fun formatTuitionFeeAbbreviated(amount: Int, currencyCode: String): String {
     val body = amount.toString().toAbbreviatedTuitionAmount()
     return if (symbol.isEmpty()) body else symbol + body
 }
-
-fun String.toDollar(): String = "$" + this.toAbbreviatedTuitionAmount()
 
 fun String.toShortDate(): String {
     val parts = this.trim().split(" ")
@@ -119,7 +120,7 @@ fun String.toShortDate(): String {
 
     val shortYear = if (year.length >= 2) year.takeLast(2) else year
 
-    return "$shortMonth$shortYear"
+    return "$shortMonth $shortYear"
 }
 
 fun String.toMonthNumber(): Int? {

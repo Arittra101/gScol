@@ -181,7 +181,7 @@ fun CourseInfoCard(
                 InfoChip(
                     modifier = Modifier.weight(1f),
                     iconPath = Res.drawable.tution_fee_icon,
-                    title = "Tuition fees",
+                    title = "Tuition",
                     text = tuitionFees,
                 )
                 InfoChip(

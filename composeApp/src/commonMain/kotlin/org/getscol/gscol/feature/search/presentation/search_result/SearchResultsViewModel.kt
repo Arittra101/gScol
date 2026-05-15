@@ -9,7 +9,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -72,7 +71,7 @@ class SearchResultsViewModel(
         combine(baseCourses, favoriteUpdates) { pagingData, favourite ->
             pagingData.map { course ->
                 favourite[course.courseId]?.let { newValue ->
-                    course.copy(isWishlisted = newValue)
+                    course.copy(isWishListed = newValue)
                 } ?: course
             }
         }

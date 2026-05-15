@@ -1,5 +1,6 @@
 package org.getscol.gscol.feature.home.data.mapper
 
+import org.getscol.gscol.core.helper.toDollar
 import org.getscol.gscol.feature.home.data.dto.CourseDto
 import org.getscol.gscol.feature.home.domain.model.Course
 
@@ -19,15 +20,15 @@ fun CourseDto.toCourse(): Course {
         country = university?.country.orEmpty(),
         imageUrl = heroImage,
         universityLogoUrl = logo,
-        intake = intake?.name.orEmpty(),
-        tuitionFee = tuitionFee ?: 0,
+        intake = intake?.name ?: "N/A",
+        tuitionFee = tuitionFee?.toString().toDollar(),
         currency = currency.orEmpty(),
-        duration = durationMonths?.let { "$it Months" }.orEmpty(),
-        scholarship = if (isScholarshipAvailable == true) 1 else 0,
-        deposit = initialDeposit ?: 0,
+        duration = durationMonths?.let { "$it mo" } ?: "N/A",
+        scholarship = if (isScholarshipAvailable == true) "Available" else "N/A",
+        deposit = initialDeposit?.toString().toDollar(),
         ieltsBandRequired = ieltsReq?.overall.toString(),
         ieltsOverallRequired = ieltsReq?.section.toString(),
-        isWishlisted = isWishlisted ?: false
+        isWishListed = isWishlisted ?: false
     )
 }
 

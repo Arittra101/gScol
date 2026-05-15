@@ -198,7 +198,7 @@ private fun LogoutConfirmationSheet(
             Box(
                 modifier = Modifier
                     .size(64.dp)
-                    .background(LightPink, CircleShape),
+                    .background(appColors().customPrimary.copy(alpha = 0.15f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
