@@ -142,6 +142,21 @@ android {
         }
     }
 
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("qa") {
+            dimension = "environment"
+            applicationIdSuffix = ".qa"
+            resValue("string", "app_name", "SCOL QA")
+            versionNameSuffix = "-qa"
+        }
+        create("prod") {
+            dimension = "environment"
+            resValue("string", "app_name", "SCOL")
+        }
+    }
+
     signingConfigs {
         create("release") {
             storeFile = file(localProperties.getProperty("store.file") ?: "")
@@ -181,6 +196,7 @@ dependencies {
 buildkonfig {
     packageName = "com.getscol.gscol"
 
+    // default fallback (required by BuildKonfig)
     defaultConfigs {
         val baseURL = localProperties.getProperty("base.url", "")
         require(baseURL.isNotEmpty()) {
@@ -196,6 +212,29 @@ buildkonfig {
             "GOOGLE_MAPS_API_KEY",
             localProperties.getProperty("google.maps.api.key", ""),
         )
+    }
+
+    targetConfigs {
+        create("qa") {
+            val qaBaseURL = localProperties.getProperty("qa.base.url", "")
+            require(qaBaseURL.isNotEmpty()) { "QA Base URL is missing in local.properties!!!" }
+            buildConfigField(STRING, "BASE_URL", qaBaseURL)
+            buildConfigField(
+                STRING,
+                "GOOGLE_MAPS_API_KEY",
+                localProperties.getProperty("google.maps.api.key", "")
+            )
+        }
+        create("prod") {
+            val prodBaseURL = localProperties.getProperty("base.url", "")
+            require(prodBaseURL.isNotEmpty()) { "Prod Base URL is missing in local.properties!!!" }
+            buildConfigField(STRING, "BASE_URL", prodBaseURL)
+            buildConfigField(
+                STRING,
+                "GOOGLE_MAPS_API_KEY",
+                localProperties.getProperty("google.maps.api.key", "")
+            )
+        }
     }
 }
 
