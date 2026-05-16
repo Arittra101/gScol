@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,13 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import org.getscol.gscol.core.presentation.BaseScreen
-import org.getscol.gscol.feature.profile.domain.download.DownloadState
 import org.getscol.gscol.feature.profile.domain.model.AcademicRecordItem
 import org.getscol.gscol.feature.profile.domain.model.DocumentStatus
 import org.getscol.gscol.feature.profile.presentation.edit_profile.components.DocumentRow
@@ -51,11 +52,18 @@ fun EditProfileScreenRoute(
 ) {
     val viewModel: EditProfileViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsState()
+    val uriHandler = LocalUriHandler.current
+
+    LaunchedEffect(Unit) {
+        viewModel.openUrlEvents.collect { url ->
+            uriHandler.openUri(url)
+        }
+    }
+
     EditProfileScreen(
         uiState = uiState,
         onBack = navigator::navigateBack,
-        onDownload = viewModel::onDownloadClick,
-        onCancelDownload = viewModel::onCancelDownload,
+        onView = viewModel::onViewDocumentClick,
     )
 }
 
@@ -63,8 +71,7 @@ fun EditProfileScreenRoute(
 fun EditProfileScreen(
     uiState: EditProfileUiState,
     onBack: () -> Unit,
-    onDownload: (documentId: String) -> Unit,
-    onCancelDownload: (documentId: String) -> Unit,
+    onView: (documentId: String) -> Unit,
 ) {
     val colors = appColors()
 
@@ -109,22 +116,22 @@ fun EditProfileScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    text = profile.academicRecordsTitle,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                AcademicRecordsCard(
-                    items = profile.academicRecords,
-                    downloadStates = uiState.downloadStates,
-                    onDownload = { docId ->
-                        onDownload(docId)
-                    },
-                    onCancelDownload = onCancelDownload,
-                    onReUpload = { reuploadDialog = true },
-                )
+                if (profile.academicRecords.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(
+                        text = profile.academicRecordsTitle,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    AcademicRecordsCard(
+                        items = profile.academicRecords,
+                        loadingDocumentIds = uiState.loadingDocumentIds,
+                        documentErrors = uiState.documentErrors,
+                        onView = onView,
+                        onReUpload = { reuploadDialog = true },
+                    )
+                }
             } else if (!uiState.errorMessage.isNullOrBlank()) {
                 Text(
                     text = uiState.errorMessage,
@@ -232,9 +239,9 @@ private fun ProfileHeaderCard(
 @Composable
 private fun AcademicRecordsCard(
     items: List<AcademicRecordItem>,
-    downloadStates: Map<String, DownloadState>,
-    onDownload: (documentId: String) -> Unit,
-    onCancelDownload: (documentId: String) -> Unit,
+    loadingDocumentIds: Set<String>,
+    documentErrors: Map<String, String>,
+    onView: (documentId: String) -> Unit,
     onReUpload: () -> Unit,
 ) {
     Column(
@@ -249,20 +256,19 @@ private fun AcademicRecordsCard(
     ) {
 
         items.forEachIndexed { index, item ->
-            val dlState = downloadStates[item.id] ?: DownloadState.Idle
             DocumentRow(
                 label = item.label,
                 status = item.status,
-                downloadState = dlState,
-                onDownload = {
+                isLoading = item.id in loadingDocumentIds,
+                errorText = documentErrors[item.id],
+                onView = {
                     when (item.status) {
                         DocumentStatus.InProgress,
-                        DocumentStatus.Verified -> onDownload(item.id)
+                        DocumentStatus.Verified -> onView(item.id)
 
                         DocumentStatus.Rejected -> onReUpload()
                     }
                 },
-                onCancel = { onCancelDownload(item.id) },
             )
             if (index < items.lastIndex) {
                 HorizontalDivider(

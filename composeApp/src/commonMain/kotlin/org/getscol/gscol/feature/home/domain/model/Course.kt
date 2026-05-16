@@ -10,12 +10,12 @@ data class Course(
     val imageUrl: String,
     val universityLogoUrl: String,
     val intake: String,
-    val tuitionFee: Int,
+    val tuitionFee: String,
     val currency: String,
     val duration: String,
-    val scholarship: Int,
-    val deposit: Int,
+    val scholarship: String,
+    val deposit: String,
     val ieltsBandRequired: String,
     val ieltsOverallRequired: String,
-    val isWishlisted: Boolean
+    val isWishListed: Boolean
 )

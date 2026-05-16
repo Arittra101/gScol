@@ -29,7 +29,7 @@ class Navigator(
     private val protectedRoutes: Map<KClass<out Route>, String> = mapOf(
         Route.Profile::class          to "Please login to access your profile",
         Route.ApplicationList::class  to "Please login to view applications",
-        Route.FavouriteRoute::class     to "Please login to compare colleges",
+        Route.FavouriteRoute::class     to "Login to view favorite courses",
         Route.Consultant::class       to "Please login to contact consultants",
     )
 

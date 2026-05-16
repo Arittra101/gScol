@@ -28,8 +28,7 @@ fun CompareScreenRoot(navigator: Navigator) {
 
     BaseScreen(
         title = "Wishlist",
-        showBackButton = false,
-        isTopLevelScreen = true,
+        onBackPress = navigator::navigateBack,
         showLoader = initialOrMutationLoader
     ) { paddingValues ->
         val listBottomPadding = paddingValues.calculateBottomPadding() + 80.dp

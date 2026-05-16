@@ -7,5 +7,5 @@ import org.getscol.gscol.feature.profile.domain.model.EditProfile
 
 interface EditProfileRepository {
     fun fetchEditProfile(): Flow<Result<EditProfile, DataError.Remote>>
+    suspend fun getDocumentDownloadUrl(documentId: String): Result<String, DataError.Remote>
 }
-

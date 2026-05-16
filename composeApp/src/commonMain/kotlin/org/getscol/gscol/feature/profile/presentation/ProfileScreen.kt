@@ -50,6 +50,7 @@ import kotlinx.coroutines.launch
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
+import org.getscol.gscol.navigation.TopLevelDestination
 import org.getscol.gscol.theme.appColors
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -59,7 +60,6 @@ import scol.composeapp.generated.resources.profile
 
 // Color constants
 private val PrimaryRed = Color(0xFFB71C1C)
-private val LightPink = Color(0xFFFCE4EC)
 private val TextPrimary = Color(0xFF1A1A2E)
 private val TextSecondary = Color(0xFF9E9E9E)
 private val DividerColor = Color(0xFFF0F0F0)
@@ -79,6 +79,7 @@ fun ProfileScreenRoute(
     }
 
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
@@ -132,7 +133,7 @@ fun ProfileScreen(
                 icon = Icons.Default.Headset,
                 title = "Support Center",
                 subtitle = "Get help & FAQ",
-                onClick = {}
+                onClick = { navigator?.navigateToTopLevel(TopLevelDestination.CONSULTANT) }
             )
 
             HorizontalDivider(color = DividerColor, thickness = 1.dp)
@@ -198,7 +199,7 @@ private fun LogoutConfirmationSheet(
             Box(
                 modifier = Modifier
                     .size(64.dp)
-                    .background(LightPink, CircleShape),
+                    .background(appColors().customPrimary.copy(alpha = 0.15f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -416,7 +417,13 @@ private fun LoggedInPreview() {
                 HorizontalDivider(color = DividerColor)
                 ProfileMenuItem(Icons.Default.Headset, "Support Center", "Get help & FAQ", {})
                 HorizontalDivider(color = DividerColor)
-                ProfileMenuItem(Icons.AutoMirrored.Filled.ExitToApp, "Log Out", "End your session securely", {}, true)
+                ProfileMenuItem(
+                    Icons.AutoMirrored.Filled.ExitToApp,
+                    "Log Out",
+                    "End your session securely",
+                    {},
+                    true
+                )
                 HorizontalDivider(color = DividerColor)
             }
         }

@@ -56,7 +56,7 @@ class InEligibleCourseViewmodel(
         combine(baseCourses, favoriteUpdates) { pagingData, favourite ->
             pagingData.map { course ->
                 favourite[course.courseId]?.let { newValue ->
-                    course.copy(isWishlisted = newValue)
+                    course.copy(isWishListed = newValue)
                 } ?: course
             }
         }

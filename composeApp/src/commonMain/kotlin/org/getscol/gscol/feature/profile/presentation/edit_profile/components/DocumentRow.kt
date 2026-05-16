@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.getscol.gscol.feature.profile.domain.download.DownloadState
 import org.getscol.gscol.feature.profile.domain.model.DocumentStatus
 import org.getscol.gscol.theme.appColors
 
@@ -36,9 +34,9 @@ import org.getscol.gscol.theme.appColors
 fun DocumentRow(
     label: String,
     status: DocumentStatus,
-    downloadState: DownloadState,
-    onDownload: () -> Unit,
-    onCancel: () -> Unit,
+    isLoading: Boolean,
+    errorText: String?,
+    onView: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val colors = appColors()
@@ -57,7 +55,6 @@ fun DocumentRow(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // Icon circle — soft rose/pink tint matching screenshot
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -88,55 +85,19 @@ fun DocumentRow(
             Spacer(modifier = Modifier.width(12.dp))
 
             ActionButton(
-                downloadState = downloadState,
+                isLoading = isLoading,
+                errorText = errorText,
                 documentStatus = status,
-                onDownload = onDownload,
-                onCancel = onCancel,
+                onView = onView,
             )
         }
 
-        // Progress bar while downloading
-        if (downloadState is DownloadState.Downloading) {
-            Spacer(modifier = Modifier.height(10.dp))
-            val progress = downloadState.progress
-            LinearProgressIndicator(
-                progress = { progress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .clip(RoundedCornerShape(2.dp)),
-                color = Color(0xFFB91C1C),
-                trackColor = Color(0xFFFCE8E8),
-            )
-            if (downloadState.totalBytes > 0) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${(progress * 100).toInt()}%  •  ${formatBytes(downloadState.bytesDone)} / ${
-                        formatBytes(
-                            downloadState.totalBytes
-                        )
-                    }",
-                    fontSize = 11.sp,
-                    color = colors.customPrimaryText.copy(alpha = 0.55f),
-                )
-            }
-        }
-
-        if (downloadState is DownloadState.Failed) {
+        if (!errorText.isNullOrBlank()) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Download failed. Tap Retry.",
+                text = errorText,
                 fontSize = 11.sp,
                 color = Color(0xFFDC2626),
-            )
-        }
-
-        if (downloadState is DownloadState.Completed) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Saved to Downloads",
-                fontSize = 11.sp,
-                color = Color(0xFF059669),
             )
         }
     }
@@ -144,30 +105,23 @@ fun DocumentRow(
 
 @Composable
 private fun ActionButton(
-    downloadState: DownloadState,
+    isLoading: Boolean,
+    errorText: String?,
     documentStatus: DocumentStatus,
-    onDownload: () -> Unit,
-    onCancel: () -> Unit,
+    onView: () -> Unit,
 ) {
     val isRejected = documentStatus == DocumentStatus.Rejected
 
     val (text, action) = when {
-        isRejected -> "Re-upload" to onDownload
-        downloadState is DownloadState.Idle
-                || downloadState is DownloadState.Cancelled -> "View" to onDownload
-
-        downloadState is DownloadState.RequestingUrl -> "Starting…" to null
-        downloadState is DownloadState.Downloading -> "Cancel" to onCancel
-        downloadState is DownloadState.Saving -> "Saving…" to null
-        downloadState is DownloadState.Completed -> "Open" to onDownload
-        downloadState is DownloadState.Failed -> "Retry" to onDownload
-        else -> "View" to onDownload
+        isRejected -> "Re-upload" to onView
+        isLoading -> "Opening..." to null
+        !errorText.isNullOrBlank() -> "Retry" to onView
+        else -> "View" to onView
     }
 
     val isEnabled = action != null
 
     if (isRejected) {
-        // Filled dark-red pill (matches the "Re-upload" button in the screenshot)
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(999.dp))
@@ -208,9 +162,9 @@ private fun StatusDotLabel(
     modifier: Modifier = Modifier,
 ) {
     val (dotColor, text) = when (status) {
-        DocumentStatus.InProgress -> Color(0xFF3B82F6) to "Uploaded"      // blue dot
-        DocumentStatus.Verified -> Color(0xFF22C55E) to "Verified"      // green dot
-        DocumentStatus.Rejected -> Color(0xFFEF4444) to "Rejected"      // red dot
+        DocumentStatus.InProgress -> Color(0xFF3B82F6) to "Uploaded"
+        DocumentStatus.Verified -> Color(0xFF22C55E) to "Verified"
+        DocumentStatus.Rejected -> Color(0xFFEF4444) to "Rejected"
     }
 
     Row(
@@ -227,16 +181,8 @@ private fun StatusDotLabel(
         Text(
             text = text,
             fontSize = 13.sp,
-            color = Color(0xFF6B7280), // muted grey, matching screenshot
+            color = Color(0xFF6B7280),
             fontWeight = FontWeight.Normal,
         )
     }
-}
-
-private fun formatBytes(bytes: Long): String {
-    if (bytes < 1024) return "$bytes B"
-    val kb = bytes / 1024.0
-    if (kb < 1024) return "${(kb * 10).toLong() / 10.0} KB"
-    val mb = kb / 1024.0
-    return "${(mb * 10).toLong() / 10.0} MB"
 }
