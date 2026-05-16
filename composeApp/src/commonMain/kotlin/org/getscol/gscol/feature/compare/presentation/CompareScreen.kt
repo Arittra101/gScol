@@ -28,7 +28,6 @@ fun CompareScreenRoot(navigator: Navigator) {
 
     BaseScreen(
         title = "Wishlist",
-        isTopLevelScreen = true,
         onBackPress = navigator::navigateBack,
         showLoader = initialOrMutationLoader
     ) { paddingValues ->
