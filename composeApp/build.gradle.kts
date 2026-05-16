@@ -2,6 +2,20 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
+val major = 1   // 1 to 99 ~ for big redesigns or breaking changes
+val minor = 0   // 0 to 99 ~ for new features
+val hotfix = 0  // 0 to 99 ~ for bug fixes only
+
+fun generateVersionCode(): Int {
+    val versionCode = major * 100000 + minor * 1000 + hotfix
+    println("VersionCode: $versionCode")
+    return versionCode
+}
+
+fun generateVersionName(): String {
+    return "$major.$minor.$hotfix"
+}
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
@@ -118,20 +132,42 @@ android {
         applicationId = "org.getscol.gscol"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = generateVersionCode()
+        versionName = generateVersionName()
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProperties.getProperty("store.file") ?: "")
+            storePassword = localProperties.getProperty("store.password") ?: ""
+            keyAlias = localProperties.getProperty("key.alias") ?: ""
+            keyPassword = localProperties.getProperty("key.password") ?: ""
         }
     }
+
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
