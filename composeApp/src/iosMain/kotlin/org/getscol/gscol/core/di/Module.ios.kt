@@ -2,7 +2,6 @@ package org.getscol.gscol.core.di
 
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.darwin.Darwin
-import org.getscol.gscol.feature.profile.data.download.PublicDownloadsWriter
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import platform.Foundation.NSUserDefaults
@@ -19,6 +18,4 @@ actual val platformModule: Module = module {
     single<HttpClientEngine> {
         Darwin.create()
     }
-
-    single { PublicDownloadsWriter() }
 }
