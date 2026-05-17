@@ -2,9 +2,9 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
-val major = 1   // 1 to 99 ~ for big redesigns or breaking changes
-val minor = 0   // 0 to 99 ~ for new features
-val hotfix = 0  // 0 to 99 ~ for bug fixes only
+val major = 0   // 1 to 99 ~ for big redesigns or breaking changes
+val minor = 7   // 0 to 99 ~ for new features
+val hotfix = 1  // 0 to 99 ~ for bug fixes only
 
 fun generateVersionCode(): Int {
     val versionCode = major * 100000 + minor * 1000 + hotfix
@@ -127,6 +127,23 @@ kotlin {
 android {
     namespace = "org.getscol.gscol"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    applicationVariants.all {
+        val variant = this
+        variant.outputs
+            .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
+            .forEach { output ->
+                // format: appname-flavor-buildtype-version-versioncode.aab/.apk
+                // example: scol-prod-release-1.0.0-100000.apk
+                //          scol-qa-debug-1.0.0-qa-100000.apk
+                output.outputFileName = "scol" +
+                        "-${variant.flavorName}" +          // qa or prod
+                        "-${variant.buildType.name}" +      // debug or release
+                        "-${variant.versionName}" +         // 1.0.0 or 1.0.0-qa
+                        "-${variant.versionCode}" +         // 100000
+                        ".apk"
+            }
+    }
 
     defaultConfig {
         applicationId = "org.getscol.gscol"
