@@ -204,11 +204,11 @@ buildkonfig {
 
         val baseURL = if (isQa) {
             localProperties.getProperty("qa.base.url", "").also {
-                println("🔵 BuildKonfig: Using QA URL → $it")
+                println("BuildKonfig: Using QA URL → $it")
             }
         } else {
             localProperties.getProperty("base.url", "").also {
-                println("🟢 BuildKonfig: Using PROD URL → $it")
+                println("BuildKonfig: Using PROD URL → $it")
             }
         }
 
