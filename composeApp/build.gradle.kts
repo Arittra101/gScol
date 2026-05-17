@@ -196,45 +196,29 @@ dependencies {
 buildkonfig {
     packageName = "com.getscol.gscol"
 
-    // default fallback (required by BuildKonfig)
     defaultConfigs {
-        val baseURL = localProperties.getProperty("base.url", "")
-        require(baseURL.isNotEmpty()) {
-            "Base URL is missing in local.properties!!!"
+        // detect which flavor is being built from task name
+        val isQa = gradle.startParameter.taskNames.any {
+            it.contains("qa", ignoreCase = true)
         }
-        buildConfigField(
-            STRING,
-            "BASE_URL",
-            baseURL
-        )
+
+        val baseURL = if (isQa) {
+            localProperties.getProperty("qa.base.url", "").also {
+                println("🔵 BuildKonfig: Using QA URL → $it")
+            }
+        } else {
+            localProperties.getProperty("base.url", "").also {
+                println("🟢 BuildKonfig: Using PROD URL → $it")
+            }
+        }
+
+        require(baseURL.isNotEmpty()) { "Base URL is missing in local.properties!!!" }
+
+        buildConfigField(STRING, "BASE_URL", baseURL)
         buildConfigField(
             STRING,
             "GOOGLE_MAPS_API_KEY",
-            localProperties.getProperty("google.maps.api.key", ""),
+            localProperties.getProperty("google.maps.api.key", "")
         )
     }
-
-    targetConfigs {
-        create("qa") {
-            val qaBaseURL = localProperties.getProperty("qa.base.url", "")
-            require(qaBaseURL.isNotEmpty()) { "QA Base URL is missing in local.properties!!!" }
-            buildConfigField(STRING, "BASE_URL", qaBaseURL)
-            buildConfigField(
-                STRING,
-                "GOOGLE_MAPS_API_KEY",
-                localProperties.getProperty("google.maps.api.key", "")
-            )
-        }
-        create("prod") {
-            val prodBaseURL = localProperties.getProperty("base.url", "")
-            require(prodBaseURL.isNotEmpty()) { "Prod Base URL is missing in local.properties!!!" }
-            buildConfigField(STRING, "BASE_URL", prodBaseURL)
-            buildConfigField(
-                STRING,
-                "GOOGLE_MAPS_API_KEY",
-                localProperties.getProperty("google.maps.api.key", "")
-            )
-        }
-    }
 }
-
