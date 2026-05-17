@@ -200,7 +200,7 @@ buildkonfig {
         // detect which flavor is being built from task name
         val isQa = gradle.startParameter.taskNames.any {
             it.contains("qa", ignoreCase = true)
-        }
+        } || (project.findProperty("env") as? String) == "qa"
 
         val baseURL = if (isQa) {
             localProperties.getProperty("qa.base.url", "").also {
@@ -222,3 +222,25 @@ buildkonfig {
         )
     }
 }
+
+/*
+# iOS QA build
+    ./gradlew :composeApp:iosSimulatorArm64 -Penv=qa
+
+# iOS Prod build (default, no flag needed)
+    ./gradlew :composeApp:iosSimulatorArm64
+
+
+open iosApp/iosApp.xcodeproj
+
+# iOS Simulator QA
+./gradlew :composeApp:iosSimulatorArm64MainBinaries -Penv=qa
+
+# iOS Real Device QA
+./gradlew :composeApp:iosArm64MainBinaries -Penv=qa
+
+# iOS Simulator PROD (no flag)
+./gradlew :composeApp:iosSimulatorArm64MainBinaries
+
+
+*/
