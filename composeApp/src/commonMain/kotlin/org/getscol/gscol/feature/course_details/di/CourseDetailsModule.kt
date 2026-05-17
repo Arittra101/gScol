@@ -9,7 +9,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val courseDetailsModule = module {
-    single<CourseDetailsApiService> { CourseDetailsApiServiceImpl(get()) }
+    single<CourseDetailsApiService> { CourseDetailsApiServiceImpl(get(),get()) }
     single<CourseDetailsRepository> { CourseDetailsRepositoryImpl(get()) }
     viewModel { params ->
         CourseDetailsViewModel(courseId = params.get(), repository = get(), session = get())
