@@ -14,7 +14,8 @@ import org.koin.core.module.Module
 
 expect val platformModule: Module
 
-fun appModules() = listOf(
+fun appModules(chuckerModule: Module) = listOf(
+    chuckerModule,
     platformModule,
     networkModule,
     storageModule,

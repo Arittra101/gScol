@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.example.scol_chuker.ui.overlay.CmpChuckerOverlay
 import org.getscol.gscol.bottombar.ScolBottomBar
 import org.getscol.gscol.core.presentation.components.LoginPromptBottomSheet
 import org.getscol.gscol.navigation.NavigationAction
@@ -79,5 +80,6 @@ fun ScolApp(
         )
     }
 
-
+    CmpChuckerOverlay()
+    
 }

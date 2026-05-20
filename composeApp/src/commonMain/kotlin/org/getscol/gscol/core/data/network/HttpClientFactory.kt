@@ -19,6 +19,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.example.scol_chuker.plugin.InspectorPlugin
 import org.getscol.gscol.core.data.dto.auth.AuthTokenResponse
 import org.getscol.gscol.core.data.dto.auth.RefreshTokenRequest
 import org.getscol.gscol.core.utils.AppLogger
@@ -34,6 +35,8 @@ object HttpClientFactory {
     ): HttpClient {
 
         return HttpClient(engine) {
+
+            install(InspectorPlugin)
 
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })

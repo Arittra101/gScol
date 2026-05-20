@@ -117,6 +117,11 @@ kotlin {
             //paging 3 support with cash app
             implementation(libs.paging.common)
             implementation(libs.paging.compose.common)
+
+//            implementation("com.arittra101:shared-android:1.0.2")
+            implementation("com.arittra101:shared:1.0.3")
+
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

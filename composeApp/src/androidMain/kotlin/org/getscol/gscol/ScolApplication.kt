@@ -1,6 +1,8 @@
 package org.getscol.gscol
 
 import android.app.Application
+import org.example.scol_chuker.CmpChucker
+import org.example.scol_chuker.initializeContext
 import org.getscol.gscol.core.data.storage.initializeAndroidContext
 import org.getscol.gscol.core.di.initKoin
 import org.koin.android.ext.koin.androidContext
@@ -13,7 +15,9 @@ class ScolApplication : Application() {
 
         Timber.plant(Timber.DebugTree())
 
-        initKoin {
+        initializeContext(this)
+        val chuckerModule = CmpChucker.getChuckerModules()
+        initKoin(chuckerModule) {
             androidContext(this@ScolApplication)
         }
     }
