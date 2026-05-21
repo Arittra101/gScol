@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -41,7 +42,12 @@ fun ApplicationActionButtons(
             Text(
                 text = "Withdraw",
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                maxLines = 1,
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 8.sp,
+                    maxFontSize = 15.sp,
+                    stepSize = 1.sp
+                ),
                 modifier = Modifier.padding(vertical = 4.dp)
             )
         }
@@ -59,8 +65,13 @@ fun ApplicationActionButtons(
         ) {
             Text(
                 text = "Track Application",
+                maxLines = 1,
                 fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 8.sp,
+                    maxFontSize = 15.sp,
+                    stepSize = 1.sp
+                ),
                 modifier = Modifier.padding(vertical = 4.dp)
             )
         }
