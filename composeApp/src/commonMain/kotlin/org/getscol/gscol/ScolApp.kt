@@ -1,5 +1,7 @@
 package org.getscol.gscol
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -60,26 +62,27 @@ fun ScolApp(
         onLogoutHandler()
     }
 
-    Scaffold(
-        bottomBar = {
-            if (shouldShowBottomBar) {
-                ScolBottomBar(
-                    destinations = TopLevelDestination.entries,
-                    currentRoute = currentRoute,
-                    onNavigateDestination = { destinations ->
-                        navigator.navigateToTopLevel(destinations)
-                    },
-                )
-            }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            bottomBar = {
+                if (shouldShowBottomBar) {
+                    ScolBottomBar(
+                        destinations = TopLevelDestination.entries,
+                        currentRoute = currentRoute,
+                        onNavigateDestination = { destinations ->
+                            navigator.navigateToTopLevel(destinations)
+                        },
+                    )
+                }
 
-        }) { paddingValues ->
-        ScolNavHost(
-            navController = navController,
-            navigator = navigator,
-            modifier = Modifier.padding(paddingValues)
-        )
+            }) { paddingValues ->
+            ScolNavHost(
+                navController = navController,
+                navigator = navigator,
+                modifier = Modifier.padding(paddingValues)
+            )
+        }
+
+        CmpChuckerOverlay()
     }
-
-    CmpChuckerOverlay()
-    
 }
