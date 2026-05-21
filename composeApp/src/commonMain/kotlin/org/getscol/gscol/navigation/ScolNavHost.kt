@@ -74,7 +74,6 @@ fun ScolNavHost(
             }
             SearchResultsScreenRoot(
                 searchText = args.searchText,
-                listType = args.listType,
                 advancedParams = advancedParams,
                 navigator = navigator
             )

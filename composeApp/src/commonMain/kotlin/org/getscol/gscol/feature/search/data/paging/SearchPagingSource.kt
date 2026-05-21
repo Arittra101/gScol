@@ -23,8 +23,6 @@ import org.getscol.gscol.feature.search.domain.model.MinMax
 class SearchPagingSource(
     private val searchApiService: SearchApiService,
     private val searchText: String,
-    private val listType: String,
-    private val isUserLogin: Boolean,
     private val advancedParams: AdvancedSearchParams? = null
 ) : PagingSource<String, Course>() {
 
@@ -39,14 +37,12 @@ class SearchPagingSource(
                     SearchRequestDto(
                         pagination = pagination,
                         searchText = searchText,
-                        listType = listType
                     )
                 )
             } else {
                 searchApiService.advancedSearch(
                     AdvancedSearchRequestDto(
                         pagination = pagination,
-                        listType = listType,
                         filters = advancedParams.filters?.toDto(),
                         ranges = advancedParams.ranges?.toDto(),
                         flags = advancedParams.flags?.toDto()

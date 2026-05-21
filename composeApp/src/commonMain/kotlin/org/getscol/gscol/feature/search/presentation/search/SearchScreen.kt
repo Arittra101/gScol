@@ -44,10 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.getscol.gscol.feature.search.presentation.search.SearchAction
-import org.getscol.gscol.feature.search.presentation.search.SearchState
-import org.getscol.gscol.feature.search.presentation.search.SearchUiEffect
-import org.getscol.gscol.feature.search.presentation.search.SearchViewModel
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.getscol.gscol.theme.appColors
@@ -68,7 +64,6 @@ fun SearchScreenRoot(
                     navigator.navigateToRoute(
                         Route.SearchResults(
                             searchText = effect.searchText,
-                            listType = "ELIGIBLE_ONLY"
                         )
                     )
                 }

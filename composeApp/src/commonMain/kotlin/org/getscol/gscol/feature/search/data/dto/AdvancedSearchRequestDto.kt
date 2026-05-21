@@ -7,7 +7,6 @@ import org.getscol.gscol.feature.home.domain.model.PaginationRequest
 @Serializable
 data class AdvancedSearchRequestDto(
     @SerialName("pagination") val pagination: PaginationRequest,
-    @SerialName("listType") val listType: String = "ELIGIBLE_ONLY",
     @SerialName("filters") val filters: AdvancedSearchFiltersDto? = null,
     @SerialName("ranges") val ranges: AdvancedSearchRangesDto? = null,
     @SerialName("flags") val flags: AdvancedSearchFlagsDto? = null

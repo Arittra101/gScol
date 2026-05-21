@@ -28,7 +28,6 @@ import org.getscol.gscol.feature.wishlist.domain.repository.WishlistRepository
 
 data class SearchResultsParams(
     val searchText: String,
-    val listType: String,
     val advancedParams: AdvancedSearchParams?
 )
 
@@ -46,10 +45,10 @@ class SearchResultsViewModel(
     private val params = MutableStateFlow<SearchResultsParams?>(null)
     private val favoriteUpdates = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
-    fun setParams(searchText: String, listType: String, advancedParams: AdvancedSearchParams?) {
+    fun setParams(searchText: String, advancedParams: AdvancedSearchParams?) {
         params.update {
-            if (it?.searchText == searchText && it.listType == listType && it.advancedParams == advancedParams) it
-            else SearchResultsParams(searchText, listType, advancedParams)
+            if (it?.searchText == searchText && it.advancedParams == advancedParams) it
+            else SearchResultsParams(searchText, advancedParams)
         }
     }
 
@@ -60,8 +59,6 @@ class SearchResultsViewModel(
             .flatMapLatest { isLoggedIn ->
                 searchRepository.getSearchResultsStream(
                     searchText = p.searchText,
-                    listType = p.listType,
-                    isLoggedIn = isLoggedIn,
                     advancedParams = p.advancedParams
                 )
             }

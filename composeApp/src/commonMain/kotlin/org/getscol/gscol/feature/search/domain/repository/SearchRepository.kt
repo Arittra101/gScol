@@ -12,8 +12,6 @@ import org.getscol.gscol.feature.search.domain.model.FilterOption
 interface SearchRepository {
     fun getSearchResultsStream(
         searchText: String,
-        listType: String,
-        isLoggedIn: Boolean,
         advancedParams: AdvancedSearchParams? = null
     ): Flow<PagingData<Course>>
     suspend fun getSearchHistory(): List<String>

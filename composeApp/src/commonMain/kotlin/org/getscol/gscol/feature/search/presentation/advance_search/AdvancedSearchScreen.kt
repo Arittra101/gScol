@@ -78,7 +78,6 @@ fun AdvancedSearchScreenRoot(
                     navigator.navigateToRoute(
                         Route.SearchResults(
                             searchText = effect.searchText,
-                            listType = "ELIGIBLE_ONLY",
                             advancedParamsJson = Json.encodeToString(effect.advancedParams)
                         )
                     )

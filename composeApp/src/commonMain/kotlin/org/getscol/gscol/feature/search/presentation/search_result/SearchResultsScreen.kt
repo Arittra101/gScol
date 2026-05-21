@@ -14,15 +14,14 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SearchResultsScreenRoot(
     searchText: String,
-    listType: String,
     advancedParams: AdvancedSearchParams?,
     navigator: Navigator,
 ) {
     val viewModel: SearchResultsViewModel = koinViewModel(
-        key = "SearchResults-$searchText-$listType-${advancedParams != null}"
+        key = "SearchResults-$searchText-${advancedParams != null}"
     )
-    LaunchedEffect(searchText, listType, advancedParams) {
-        viewModel.setParams(searchText, listType, advancedParams)
+    LaunchedEffect(searchText, advancedParams) {
+        viewModel.setParams(searchText, advancedParams)
     }
 
     val courses = viewModel.courses.collectAsLazyPagingItems()

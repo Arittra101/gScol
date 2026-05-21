@@ -4,11 +4,10 @@ import app.cash.paging.Pager
 import app.cash.paging.PagingConfig
 import app.cash.paging.PagingData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.core.data.storage.LocalStorage
 import org.getscol.gscol.core.data.storage.StorageKeys
+import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.feature.home.domain.model.Course
 import org.getscol.gscol.feature.search.data.api_service.SearchApiService
 import org.getscol.gscol.feature.search.data.paging.SearchPagingSource
@@ -26,8 +25,6 @@ class SearchRepositoryImpl(
 
     override fun getSearchResultsStream(
         searchText: String,
-        listType: String,
-        isLoggedIn: Boolean,
         advancedParams: AdvancedSearchParams?
     ): Flow<PagingData<Course>> {
         return Pager(
@@ -40,8 +37,6 @@ class SearchRepositoryImpl(
                 SearchPagingSource(
                     searchApiService = searchApiService,
                     searchText = searchText,
-                    listType = listType,
-                    isUserLogin = isLoggedIn,
                     advancedParams = advancedParams
                 )
             }
