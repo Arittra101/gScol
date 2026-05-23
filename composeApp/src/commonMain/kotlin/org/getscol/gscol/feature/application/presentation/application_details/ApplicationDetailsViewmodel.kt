@@ -14,10 +14,10 @@ import org.getscol.gscol.core.domain.Result
 import org.getscol.gscol.core.feature_components.upload.PdfUploader
 import org.getscol.gscol.core.feature_components.upload.domain.model.UploadPdfModel
 import org.getscol.gscol.core.presentation.components.PickedFile
-import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailsUiEffect.*
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
 import org.getscol.gscol.feature.application.domain.model.response.DocumentCheckList
 import org.getscol.gscol.feature.application.domain.model.response.UploadedDocument
+import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailsUiEffect.NavigateToApplicationTracker
 
 class ApplicationDetailsViewmodel(
     private val applicationId: String,
@@ -90,7 +90,7 @@ class ApplicationDetailsViewmodel(
     fun onAction(action: ApplicationDetailAction) {
         when (action) {
             is ApplicationDetailAction.OnDeleteDocument -> {
-
+                deleteDocument(applicationId, action.document)
             }
 
             is ApplicationDetailAction.OnPickDocumentUpload -> {
@@ -122,14 +122,11 @@ class ApplicationDetailsViewmodel(
             }
 
             is ApplicationDetailAction.OnCloseErrorUploadDialog -> {
-                _applicationState.value = _applicationState.value.copy(
-                    showDocumentUploadError = false
-                )
+                _applicationState.update { it.copy(showDocumentUploadError = false) }
             }
+
             is ApplicationDetailAction.OnWithdrawApplication -> {
-                _applicationState.value = _applicationState.value.copy(
-                    showConsultantBottomSheet = true,
-                )
+                _applicationState.update { it.copy(showConsultantBottomSheet = true) }
             }
 
             is ApplicationDetailAction.OnTrackApplication -> {
@@ -143,13 +140,64 @@ class ApplicationDetailsViewmodel(
             }
 
             is ApplicationDetailAction.OnHideWithdrawBottomSheet -> {
-                _applicationState.value = _applicationState.value.copy(
-                    showConsultantBottomSheet = false,
-                )
+                _applicationState.update { it.copy(showConsultantBottomSheet = false) }
+            }
+
+            is ApplicationDetailAction.OnHideDocumentResponseBottomSheet -> {
+                _applicationState.update { it.copy(showFileUpDownloadBottomSheet = false) }
             }
         }
     }
 
+    private fun deleteDocument(applicationId: String, document: UploadedDocument) {
+        viewModelScope.launch {
+            val deleteDocument = applicationRepository.deleteDocument(applicationId, document.applicationDocumentId.orEmpty())
+            deleteDocument.onStart { _applicationState.update { it.copy(isLoading = true) } }
+                .collect { r ->
+                    when (r) {
+                        is Result.Success -> {
+                       /*     _applicationState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    isFileSuccessResponse = true,
+                                    fileBottomSheetMsg = "File Delete Successfully!",
+                                    showFileUpDownloadBottomSheet = true
+                                )
+                            }*/
+
+                            _applicationState.update { state ->
+                                val updated = state.documentCheckLists.map { doc ->
+                                    if (doc.documentTypeId == document.documentTypeId) {
+                                        doc.copy(
+                                            uploadedDocuments = doc.uploadedDocuments.filter
+                                            { it.applicationDocumentId != document.applicationDocumentId }
+                                        )
+                                    } else doc
+                                }
+
+                                state.copy(
+                                    documentCheckLists = updated, isLoading = false,
+                                    isFileSuccessResponse = true,
+                                    fileBottomSheetMsg = "File Delete Successfully!",
+                                    showFileUpDownloadBottomSheet = true
+                                )
+                            }
+                        }
+
+                        is Result.Error -> {
+                            _applicationState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    isFileSuccessResponse = false,
+                                    fileBottomSheetMsg = "File Delete Failed!",
+                                    showFileUpDownloadBottomSheet = true
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
 
 
     private fun uploadPdf(pickedFile: PickedFile, documentTypeId: String) {
@@ -179,9 +227,6 @@ class ApplicationDetailsViewmodel(
 
             when (result) {
                 is Result.Success -> {
-                    _applicationState.value = _applicationState.value.copy(
-                        showDocumentUploadLoader = false
-                    )
 
                     val data = result.data
                     _applicationState.update { state ->
@@ -191,13 +236,19 @@ class ApplicationDetailsViewmodel(
                                     uploadedDocuments =
                                         doc.uploadedDocuments + UploadedDocument(
                                             fileName = data.documentName,
-                                            applicationDocumentId = data.documentId
+                                            applicationDocumentId = data.documentId,
+                                            documentTypeId = data.documentTypeId
                                         )
                                 )
                             } else doc
                         }
 
-                        state.copy(documentCheckLists = updated)
+                        state.copy(
+                            documentCheckLists = updated, showDocumentUploadLoader = false,
+                            isFileSuccessResponse = true,
+                            showFileUpDownloadBottomSheet = true,
+                            fileBottomSheetMsg = "Document Upload Successfully!"
+                        )
                     }
 
                 }
@@ -205,7 +256,9 @@ class ApplicationDetailsViewmodel(
                 is Result.Error -> {
                     _applicationState.value = _applicationState.value.copy(
                         showDocumentUploadLoader = false,
-                        showDocumentUploadError = true
+                        isFileSuccessResponse = false,
+                        showFileUpDownloadBottomSheet = true,
+                        fileBottomSheetMsg = "Document Upload Failed"
                     )
                 }
 
@@ -219,7 +272,7 @@ class ApplicationDetailsViewmodel(
 }
 
 
-data class ApplicationDetailsUiState( //viewmodel to ui
+data class ApplicationDetailsUiState(
     val universityCoverImageUrl: String? = null,
     val universityName: String? = null,
     val intakeMonth: String? = null,
@@ -234,7 +287,11 @@ data class ApplicationDetailsUiState( //viewmodel to ui
     val showDocumentUploadLoader: Boolean = false,
     val showDocumentUploadError: Boolean = false,
     val uploadState: UploadState? = null,
-    val showConsultantBottomSheet: Boolean = false
+    val showConsultantBottomSheet: Boolean = false,
+
+    val showFileUpDownloadBottomSheet: Boolean = false,
+    val isFileSuccessResponse: Boolean = false,
+    val fileBottomSheetMsg: String = ""
 )
 
 data class UploadState(
@@ -249,7 +306,7 @@ sealed interface ApplicationDetailsUiEffect {
 
 sealed interface ApplicationDetailAction {
     data class OnPickDocumentUpload(val pickedFile: PickedFile, val documentTypeId: String) : ApplicationDetailAction
-    data class OnDeleteDocument(val documentId: String, val documentTypeId: String) : ApplicationDetailAction
+    data class OnDeleteDocument(val document: UploadedDocument) : ApplicationDetailAction
     data class OnExpand(val documentTypeId: String) : ApplicationDetailAction
 
     data object OnCancelUpload : ApplicationDetailAction
@@ -258,4 +315,5 @@ sealed interface ApplicationDetailAction {
     data object OnWithdrawApplication: ApplicationDetailAction
     data object OnHideWithdrawBottomSheet: ApplicationDetailAction
     data object OnTrackApplication: ApplicationDetailAction
+    data object OnHideDocumentResponseBottomSheet: ApplicationDetailAction
 }

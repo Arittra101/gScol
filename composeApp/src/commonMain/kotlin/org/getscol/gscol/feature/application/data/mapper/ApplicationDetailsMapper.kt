@@ -6,7 +6,6 @@ import org.getscol.gscol.feature.application.data.dto.response.UploadedDocumentD
 import org.getscol.gscol.feature.application.domain.model.response.ApplicationDetails
 import org.getscol.gscol.feature.application.domain.model.response.DocumentCheckList
 import org.getscol.gscol.feature.application.domain.model.response.UploadedDocument
-import org.getscol.gscol.feature.application.presentation.ApplicationStageState
 import org.getscol.gscol.feature.application.presentation.DocumentCategoryState
 
 fun ApplicationDetailsResponseDto.toDomain(): ApplicationDetails =
@@ -29,14 +28,15 @@ fun DocumentCheckListDto.toDomain(): DocumentCheckList =
         overallStatus = overallStatus.toDocumentCategoryState(),
         allowedMimeTypes = allowedMimeTypes?.split(",")?.map { it.trim() }.orEmpty(),
         maxFileSizeBytes = maxFileSizeBytes,
-        uploadedDocuments = uploadedDocuments?.map { it.toDomain() }.orEmpty(),
+        uploadedDocuments = uploadedDocuments?.map { it.toDomain(documentType?.documentTypeId) }.orEmpty(),
     )
 
-fun UploadedDocumentDto.toDomain(): UploadedDocument =
+fun UploadedDocumentDto.toDomain(documentTypeId: String?): UploadedDocument =
     UploadedDocument(
         applicationDocumentId = applicationDocumentId,
         fileName = fileName,
         overallStatus = overallStatus,
+        documentTypeId = documentTypeId
     )
 
 

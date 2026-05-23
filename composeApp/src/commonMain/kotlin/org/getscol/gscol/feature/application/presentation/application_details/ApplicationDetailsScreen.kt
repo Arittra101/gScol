@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.getscol.gscol.core.helper.ObserveEffect
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.ApiResponseBottomSheet
 import org.getscol.gscol.feature.application.presentation.application_details.components.ApplicationActionButtons
 import org.getscol.gscol.feature.application.presentation.application_details.components.ApplicationInfoCard
 import org.getscol.gscol.feature.application.presentation.application_details.components.DocumentsSection
@@ -83,6 +84,14 @@ fun ApplicationDetailsRoute(
     WithdrawApplicationBottomSheet(showBottomSheet = state.showConsultantBottomSheet){
         action(ApplicationDetailAction.OnHideWithdrawBottomSheet)
     }
+
+    ApiResponseBottomSheet(
+        showBottomSheet = state.showFileUpDownloadBottomSheet,
+        isSuccess = state.isFileSuccessResponse,
+        message = state.fileBottomSheetMsg,
+        onDismiss = { action(ApplicationDetailAction.OnHideDocumentResponseBottomSheet) },
+        onConfirm = { action(ApplicationDetailAction.OnHideDocumentResponseBottomSheet) }
+    )
 
     BaseScreen(
         title = "Application Tracker",

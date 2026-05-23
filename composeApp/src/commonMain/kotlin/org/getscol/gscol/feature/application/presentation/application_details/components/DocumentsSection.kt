@@ -188,7 +188,9 @@ fun DocumentCategoryCard(
                             FileRow(
                                 file = file,
                                 category.showDltIcon,
-                                onDelete = {  /*application delete*/ })
+                                onDelete = {
+                                    action(ApplicationDetailAction.OnDeleteDocument(file))
+                                })
                         }
                     }
 
@@ -322,7 +324,9 @@ fun FileRow(file: UploadedDocument, showDltIcon : Boolean, onDelete: () -> Unit)
                 .clip(RoundedCornerShape(7.dp))
                 .background(Color(0xFFFFEEEE))
                 .clickable(onClick = {
-                    if (showDltIcon) { }
+                    if (showDltIcon) {
+                        onDelete()
+                    }
                 }),
             contentAlignment = Alignment.Center
         ) {

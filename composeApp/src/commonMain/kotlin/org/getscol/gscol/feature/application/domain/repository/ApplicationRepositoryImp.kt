@@ -48,4 +48,14 @@ class ApplicationRepositoryImp(private val applicationService: ApplicationApiSer
         }.flowOn(Dispatchers.IO)
     }
 
+    override suspend fun deleteDocument(
+        applicationId: String,
+        documentId: String
+    ): Flow<Result<Unit, DataError>> {
+        return flow {
+            val result = applicationService.deleteDocument(applicationId, documentId)
+            emit(result.map { })
+        }.flowOn(Dispatchers.IO)
+    }
+
 }

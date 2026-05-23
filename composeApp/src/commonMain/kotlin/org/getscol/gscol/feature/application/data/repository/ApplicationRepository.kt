@@ -10,11 +10,8 @@ import org.getscol.gscol.feature.application.domain.model.response.ApplicationSt
 
 interface ApplicationRepository {
     suspend fun getApplicationStatus(applicationId: String): Flow<Result<ApplicationStage, DataError>>
-
     suspend fun getApplicationList() : Flow<Result<ApplicationListResponse, DataError>>
-
     suspend fun createApplication(applicationFormRequest: ApplicationCreateRequestBody) : Flow<Result<String?, DataError>>
-
     suspend fun getApplicationById(applicationId: String): Flow<Result<ApplicationDetails, DataError>>
-
+    suspend fun deleteDocument(applicationId:String, documentId: String): Flow<Result<Unit, DataError>>
 }

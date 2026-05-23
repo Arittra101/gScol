@@ -44,11 +44,12 @@ data class DocumentCheckList(
         }
     }
 
-    fun shouldShowDltIcon() = (overallStatus.name == DocumentCategoryState.PENDING.name)
+    fun shouldShowDltIcon() = overallStatus.name == DocumentCategoryState.PENDING.name
 }
 
 data class UploadedDocument(
     val applicationDocumentId: String? = null,
     val fileName: String? = null,
     val overallStatus: String? = null,
+    val documentTypeId: String? = null
 )

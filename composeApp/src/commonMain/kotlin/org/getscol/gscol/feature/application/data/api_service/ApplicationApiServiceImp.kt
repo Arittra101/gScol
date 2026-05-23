@@ -1,6 +1,7 @@
 package org.getscol.gscol.feature.application.data.api_service
 
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -37,6 +38,15 @@ class ApplicationApiServiceImp(private val httpClient: HttpClient) : Application
     override suspend fun getApplicationById(applicationId: String): Result<ApplicationDetailsResponseDto, DataError> {
         return newSafeApiCall {
             httpClient.get("applications/${applicationId}")
+        }
+    }
+
+    override suspend fun deleteDocument(
+        applicationId: String,
+        documentId: String
+    ): Result<Unit, DataError> {
+        return newSafeApiCall {
+            httpClient.delete("applications/${applicationId}/documents/${documentId}")
         }
     }
 

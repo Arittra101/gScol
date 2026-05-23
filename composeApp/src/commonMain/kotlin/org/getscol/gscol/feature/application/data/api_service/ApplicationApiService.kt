@@ -14,5 +14,6 @@ interface ApplicationApiService {
     suspend fun getApplicationList(): Result<ApplicationListResponseDto, DataError>
     suspend fun createApplication(applicationFormRequest: ApplicationCreateRequestBodyDto): Result<ApplicationCreateResponseDto, DataError>
     suspend fun getApplicationById(applicationId: String): Result<ApplicationDetailsResponseDto, DataError>
+    suspend fun deleteDocument(applicationId:String, documentId: String): Result<Unit, DataError>
 
 }
