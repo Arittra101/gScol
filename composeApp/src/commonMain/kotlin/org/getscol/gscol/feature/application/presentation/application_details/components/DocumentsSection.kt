@@ -181,7 +181,7 @@ fun DocumentCategoryCard(
                         .padding(horizontal = 12.dp, vertical = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    HorizontalDivider(color = DocumentTheme.DividerColor, thickness = 2.5.dp)
+                    HorizontalDivider(color = DocumentTheme.DividerColor, thickness = 2.dp)
 
                     category.uploadedDocuments.forEach { file ->
                         key(file.applicationDocumentId) {
