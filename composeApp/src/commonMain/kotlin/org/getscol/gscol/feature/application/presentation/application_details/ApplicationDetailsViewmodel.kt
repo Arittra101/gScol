@@ -156,15 +156,6 @@ class ApplicationDetailsViewmodel(
                 .collect { r ->
                     when (r) {
                         is Result.Success -> {
-                       /*     _applicationState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    isFileSuccessResponse = true,
-                                    fileBottomSheetMsg = "File Delete Successfully!",
-                                    showFileUpDownloadBottomSheet = true
-                                )
-                            }*/
-
                             _applicationState.update { state ->
                                 val updated = state.documentCheckLists.map { doc ->
                                     if (doc.documentTypeId == document.documentTypeId) {

@@ -8,43 +8,38 @@ import org.getscol.gscol.feature.application.domain.model.response.DocumentCheck
 import org.getscol.gscol.feature.application.domain.model.response.UploadedDocument
 import org.getscol.gscol.feature.application.presentation.DocumentCategoryState
 
-fun ApplicationDetailsResponseDto.toDomain(): ApplicationDetails =
-    ApplicationDetails(
-        universityCoverImageUrl = data?.applicationOverview?.universityInfo?.universityCoverImageUrl,
-        universityName = data?.applicationOverview?.universityInfo?.universityName,
-        intakeMonth = data?.applicationOverview?.intakeInfo?.intakeMonth,
-        intakeYear = data?.applicationOverview?.intakeInfo?.intakeYear,
-        courseName = data?.applicationOverview?.courseInfo?.courseName,
-        applicationSerialNumber = data?.applicationSerialNumber,
-        documentCheckLists = data?.documentCheckLists?.map { it.toDomain() }.orEmpty(),
-    )
+fun ApplicationDetailsResponseDto.toDomain(): ApplicationDetails = ApplicationDetails(
+    universityCoverImageUrl = data?.applicationOverview?.universityInfo?.universityCoverImageUrl,
+    universityName = data?.applicationOverview?.universityInfo?.universityName,
+    intakeMonth = data?.applicationOverview?.intakeInfo?.intakeMonth,
+    intakeYear = data?.applicationOverview?.intakeInfo?.intakeYear,
+    courseName = data?.applicationOverview?.courseInfo?.courseName,
+    applicationSerialNumber = data?.applicationSerialNumber,
+    documentCheckLists = data?.documentCheckLists?.map { it.toDomain() }.orEmpty(),
+)
 
-fun DocumentCheckListDto.toDomain(): DocumentCheckList =
-    DocumentCheckList(
-        documentTypeId = documentType?.documentTypeId,
-        documentTypeName = documentType?.documentTypeName,
-        isRequired = isRequired,
-        isMultipleAllowed = isMultipleAllowed,
-        overallStatus = overallStatus.toDocumentCategoryState(),
-        allowedMimeTypes = allowedMimeTypes?.split(",")?.map { it.trim() }.orEmpty(),
-        maxFileSizeBytes = maxFileSizeBytes,
-        uploadedDocuments = uploadedDocuments?.map { it.toDomain(documentType?.documentTypeId) }.orEmpty(),
-    )
+fun DocumentCheckListDto.toDomain(): DocumentCheckList = DocumentCheckList(
+    documentTypeId = documentType?.documentTypeId,
+    documentTypeName = documentType?.documentTypeName,
+    isRequired = isRequired,
+    isMultipleAllowed = isMultipleAllowed,
+    overallStatus = overallStatus.toDocumentCategoryState(),
+    allowedMimeTypes = allowedMimeTypes?.split(",")?.map { it.trim() }.orEmpty(),
+    maxFileSizeBytes = maxFileSizeBytes,
+    uploadedDocuments = uploadedDocuments?.map { it.toDomain(documentType?.documentTypeId) }.orEmpty(),
+)
 
-fun UploadedDocumentDto.toDomain(documentTypeId: String?): UploadedDocument =
-    UploadedDocument(
-        applicationDocumentId = applicationDocumentId,
-        fileName = fileName,
-        overallStatus = overallStatus,
-        documentTypeId = documentTypeId
-    )
+fun UploadedDocumentDto.toDomain(documentTypeId: String?): UploadedDocument = UploadedDocument(
+    applicationDocumentId = applicationDocumentId,
+    fileName = fileName,
+    overallStatus = overallStatus,
+    documentTypeId = documentTypeId
+)
 
 
-fun String?.toDocumentCategoryState(): DocumentCategoryState {
-    return when (this?.uppercase()) {
-        "PENDING" -> DocumentCategoryState.PENDING
-        "IN_PROGRESS" -> DocumentCategoryState.IN_PROGRESS
-        "VERIFIED" -> DocumentCategoryState.VERIFIED
-        else -> DocumentCategoryState.PENDING
-    }
+fun String?.toDocumentCategoryState() = when (this?.trim()?.uppercase()) {
+    "PENDING" -> DocumentCategoryState.PENDING
+    "IN_PROGRESS" -> DocumentCategoryState.IN_PROGRESS
+    "VERIFIED" -> DocumentCategoryState.VERIFIED
+    else -> DocumentCategoryState.PENDING
 }

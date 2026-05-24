@@ -1,18 +1,10 @@
 package org.getscol.gscol.feature.application.presentation
 
 import androidx.compose.ui.graphics.Color
+import org.getscol.gscol.feature.application.domain.model.response.DocumentCheckList
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ColorCompleted
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ColorInProgress
 import org.getscol.gscol.feature.application.presentation.application_status_tracker.ColorPending
-
-
-enum class ApplicationStageStatus {
-    GENERIC,
-    UNDER_REVIEW,
-    OFFER,
-    VISA,
-    COMPLETED
-}
 
 enum class DocumentCategoryState {
     PENDING,
@@ -26,36 +18,6 @@ enum class ApplicationStageState {
     UPCOMING,
     UNKNOWN
 }
-
-
-data class StatusStyle1(
-    val label: String,
-    val backgroundColor: Color,
-    val textColor: Color
-)
-
-fun ApplicationStageStatus.toStyle(): StatusStyle1 = when (this) {
-    ApplicationStageStatus.GENERIC -> StatusStyle1(
-        "Submitted",
-        Color(0xFFFDE8EC),
-        Color(0xFFB5294A)
-    )
-
-    ApplicationStageStatus.UNDER_REVIEW -> StatusStyle1(
-        "Under Review",
-        Color(0xFFFFF3CD),
-        Color(0xFF8A6000)
-    )
-
-    ApplicationStageStatus.OFFER -> StatusStyle1("Offer", Color(0xFFE6F4EA), Color(0xFF2E7D32))
-    ApplicationStageStatus.VISA -> StatusStyle1("Visa", Color(0xFFEEEDFE), Color(0xFF534AB7))
-    ApplicationStageStatus.COMPLETED -> StatusStyle1(
-        "Completed",
-        Color(0xFFF1EFE8),
-        Color(0xFF5F5E5A)
-    )
-}
-
 
 fun ApplicationStageState.label(): String = when (this) {
     ApplicationStageState.COMPLETED -> "Completed"
@@ -77,3 +39,19 @@ fun ApplicationStageState.progressStateIcon(): String = when (this) {
     ApplicationStageState.UPCOMING -> "files/ic_upcoming.svg"
     ApplicationStageState.UNKNOWN -> "files/ic_upcoming.svg"
 }
+
+
+data class DocumentProgressStep(
+    val label: String,
+    val status: DocumentCategoryState,
+)
+
+fun DocumentCheckList.toProgressDisplayStatus(): DocumentCategoryState = when (overallStatus) {
+    DocumentCategoryState.VERIFIED -> DocumentCategoryState.VERIFIED
+    DocumentCategoryState.IN_PROGRESS -> DocumentCategoryState.IN_PROGRESS
+    DocumentCategoryState.PENDING -> if (uploadedDocuments.isNotEmpty()) DocumentCategoryState.IN_PROGRESS
+    else DocumentCategoryState.PENDING
+}
+
+fun List<DocumentCheckList>.toDocumentProgressSteps(): List<DocumentProgressStep> =
+    map { doc -> DocumentProgressStep(label = doc.documentTypeName.orEmpty(), status = doc.toProgressDisplayStatus()) }

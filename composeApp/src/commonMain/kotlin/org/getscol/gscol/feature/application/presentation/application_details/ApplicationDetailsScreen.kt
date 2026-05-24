@@ -1,14 +1,30 @@
 package org.getscol.gscol.feature.application.presentation.application_details
 
 import FileUploadDialog
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.getscol.gscol.core.helper.ObserveEffect
@@ -16,10 +32,13 @@ import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.components.ApiResponseBottomSheet
 import org.getscol.gscol.feature.application.presentation.application_details.components.ApplicationActionButtons
 import org.getscol.gscol.feature.application.presentation.application_details.components.ApplicationInfoCard
+import org.getscol.gscol.feature.application.presentation.application_details.components.DocumentProgressStepper
 import org.getscol.gscol.feature.application.presentation.application_details.components.DocumentsSection
 import org.getscol.gscol.feature.application.presentation.application_details.components.UniversityHeroHeader
+import org.getscol.gscol.feature.application.presentation.application_details.components.documentProgressBottomInset
 import org.getscol.gscol.feature.application.presentation.components.FileUploadErrorDialog
 import org.getscol.gscol.feature.application.presentation.components.WithdrawApplicationBottomSheet
+import org.getscol.gscol.feature.application.presentation.toDocumentProgressSteps
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -102,37 +121,97 @@ fun ApplicationDetailsRoute(
 
 }
 
+private const val DocumentProgressScrollThreshold = 8
+private const val DocumentProgressAnimationDurationMillis = 280
+
+@Composable
+private fun rememberDocumentProgressVisibleOnScroll(scrollState: ScrollState): Boolean {
+    var isVisible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(scrollState) {
+        var previousScroll = scrollState.value
+        snapshotFlow { scrollState.value }.collect { current ->
+            val delta = current - previousScroll
+            isVisible = when {
+                current <= 0 -> true
+                delta > DocumentProgressScrollThreshold -> true
+                delta < -DocumentProgressScrollThreshold -> false
+                else -> isVisible
+            }
+            previousScroll = current
+        }
+    }
+
+    return isVisible
+}
+
 @Preview
 @Composable
 fun ApplicationDetailsScreen(
     state: ApplicationDetailsUiState,
     action: (ApplicationDetailAction) -> Unit
 ) {
-    Column(
+    val showDocumentProgress = !state.isLoading && state.documentCheckLists.isNotEmpty()
+    val scrollState = rememberScrollState()
+    val isStepperVisibleOnScroll = rememberDocumentProgressVisibleOnScroll(scrollState)
+    val isStepperVisible = showDocumentProgress && isStepperVisibleOnScroll
+
+    val bottomInset by animateDpAsState(
+        targetValue = documentProgressBottomInset(isStepperVisible),
+        animationSpec = tween(durationMillis = DocumentProgressAnimationDurationMillis),
+        label = "document_progress_bottom_inset",
+    )
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(DocumentTheme.Background)
-            .verticalScroll(rememberScrollState())
+            .background(DocumentTheme.Background),
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(bottom = bottomInset),
+        ) {
+            UniversityHeroHeader(
+                imageUrl = state.universityCoverImageUrl.orEmpty(),
+                universityName = state.universityName.orEmpty(),
+            )
 
-        UniversityHeroHeader(
-            imageUrl = state.universityCoverImageUrl.orEmpty(),
-            universityName = state.universityName.orEmpty()
-        )
+            ApplicationInfoCard(
+                intake = "${state.intakeMonth ?: ""} ${state.intakeYear}",
+                program = state.courseName.orEmpty(),
+                applicationId = state.applicationSerialNumber.orEmpty(),
+                action = action,
+            )
 
-        ApplicationInfoCard(
-            intake = "${state.intakeMonth ?: ""} ${state.intakeYear}",
-            program = state.courseName.orEmpty(),
-            applicationId = state.applicationSerialNumber.orEmpty(),
-            action = action
-        )
+            DocumentsSection(documentCheckList = state.documentCheckLists, action)
 
-        DocumentsSection(documentCheckList = state.documentCheckLists, action)
+            ApplicationActionButtons(
+                onWithdrawClick = { action(ApplicationDetailAction.OnWithdrawApplication) },
+                onTrackApplicationClick = { action(ApplicationDetailAction.OnTrackApplication) },
+            )
+        }
 
-        ApplicationActionButtons({
-            action(ApplicationDetailAction.OnWithdrawApplication)
-        }, {
-            action(ApplicationDetailAction.OnTrackApplication)
-        })
+        AnimatedVisibility(
+            visible = isStepperVisible,
+            modifier = Modifier.align(Alignment.BottomCenter),
+            enter = slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = tween(durationMillis = DocumentProgressAnimationDurationMillis),
+            ) + fadeIn(
+                animationSpec = tween(durationMillis = DocumentProgressAnimationDurationMillis),
+            ),
+            exit = slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = tween(durationMillis = DocumentProgressAnimationDurationMillis),
+            ) + fadeOut(
+                animationSpec = tween(durationMillis = DocumentProgressAnimationDurationMillis),
+            ),
+        ) {
+            DocumentProgressStepper(
+                steps = state.documentCheckLists.toDocumentProgressSteps(),
+            )
+        }
     }
 }
