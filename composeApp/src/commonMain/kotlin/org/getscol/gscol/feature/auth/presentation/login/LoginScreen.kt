@@ -3,6 +3,7 @@ package org.getscol.gscol.feature.auth.presentation.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import org.getscol.gscol.core.components.AppTextField
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
@@ -66,7 +69,7 @@ fun LoginScreenRoot(
             when (effect) {
                 is LoginUiEffect.LoginSuccess -> {
                     if (effect.isUserFillupAcademicForm > 0) {
-                        navigator.navigateTo(Route.HomeRoute,true)
+                        navigator.navigateTo(Route.HomeRoute, true)
                     } else {
                         navigator.navigateTo(Route.AcademicForm, true)
                     }
@@ -84,14 +87,13 @@ fun LoginScreenRoot(
 fun LoginScreen(
     state: LoginState,
     onAction: (LoginAction) -> Unit,
-    navigator: Navigator
+    navigator: Navigator,
 ) {
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         Column(
             modifier = Modifier
@@ -103,7 +105,7 @@ fun LoginScreen(
             Image(
                 painter = painterResource(resource = Res.drawable.scol_hat_logo),
                 contentDescription = "Logo",
-                modifier = Modifier.height(70.dp)
+                modifier = Modifier.height(70.dp),
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
@@ -114,12 +116,9 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(56.dp))
 
-            // Phone number field
             AppTextField(
                 value = state.phoneNumber,
-                onValueChange = {
-                    onAction(LoginAction.OnPhoneNumberChange(it))
-                },
+                onValueChange = { onAction(LoginAction.OnPhoneNumberChange(it)) },
                 label = stringResource(Res.string.enter_phone_text),
                 keyboardType = KeyboardType.Phone,
                 errorText = state.phoneError,
@@ -127,12 +126,9 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Password field
             AppTextField(
                 value = state.password,
-                onValueChange = {
-                    onAction(LoginAction.OnPasswordChange(it))
-                },
+                onValueChange = { onAction(LoginAction.OnPasswordChange(it)) },
                 label = stringResource(Res.string.enter_pass),
                 isPassword = true,
                 keyboardType = KeyboardType.Password,
@@ -140,105 +136,119 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Forgot Password link
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.End,
             ) {
                 Text(
                     stringResource(Res.string.forget_password),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Black,
-                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.ResetPassword) }
+                    modifier = Modifier.clickable {
+                        navigator.navigateToAuthScreen(Route.ResetPassword)
+                    },
                 )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Error message
             if (state.errorMessage != null) {
                 Text(
                     text = state.errorMessage,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
             }
 
-            // Login button
             Button(
                 onClick = { onAction(LoginAction.OnLoginClick) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF8B3838),
-                ),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8B3838)),
                 shape = RoundedCornerShape(16.dp),
                 contentPadding = PaddingValues(16.dp),
-                enabled = !state.isLoading
+                enabled = !state.isLoading,
             ) {
                 if (state.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 } else {
                     Text(
                         stringResource(Res.string.login_text),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Navigate to registration
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     stringResource(Res.string.dont_have_account),
                     modifier = Modifier.padding(end = 2.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                 )
                 Text(
                     stringResource(Res.string.signup_text),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.clickable { navigator.navigateToAuthScreen(Route.SignUp) }
+                    modifier = Modifier.clickable {
+                        navigator.navigateToAuthScreen(Route.SignUp)
+                    },
                 )
             }
-
         }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.BottomEnd
+                .padding(vertical = 32.dp)
+                .zIndex(1f),
+            contentAlignment = Alignment.TopEnd,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.clickable(onClick = { navigator.navigateAuthScreenBack(Route.Login) })
-            ) {
-                Text(
-                    stringResource(Res.string.skip_text),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.error,
-                )
-                Icon(
-                    Icons.Default.ArrowForwardIos,
-                    contentDescription = "Arrow Right",
-                    modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.error,
-                )
-            }
+            LoginSkipButton(
+                onClick = { navigator.navigateAuthScreenBack(Route.Login) },
+            )
         }
+    }
+}
+
+@Composable
+private fun LoginSkipButton(
+    onClick: () -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null,
+            onClick = onClick,
+        ),
+    ) {
+        Text(
+            stringResource(Res.string.skip_text),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.error,
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+            contentDescription = "Skip",
+            modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.error,
+        )
     }
 }
