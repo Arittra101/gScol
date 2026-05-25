@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
 val major = 0   // 1 to 99 ~ for big redesigns or breaking changes
-val minor = 7   // 0 to 99 ~ for new features
+val minor = 8   // 0 to 99 ~ for new features
 val hotfix = 1  // 0 to 99 ~ for bug fixes only
 
 fun generateVersionCode(): Int {

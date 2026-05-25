@@ -16,10 +16,12 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.components.ExitConfirmationDialog
+import org.getscol.gscol.core.presentation.components.LoginPromptBottomSheet
 import org.getscol.gscol.core.presentation.course.CourseItemView
 import org.getscol.gscol.core.utils.closeApp
 import org.getscol.gscol.feature.home.presentation.components.HomeAppBar
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -82,5 +84,16 @@ fun HomeScreenRoot(
 
     if (showExitDialog) {
         ExitConfirmationDialog(onConfirm = { closeApp() }, onDismiss = { showExitDialog = false })
+    }
+
+    if(wishlistUi.showLoginPromptBottomSheet){
+        LoginPromptBottomSheet(
+            message = "Please login to add courses in Wishlist",
+            onDismiss = { action(HomeAction.OnHideLoginPromptBottomSheet) },
+            onLoginClick = {
+                action(HomeAction.OnHideLoginPromptBottomSheet)
+                navigator.navigateTo(Route.Login)
+            }
+        )
     }
 }

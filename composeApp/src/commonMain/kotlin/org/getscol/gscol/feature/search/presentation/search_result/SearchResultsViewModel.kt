@@ -76,6 +76,11 @@ class SearchResultsViewModel(
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.AddToWishlist -> {
+                if(!session.isUserLoggedIn.value){
+                    _wishlistMutationUiState.update { it.copy(showLoginPromptBottomSheet = true) }
+                    return
+                }
+
                 viewModelScope.launch {
                     if (!session.isUserLoggedIn.first()) return@launch
                     wishlistMutationMutex.withLock {
@@ -97,6 +102,11 @@ class SearchResultsViewModel(
                         }
                     }
                 }
+            }
+
+            HomeAction.OnHideLoginPromptBottomSheet -> {
+                _wishlistMutationUiState.update { it.copy(showLoginPromptBottomSheet = false) }
+
             }
         }
     }

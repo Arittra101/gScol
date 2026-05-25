@@ -86,6 +86,10 @@ class InEligibleCourseViewmodel(
                     }
                 }
             }
+
+            HomeAction.OnHideLoginPromptBottomSheet -> {
+                _wishlistMutationUiState.update { it.copy(showLoginPromptBottomSheet = false) }
+            }
         }
     }
 

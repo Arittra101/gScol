@@ -22,7 +22,7 @@ import org.getscol.gscol.feature.auth.presentation.otp.OtpVerificationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.registration.RegistrationScreenRoot
 import org.getscol.gscol.feature.auth.presentation.resetpassword.ResetPasswordRoute
 import org.getscol.gscol.feature.common_media.presentation.InAppWebViewScreenRoot
-import org.getscol.gscol.feature.compare.presentation.CompareScreenRoot
+import org.getscol.gscol.feature.compare.presentation.FavouriteScreenRoot
 import org.getscol.gscol.feature.consultant.presentation.consultant.ConsultantScreenRoot
 import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreenRoot
 import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
@@ -82,7 +82,7 @@ fun ScolNavHost(
             AdvancedSearchScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.FavouriteRoute> {
-            CompareScreenRoot(navigator = navigator)
+            FavouriteScreenRoot(navigator = navigator)
         }
         composableNoAnimation<Route.Profile> {
             ProfileScreenRoute(navigator = navigator)

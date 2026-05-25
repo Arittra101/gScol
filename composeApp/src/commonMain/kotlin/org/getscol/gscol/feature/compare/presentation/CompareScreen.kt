@@ -16,7 +16,7 @@ import org.getscol.gscol.navigation.Navigator
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun CompareScreenRoot(navigator: Navigator) {
+fun FavouriteScreenRoot(navigator: Navigator) {
     val viewModel: CompareViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()

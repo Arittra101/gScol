@@ -9,10 +9,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -69,8 +68,11 @@ class HomeViewmodel(
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.AddToWishlist -> {
+                if(!session.isUserLoggedIn.value){
+                    _wishlistMutationUiState.update { it.copy(showLoginPromptBottomSheet = true) }
+                    return
+                }
                 viewModelScope.launch {
-                    if (!session.isUserLoggedIn.first()) return@launch
                     wishlistMutationMutex.withLock {
                         _wishlistMutationUiState.update { it.copy(isMutating = true) }
                         try {
@@ -91,6 +93,10 @@ class HomeViewmodel(
                     }
                 }
             }
+
+            is HomeAction.OnHideLoginPromptBottomSheet -> {
+                _wishlistMutationUiState.update { it.copy(showLoginPromptBottomSheet = false) }
+            }
         }
     }
 
@@ -98,6 +104,7 @@ class HomeViewmodel(
 
 sealed interface HomeAction {
     data class AddToWishlist(val courseId: String, val isWishListed: Boolean) : HomeAction
+    data object OnHideLoginPromptBottomSheet : HomeAction
 }
 
 

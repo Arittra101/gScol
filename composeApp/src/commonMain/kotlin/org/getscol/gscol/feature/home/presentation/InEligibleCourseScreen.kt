@@ -5,8 +5,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.LoginPromptBottomSheet
 import org.getscol.gscol.core.presentation.course.CourseItemView
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -30,5 +32,16 @@ fun InEligibleScreenRoute(
             it,
             isIneligibleScreen = true
         )
+
+        if(wishlistUi.showLoginPromptBottomSheet){
+            LoginPromptBottomSheet(
+                message = "Please login to add courses in Wishlist",
+                onDismiss = { action(HomeAction.OnHideLoginPromptBottomSheet) },
+                onLoginClick = {
+                    action(HomeAction.OnHideLoginPromptBottomSheet)
+                    navigator.navigateTo(Route.Login)
+                }
+            )
+        }
     }
 }

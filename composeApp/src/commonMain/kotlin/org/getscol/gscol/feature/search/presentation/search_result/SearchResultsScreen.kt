@@ -6,9 +6,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import app.cash.paging.compose.collectAsLazyPagingItems
 import org.getscol.gscol.core.presentation.BaseScreen
+import org.getscol.gscol.core.presentation.components.LoginPromptBottomSheet
 import org.getscol.gscol.core.presentation.course.CourseItemView
+import org.getscol.gscol.feature.home.presentation.HomeAction
 import org.getscol.gscol.feature.search.domain.model.AdvancedSearchParams
 import org.getscol.gscol.navigation.Navigator
+import org.getscol.gscol.navigation.Route
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -35,4 +38,16 @@ fun SearchResultsScreenRoot(
     ) {
         CourseItemView(navigator, action, courses, it, isSearchResultScreen = true)
     }
+
+    if(wishlistUi.showLoginPromptBottomSheet){
+        LoginPromptBottomSheet(
+            message = "Please login to add courses in Wishlist",
+            onDismiss = { action(HomeAction.OnHideLoginPromptBottomSheet) },
+            onLoginClick = {
+                action(HomeAction.OnHideLoginPromptBottomSheet)
+                navigator.navigateTo(Route.Login)
+            }
+        )
+    }
+
 }

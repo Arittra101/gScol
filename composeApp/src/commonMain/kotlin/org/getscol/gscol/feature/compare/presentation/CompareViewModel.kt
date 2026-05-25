@@ -99,6 +99,8 @@ class CompareViewModel(
                     }
                 }
             }
+
+            is HomeAction.OnHideLoginPromptBottomSheet -> {}
         }
     }
 
