@@ -242,22 +242,8 @@ fun OtpVerificationScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = Color.Gray,
                     modifier = Modifier.clickable{
-                        println("click")
                         onAction(OtpVerificationAction.OnResendClick) }
                 )
-            }
-
-            if (state.resendingOtp) {
-                val resendMinutes = state.resendAvailableSeconds / 60
-                val resendSeconds = state.resendAvailableSeconds % 60
-                Text(
-                    text = "Resend code in ${
-                        resendMinutes.toString().padStart(2, '0')
-                    }:${resendSeconds.toString().padStart(2, '0')}",
-                    fontSize = 14.sp,
-                    color = Color.Gray,
-                )
-
             }
         }
     }

@@ -11,8 +11,7 @@ data class OtpVerificationState(
     val isAcademicFormFillup : Boolean = false,
     
     // Timer states
-    val tokenExpirationSeconds: Int = 30, // 3 minutes = 180 seconds
-    val resendAvailableSeconds: Int = 20, // Can resend after 60 seconds
+    val tokenExpirationSeconds: Int = 60,
     val isTokenExpired: Boolean = false,
     val canResend: Boolean = false,
     val resendingOtp: Boolean = false,

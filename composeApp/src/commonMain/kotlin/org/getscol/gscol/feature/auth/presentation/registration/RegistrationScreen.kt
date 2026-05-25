@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -28,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -37,6 +39,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -76,14 +79,6 @@ fun RegistrationScreenRoot(
                     val devOtp = viewModel.state.value.registrationData?.devOtp
                     navigator.navigateToAuthScreen(Route.OtpVerification(devOtp))
                 }
-
-                is RegistrationUiEffect.ShowToast -> {
-//                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                }
-
-                is RegistrationUiEffect.NavigateBack -> {
-//                    navController.popBackStack()
-                }
             }
         }
     }
@@ -99,10 +94,13 @@ fun RegistrationScreen(
     onAction: (RegistrationAction) -> Unit,
     navigator: Navigator
 ) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
+                scrollBehavior = scrollBehavior,
                 title = {
                     Text(
                         stringResource(Res.string.create_account),
@@ -131,6 +129,7 @@ fun RegistrationScreen(
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background)
                 .padding(padding)
+                .imePadding()
         ) {
             Column(
                 modifier = Modifier
@@ -168,9 +167,7 @@ fun RegistrationScreen(
                 // Phone number field
                 AppTextField(
                     value = state.phoneNumber,
-                    onValueChange = {
-                        onAction(RegistrationAction.OnPhoneNumberChange(it))
-                    },
+                    onValueChange = { onAction(RegistrationAction.OnPhoneNumberChange(it)) },
                     label = stringResource(Res.string.enter_phone_text),
                     keyboardType = KeyboardType.Phone,
                     errorText = state.phoneError,
@@ -180,9 +177,7 @@ fun RegistrationScreen(
                 // Password field
                 AppTextField(
                     value = state.password,
-                    onValueChange = {
-                        onAction(RegistrationAction.OnPasswordChange(it))
-                    },
+                    onValueChange = { onAction(RegistrationAction.OnPasswordChange(it)) },
                     label = stringResource(Res.string.enter_pass),
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
@@ -190,12 +185,10 @@ fun RegistrationScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
-                //Confirm password field
+                // Confirm password field
                 AppTextField(
                     value = state.confirmPassword,
-                    onValueChange = {
-                        onAction(RegistrationAction.OnConfirmPassWordChange(it))
-                    },
+                    onValueChange = { onAction(RegistrationAction.OnConfirmPassWordChange(it)) },
                     label = stringResource(Res.string.confirmed_password_text),
                     isPassword = true,
                     keyboardType = KeyboardType.Password,
@@ -240,9 +233,22 @@ fun RegistrationScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                // Navigate to login
+                TermsAndPrivacyCheckBox(
+                    isTermsAccepted = state.isTermsAccepted,
+                    onCheckedChange = {
+                        onAction(RegistrationAction.OnTermsAcceptedChange(it))
+                    },
+                    onTermsClick = {
+                        // navigate to Terms screen
+                    },
+                    onPrivacyClick = {
+                        // navigate to Privacy screen
+                    }
+                )
+
+             
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
@@ -264,19 +270,8 @@ fun RegistrationScreen(
                         modifier = Modifier.clickable { navigator.navigateAuthScreenBack(Route.SignUp) }
                     )
                 }
+
                 Spacer(modifier = Modifier.height(30.dp))
-                TermsAndPrivacyCheckBox(
-                    isTermsAccepted = state.isTermsAccepted,
-                    onCheckedChange = {
-                        onAction(RegistrationAction.OnTermsAcceptedChange(it))
-                    },
-                    onTermsClick = {
-                        // navigate to Terms screen
-                    },
-                    onPrivacyClick = {
-                        // navigate to Privacy screen
-                    }
-                )
             }
         }
     }

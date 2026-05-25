@@ -41,26 +41,7 @@ class OtpVerificationViewModel(
 
             OtpVerificationAction.OnResendClick -> {
                 resendOtp()
-                startResendOtpTimer()
                 startOtpExpireTimer()
-            }
-        }
-    }
-
-    private fun startResendOtpTimer(){
-        resendTimerJob?.cancel()
-        resendTimerJob = viewModelScope.launch {
-            var secondsRemaining = _state.value.resendAvailableSeconds
-            if(secondsRemaining == 0) secondsRemaining = 20
-            while (secondsRemaining > 0) {
-                delay(1000)
-                secondsRemaining--
-                _state.update {
-                    it.copy(
-                        resendAvailableSeconds = secondsRemaining,
-                        resendingOtp = secondsRemaining != 0
-                    )
-                }
             }
         }
     }
@@ -70,7 +51,7 @@ class OtpVerificationViewModel(
         expirationTimerJob?.cancel()
         expirationTimerJob = viewModelScope.launch {
             var secondsRemaining = _state.value.tokenExpirationSeconds
-            if(secondsRemaining == 0) secondsRemaining = 30
+            if(secondsRemaining == 0) secondsRemaining = 60
             while (secondsRemaining > 0) {
                 delay(1000)
                 secondsRemaining--
