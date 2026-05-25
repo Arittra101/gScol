@@ -46,12 +46,5 @@ data class DocumentProgressStep(
     val status: DocumentCategoryState,
 )
 
-fun DocumentCheckList.toProgressDisplayStatus(): DocumentCategoryState = when (overallStatus) {
-    DocumentCategoryState.VERIFIED -> DocumentCategoryState.VERIFIED
-    DocumentCategoryState.IN_PROGRESS -> DocumentCategoryState.IN_PROGRESS
-    DocumentCategoryState.PENDING -> if (uploadedDocuments.isNotEmpty()) DocumentCategoryState.IN_PROGRESS
-    else DocumentCategoryState.PENDING
-}
-
 fun List<DocumentCheckList>.toDocumentProgressSteps(): List<DocumentProgressStep> =
-    map { doc -> DocumentProgressStep(label = doc.documentTypeName.orEmpty(), status = doc.toProgressDisplayStatus()) }
+    map { doc -> DocumentProgressStep(label = doc.documentTypeName.orEmpty(), status = doc.overallStatus) }

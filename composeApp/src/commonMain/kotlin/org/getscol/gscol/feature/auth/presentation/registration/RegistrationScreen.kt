@@ -248,7 +248,8 @@ fun RegistrationScreen(
                     }
                 )
 
-             
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
