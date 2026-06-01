@@ -5,8 +5,7 @@ import org.getscol.gscol.feature.home.data.dto.CourseDto
 import org.getscol.gscol.feature.home.domain.model.Course
 
 fun CourseDto.toCourse(): Course {
-    val ieltsReq =
-        engRequirements?.find { it.testName?.contains("IELTS", ignoreCase = true) == true }
+    val ieltsReq = engRequirements?.find { it.testName?.contains("IELTS", ignoreCase = true) == true }
     val universityHero = university?.imgUrl?.takeIf { it.isNotBlank() }
     val heroImage = universityHero.orEmpty()
     val logo = university?.logoUrl?.takeIf { it.isNotBlank() }.orEmpty()

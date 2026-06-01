@@ -13,7 +13,8 @@ import org.getscol.gscol.platformExitTransition
 import org.getscol.gscol.platformPopEnterTransition
 import org.getscol.gscol.platformPopExitTransition
 import kotlin.jvm.JvmSuppressWildcards
-import kotlin.math.roundToInt
+import kotlin.math.abs
+import kotlin.math.round
 import kotlin.reflect.KType
 
 
@@ -79,14 +80,19 @@ private val Iso4217CurrencySymbols = mapOf(
 fun String?.toDollar(): String = this.toAbbreviatedTuitionAmount()
 
 fun String?.toAbbreviatedTuitionAmount(): String {
-    if(this == null) return "N/A"
-    val amount = this.toDoubleOrNull() ?: 0.0
-    val result = amount / 1000
-    val rounded = (result * 10).roundToInt()
-    val wholePart = rounded / 10
-    val fractionalPart = rounded % 10
-    return "$$wholePart.$fractionalPart"
+    if (this == null) return "N/A"
+
+    val amount = this.toDoubleOrNull() ?: return "N/A"
+
+    return when {
+        abs(amount) >= 1_000_000_000 -> "$${formatValue(amount / 1_000_000_000)}B"
+        abs(amount) >= 1_000_000 -> "$${formatValue(amount / 1_000_000)}M"
+        abs(amount) >= 1_000 -> "$${formatValue(amount / 1_000)}K"
+        else -> "$${formatValue(amount)}"
+    }
 }
+
+private fun formatValue(value: Double) = (round(value * 10) / 10).toString().removeSuffix(".0")
 
 /** Abbreviated tuition (÷1000, one decimal) with the correct currency symbol for [currencyCode]. */
 fun formatTuitionFeeAbbreviated(amount: Int, currencyCode: String): String {
