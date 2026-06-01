@@ -16,9 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailAction
 import org.getscol.gscol.feature.application.presentation.application_details.DocumentTheme
 
 
@@ -27,7 +28,6 @@ fun ApplicationInfoCard(
     intake: String,
     program: String,
     applicationId: String,
-    action: (ApplicationDetailAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -45,11 +45,7 @@ fun ApplicationInfoCard(
             HorizontalDivider(color = Color(0xFFEEEEEE), thickness = 1.dp)
             ApplicationInfoRow(label = "Program", value = program, labelColor = Color(0xFF888888))
             HorizontalDivider(color = Color(0xFFEEEEEE), thickness = 1.dp)
-            ApplicationInfoRow(
-                label = "Application ID",
-                value = applicationId,
-                labelColor = DocumentTheme.Primary
-            )
+            ApplicationInfoRow(label = "Application ID", value = applicationId, labelColor = DocumentTheme.Primary)
         }
     }
 }
@@ -67,14 +63,26 @@ fun ApplicationInfoRow(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top  // Top alignment for multiline support
     ) {
-        Text(text = label, color = labelColor, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        Text(
+            text = label,
+            color = labelColor,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(0.4f).padding(end = 8.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
         Text(
             text = value,
             color = Color(0xFF1A1A1A),
             fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.weight(0.6f),
+            textAlign = TextAlign.End,
+            softWrap = true,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

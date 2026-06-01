@@ -121,10 +121,6 @@ class ApplicationDetailsViewmodel(
                 uploadJob?.cancel()
             }
 
-            is ApplicationDetailAction.OnCloseErrorUploadDialog -> {
-                _applicationState.update { it.copy(showDocumentUploadError = false) }
-            }
-
             is ApplicationDetailAction.OnWithdrawApplication -> {
                 _applicationState.update { it.copy(showConsultantBottomSheet = true) }
             }
@@ -276,7 +272,6 @@ data class ApplicationDetailsUiState(
     val isEmpty: Boolean = false,
 
     val showDocumentUploadLoader: Boolean = false,
-    val showDocumentUploadError: Boolean = false,
     val uploadState: UploadState? = null,
     val showConsultantBottomSheet: Boolean = false,
 
@@ -302,7 +297,6 @@ sealed interface ApplicationDetailAction {
 
     data object OnCancelUpload : ApplicationDetailAction
     data object OnRefreshApplicationInfo : ApplicationDetailAction
-    data object OnCloseErrorUploadDialog : ApplicationDetailAction
     data object OnWithdrawApplication: ApplicationDetailAction
     data object OnHideWithdrawBottomSheet: ApplicationDetailAction
     data object OnTrackApplication: ApplicationDetailAction

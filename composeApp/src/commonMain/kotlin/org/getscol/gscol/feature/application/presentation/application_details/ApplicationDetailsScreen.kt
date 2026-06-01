@@ -36,7 +36,6 @@ import org.getscol.gscol.feature.application.presentation.application_details.co
 import org.getscol.gscol.feature.application.presentation.application_details.components.DocumentsSection
 import org.getscol.gscol.feature.application.presentation.application_details.components.UniversityHeroHeader
 import org.getscol.gscol.feature.application.presentation.application_details.components.documentProgressBottomInset
-import org.getscol.gscol.feature.application.presentation.components.FileUploadErrorDialog
 import org.getscol.gscol.feature.application.presentation.components.WithdrawApplicationBottomSheet
 import org.getscol.gscol.feature.application.presentation.toDocumentProgressSteps
 import org.getscol.gscol.navigation.Navigator
@@ -89,14 +88,6 @@ fun ApplicationDetailsRoute(
             FileUploadDialog(uploadState = it, onCancel = {
                 action(ApplicationDetailAction.OnCancelUpload)
             })
-        }
-    }
-
-    if(state.showDocumentUploadError){
-        state.uploadState?.let {
-            FileUploadErrorDialog(uploadState = it){
-                action(ApplicationDetailAction.OnCloseErrorUploadDialog)
-            }
         }
     }
 
@@ -182,7 +173,6 @@ fun ApplicationDetailsScreen(
                 intake = "${state.intakeMonth ?: ""} ${state.intakeYear}",
                 program = state.courseName.orEmpty(),
                 applicationId = state.applicationSerialNumber.orEmpty(),
-                action = action,
             )
 
             DocumentsSection(documentCheckList = state.documentCheckLists, action)
