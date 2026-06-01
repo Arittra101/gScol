@@ -13,6 +13,6 @@ class DocumentDownloadApiServiceImpl(
     override suspend fun requestDownloadLink(
         documentId: String,
     ): Result<DocumentDownloadUrlResponse, DataError.Remote> = safeApiCall {
-        client.get("leads/profile/leads/documents/$documentId/download")
+        client.get("leads/profile/documents/$documentId")
     }
 }
