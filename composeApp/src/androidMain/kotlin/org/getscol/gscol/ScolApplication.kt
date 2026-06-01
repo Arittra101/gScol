@@ -16,5 +16,8 @@ class ScolApplication : Application() {
         initKoin {
             androidContext(this@ScolApplication)
         }
+
+        // Start the platform network monitor to update NetworkStatus
+        NetworkMonitor.start(this)
     }
 }
