@@ -18,6 +18,7 @@ import org.getscol.gscol.feature.application.data.repository.ApplicationReposito
 import org.getscol.gscol.feature.application.domain.model.response.DocumentCheckList
 import org.getscol.gscol.feature.application.domain.model.response.UploadedDocument
 import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailsUiEffect.NavigateToApplicationTracker
+import kotlin.math.roundToInt
 
 class ApplicationDetailsViewmodel(
     private val applicationId: String,
@@ -197,11 +198,14 @@ class ApplicationDetailsViewmodel(
         )
 
         uploadJob = viewModelScope.launch {
+            val sizeInMB = pickedFile.fileByteSize / (1024.0 * 1024.0)
+            val formattedSize = ((sizeInMB * 100).roundToInt() / 100.0).toString()
+
             _applicationState.value = _applicationState.value.copy(
                 showDocumentUploadLoader = true,
                 uploadState = UploadState(
                     fileName = pickedFile.fileName,
-                    fileSize = (pickedFile.fileByteSize / (1024.0 * 1024.0)).toString(),
+                    fileSize = "$formattedSize MB",
                     progress = 0f
                 )
             )
