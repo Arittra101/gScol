@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
             val currentLogoutEvent by logoutEvent.collectAsState()
             ScolTheme {
                 ScolApp(
-                    currentLogoutEvent= currentLogoutEvent,
+                    currentLogoutEvent = currentLogoutEvent,
                     onLogoutHandler = { _logoutEvent.value = null }
                 )
             }

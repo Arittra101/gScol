@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -64,9 +64,7 @@ fun ScolApp(
     )
 
     LaunchedEffect(currentLogoutEvent){
-        currentLogoutEvent?.let {
-            navigator.navigateTo(currentLogoutEvent)
-        }
+        currentLogoutEvent?.let { navigator.navigateTo(currentLogoutEvent) }
         onLogoutHandler()
     }
 
@@ -94,10 +92,11 @@ fun ScolApp(
         }
 
 
-        AnimatedVisibility(visible = !isOnline, enter = slideInVertically() + fadeIn(), exit = slideOutVertically() + fadeOut())
-        {
-            NoInternetScreen()
-        }
+        AnimatedVisibility(
+            visible = !isOnline,
+            enter = slideInVertically() + fadeIn(),
+            exit = slideOutVertically() + fadeOut()
+        ) { NoInternetScreen() }
     }
 
 }

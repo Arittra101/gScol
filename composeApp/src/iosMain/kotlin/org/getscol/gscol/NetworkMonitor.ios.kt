@@ -1,45 +1,70 @@
 package org.getscol.gscol
 
-import platform.Foundation.NSOperationQueue
-import platform.Network.NWPath
-import platform.Network.NWPathMonitor
-import platform.darwin.dispatch_get_main_queue
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.darwin.Darwin
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.request.get
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 /**
- * iOS network monitor using NWPathMonitor to update the common [NetworkStatus].
- * Call NetworkMonitor.start() from your iOS app lifecycle (e.g., App init or AppDelegate).
+ * iOS network monitor.
+ *
+ * NOTE:
+ * Your current Kotlin/Native iOS bindings don't expose `NWPathMonitor`,
+ * so we can't rely on it here. Instead, we update [NetworkStatus] by doing
+ * a lightweight periodic request.
  */
 object NetworkMonitor {
-    private var monitor: NWPathMonitor? = null
-    private var queue: NSOperationQueue? = null
+    private const val PING_URL = "https://www.google.com/generate_204"
+    private const val CHECK_INTERVAL_MS = 5_000L
+    private const val CHECK_TIMEOUT_MS = 3_000L
+
+    private var client: HttpClient? = null
+    private var job: Job? = null
 
     fun start() {
-        if (monitor != null) return
+        if (job != null) return
 
-        // Create the NWPathMonitor
-        monitor = NWPathMonitor()
-
-        // Use main queue to marshal updates to the main thread
-        queue = NSOperationQueue.mainQueue
-
-        monitor?.setQueue(dispatch_get_main_queue())
-
-        monitor?.setPathUpdateHandler { path: NWPath? ->
-            val status = path?.status
-            val ok = when (status) {
-                NWPathStatusSatisfied -> true
-                else -> false
+        val newClient = HttpClient(Darwin) {
+            install(HttpTimeout) {
+                requestTimeoutMillis = CHECK_TIMEOUT_MS
+                socketTimeoutMillis = CHECK_TIMEOUT_MS
             }
-            NetworkStatus.isAvailable.value = ok
         }
 
-        monitor?.start()
+        client = newClient
+
+        job = CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            while (currentCoroutineContext().isActive) {
+                NetworkStatus.isAvailable.value = isInternetAvailable(newClient)
+                delay(CHECK_INTERVAL_MS)
+            }
+        }
     }
 
     fun stop() {
-        monitor?.cancel()
-        monitor = null
-        queue = null
+        job?.cancel()
+        job = null
+        client?.close()
+        client = null
+    }
+
+    private suspend fun isInternetAvailable(httpClient: HttpClient): Boolean {
+        return try {
+            withTimeout(CHECK_TIMEOUT_MS) {
+                val response = httpClient.get(PING_URL)
+                response.status.value in 200..299
+            }
+        } catch (_: Exception) {
+            false
+        }
     }
 }
-

@@ -13,7 +13,10 @@ import org.getscol.gscol.navigation.NavigationAction
 import org.getscol.gscol.theme.ScolTheme
 
 fun MainViewController() = ComposeUIViewController {
+
     initKoin()
+    NetworkMonitor.start()
+
     val scope = rememberCoroutineScope()
     val logoutEvent = remember { MutableStateFlow<NavigationAction?>(null) }
 
