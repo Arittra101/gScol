@@ -48,7 +48,8 @@ object HttpClientFactory {
                 logger = object : Logger {
                     override fun log(message: String) = AppLogger.d(message)
                 }
-                level = LogLevel.ALL
+                // Full HTTP logs only in debug; silence everything in release
+                level = if (AppLogger.isEnabled) LogLevel.ALL else LogLevel.NONE
             }
 
             // Install custom plugin to add fresh tokens on each request
@@ -76,8 +77,9 @@ object HttpClientFactory {
                             AppLogger.d("No access token available")
                             return@loadTokens null
                         }
-                        AppLogger.d("access token ${accessToken}")
-                        AppLogger.d("refreshToken  ${refreshToken}")
+                        // Never log token values — only presence
+                        AppLogger.d("access token present: true")
+                        AppLogger.d("refreshToken present: ${!refreshToken.isNullOrBlank()}")
                         BearerTokens(
                             accessToken = accessToken,
                             refreshToken = refreshToken.orEmpty()

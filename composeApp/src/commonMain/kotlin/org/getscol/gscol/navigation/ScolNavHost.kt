@@ -27,6 +27,7 @@ import org.getscol.gscol.feature.consultant.presentation.consultant.ConsultantSc
 import org.getscol.gscol.feature.consultant.presentation.details.ConsultantDetailsScreenRoot
 import org.getscol.gscol.feature.course_details.domain.model.CourseDetails
 import org.getscol.gscol.feature.course_details.presentation.course_details.CourseDetailsScreenRoot
+import org.getscol.gscol.feature.legal.presentation.LegalDocumentScreenRoot
 import org.getscol.gscol.feature.home.presentation.HomeScreenRoot
 import org.getscol.gscol.feature.home.presentation.InEligibleScreenRoute
 import org.getscol.gscol.feature.profile.presentation.ProfileScreenRoute
@@ -130,6 +131,10 @@ fun ScolNavHost(
         composableNoAnimation<Route.WebViewRoute> { backStackEntry ->
             val args = backStackEntry.toRoute<Route.WebViewRoute>()
             InAppWebViewScreenRoot(title = args.title, url = args.url, navigator = navigator)
+        }
+        composableNoAnimation<Route.LegalDocument> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.LegalDocument>()
+            LegalDocumentScreenRoot(documentType = args.documentType, navigator = navigator)
         }
         composableNoAnimation<Route.InEligibleScreen> {
             InEligibleScreenRoute(navigator = navigator)

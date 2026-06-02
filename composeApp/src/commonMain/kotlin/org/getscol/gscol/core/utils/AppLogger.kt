@@ -7,6 +7,9 @@ object AppLogger {
     private var enabled: Boolean = true
     private var currentLevel: LogLevel = LogLevel.DEBUG
 
+    /** Read-only access so other components (e.g. HttpClientFactory) can gate behaviour. */
+    val isEnabled: Boolean get() = enabled
+
     fun setLogLevel(level: LogLevel) {
         currentLevel = level
     }

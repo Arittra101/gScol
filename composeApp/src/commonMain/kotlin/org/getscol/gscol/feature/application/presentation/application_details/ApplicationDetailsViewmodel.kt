@@ -15,9 +15,9 @@ import org.getscol.gscol.core.feature_components.upload.PdfUploader
 import org.getscol.gscol.core.feature_components.upload.domain.model.UploadPdfModel
 import org.getscol.gscol.core.presentation.components.PickedFile
 import org.getscol.gscol.feature.application.data.repository.ApplicationRepository
-import org.getscol.gscol.feature.application.domain.model.response.DocumentCheckList
 import org.getscol.gscol.feature.application.domain.model.response.UploadedDocument
 import org.getscol.gscol.feature.application.presentation.application_details.ApplicationDetailsUiEffect.NavigateToApplicationTracker
+import kotlin.math.roundToInt
 
 class ApplicationDetailsViewmodel(
     private val applicationId: String,
@@ -33,18 +33,13 @@ class ApplicationDetailsViewmodel(
     private val _applicationDetailsUiEffect = Channel<ApplicationDetailsUiEffect>(Channel.BUFFERED)
     val applicationDetailsUiEffect = _applicationDetailsUiEffect.receiveAsFlow()
 
-
-    init {
-        getApplicationDetails()
-    }
-
+    init { getApplicationDetails() }
 
     fun getApplicationDetails() {
         viewModelScope.launch {
             applicationRepository.getApplicationById(applicationId)
-                .onStart {
-                    _applicationState.value = _applicationState.value.copy(isLoading = true)
-                }.collect { result ->
+                .onStart { _applicationState.update { it.copy(isLoading = true) } }
+                .collect { result ->
                     when (result) {
                         is Result.Success -> {
                             val data = result.data
@@ -97,10 +92,6 @@ class ApplicationDetailsViewmodel(
                 uploadPdf(action.pickedFile, action.documentTypeId)
             }
 
-            ApplicationDetailAction.OnRefreshApplicationInfo -> {
-
-            }
-
             is ApplicationDetailAction.OnExpand -> {
                 val documentCheckLists = _applicationState.value.documentCheckLists
                 val updatedDocumentCheckLists = documentCheckLists.map {
@@ -110,14 +101,11 @@ class ApplicationDetailsViewmodel(
                         it
                     }
                 }
-                _applicationState.value =
-                    _applicationState.value.copy(documentCheckLists = updatedDocumentCheckLists)
+                _applicationState.update { it.copy(documentCheckLists = updatedDocumentCheckLists) }
             }
 
             is ApplicationDetailAction.OnCancelUpload -> {
-                _applicationState.value = _applicationState.value.copy(
-                    showDocumentUploadLoader = false
-                )
+                _applicationState.update { it.copy(showDocumentUploadLoader = false) }
                 uploadJob?.cancel()
             }
 
@@ -127,11 +115,7 @@ class ApplicationDetailsViewmodel(
 
             is ApplicationDetailAction.OnTrackApplication -> {
                 viewModelScope.launch {
-                    _applicationDetailsUiEffect.send(
-                        NavigateToApplicationTracker(
-                            applicationId
-                        )
-                    )
+                    _applicationDetailsUiEffect.send(NavigateToApplicationTracker(applicationId))
                 }
             }
 
@@ -149,16 +133,13 @@ class ApplicationDetailsViewmodel(
         viewModelScope.launch {
             val deleteDocument = applicationRepository.deleteDocument(applicationId, document.applicationDocumentId.orEmpty())
             deleteDocument.onStart { _applicationState.update { it.copy(isLoading = true) } }
-                .collect { r ->
-                    when (r) {
+                .collect { result ->
+                    when (result) {
                         is Result.Success -> {
                             _applicationState.update { state ->
                                 val updated = state.documentCheckLists.map { doc ->
                                     if (doc.documentTypeId == document.documentTypeId) {
-                                        doc.copy(
-                                            uploadedDocuments = doc.uploadedDocuments.filter
-                                            { it.applicationDocumentId != document.applicationDocumentId }
-                                        )
+                                        doc.copy(uploadedDocuments = doc.uploadedDocuments.filter { it.applicationDocumentId != document.applicationDocumentId })
                                     } else doc
                                 }
 
@@ -197,11 +178,14 @@ class ApplicationDetailsViewmodel(
         )
 
         uploadJob = viewModelScope.launch {
+            val sizeInMB = pickedFile.fileByteSize / (1024.0 * 1024.0)
+            val formattedSize = ((sizeInMB * 100).roundToInt() / 100.0).toString()
+
             _applicationState.value = _applicationState.value.copy(
                 showDocumentUploadLoader = true,
                 uploadState = UploadState(
                     fileName = pickedFile.fileName,
-                    fileSize = (pickedFile.fileByteSize / (1024.0 * 1024.0)).toString(),
+                    fileSize = "$formattedSize MB",
                     progress = 0f
                 )
             )
@@ -256,49 +240,4 @@ class ApplicationDetailsViewmodel(
     override fun onCleared() {
         uploadJob?.cancel()
     }
-}
-
-
-data class ApplicationDetailsUiState(
-    val universityCoverImageUrl: String? = null,
-    val universityName: String? = null,
-    val intakeMonth: String? = null,
-    val intakeYear: String? = null,
-    val courseName: String? = null,
-    val applicationSerialNumber: String? = null,
-    val documentCheckLists: List<DocumentCheckList> = listOf(),
-
-    val isLoading: Boolean = true,
-    val isEmpty: Boolean = false,
-
-    val showDocumentUploadLoader: Boolean = false,
-    val uploadState: UploadState? = null,
-    val showConsultantBottomSheet: Boolean = false,
-
-    val showFileUpDownloadBottomSheet: Boolean = false,
-    val isFileSuccessResponse: Boolean = false,
-    val fileBottomSheetMsg: String = ""
-)
-
-data class UploadState(
-    val fileName: String,
-    val fileSize: String,
-    val progress: Float
-)
-
-sealed interface ApplicationDetailsUiEffect {
-    data class NavigateToApplicationTracker(val applicationId: String) : ApplicationDetailsUiEffect
-}
-
-sealed interface ApplicationDetailAction {
-    data class OnPickDocumentUpload(val pickedFile: PickedFile, val documentTypeId: String) : ApplicationDetailAction
-    data class OnDeleteDocument(val document: UploadedDocument) : ApplicationDetailAction
-    data class OnExpand(val documentTypeId: String) : ApplicationDetailAction
-
-    data object OnCancelUpload : ApplicationDetailAction
-    data object OnRefreshApplicationInfo : ApplicationDetailAction
-    data object OnWithdrawApplication: ApplicationDetailAction
-    data object OnHideWithdrawBottomSheet: ApplicationDetailAction
-    data object OnTrackApplication: ApplicationDetailAction
-    data object OnHideDocumentResponseBottomSheet: ApplicationDetailAction
 }
