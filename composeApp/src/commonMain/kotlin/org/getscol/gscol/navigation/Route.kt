@@ -75,9 +75,6 @@ sealed interface Route {
     object InEligibleScreen : Route
 
     @Serializable
-    object UploadScreen : Route
-
-    @Serializable
     class ApplicationFormRoute(val courseDetails: String) : Route
 
     @Serializable
