@@ -6,9 +6,9 @@ data class LegalDocumentContent(
 )
 
 object LegalContent {
-    fun forType(type: LegalDocumentType): LegalDocumentContent = when (type) {
-        LegalDocumentType.TERMS_OF_SERVICE -> termsOfService()
-        LegalDocumentType.PRIVACY_POLICY -> privacyPolicy()
+    fun forType(isTermsAndConditions: Boolean): LegalDocumentContent = when (isTermsAndConditions) {
+        true -> termsOfService()
+        false -> privacyPolicy()
     }
 
     private fun termsOfService() = LegalDocumentContent(

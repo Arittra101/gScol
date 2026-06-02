@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.sp
 import org.getscol.gscol.core.components.AppTextField
 import org.getscol.gscol.feature.auth.presentation.registration.components.RegistrationUiEffect
 import org.getscol.gscol.feature.auth.presentation.registration.components.TermsAndPrivacyCheckBox
-import org.getscol.gscol.feature.legal.presentation.LegalDocumentType
 import org.getscol.gscol.navigation.Navigator
 import org.getscol.gscol.navigation.Route
 import org.jetbrains.compose.resources.stringResource
@@ -241,16 +240,8 @@ fun RegistrationScreen(
                     onCheckedChange = {
                         onAction(RegistrationAction.OnTermsAcceptedChange(it))
                     },
-                    onTermsClick = {
-                        navigator.navigateToRoute(
-                            Route.LegalDocument(LegalDocumentType.TERMS_OF_SERVICE),
-                        )
-                    },
-                    onPrivacyClick = {
-                        navigator.navigateToRoute(
-                            Route.LegalDocument(LegalDocumentType.PRIVACY_POLICY),
-                        )
-                    },
+                    onTermsClick = { navigator.navigateToRoute(Route.LegalDocument(isTermsAndConditions = true)) },
+                    onPrivacyClick = { navigator.navigateToRoute(Route.LegalDocument()) },
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))

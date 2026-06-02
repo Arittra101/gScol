@@ -10,6 +10,7 @@ import java.util.Calendar
 class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
     override val transitionAnimationTime: Int = 200
+    override val platformName: String = "ANDROID"
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()

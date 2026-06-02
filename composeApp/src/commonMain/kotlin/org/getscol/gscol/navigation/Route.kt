@@ -1,7 +1,6 @@
 package org.getscol.gscol.navigation
 
 import kotlinx.serialization.Serializable
-import org.getscol.gscol.feature.legal.presentation.LegalDocumentType
 
 sealed interface Route {
 
@@ -66,7 +65,7 @@ sealed interface Route {
     data class WebViewRoute(val title: String, val url: String) : Route
 
     @Serializable
-    data class LegalDocument(val documentType: LegalDocumentType) : Route
+    data class LegalDocument(val isTermsAndConditions: Boolean = false) : Route
 
     @Serializable
     object Splash : Route

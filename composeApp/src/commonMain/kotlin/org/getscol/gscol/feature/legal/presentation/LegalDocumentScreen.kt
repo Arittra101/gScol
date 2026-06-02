@@ -14,10 +14,10 @@ import org.getscol.gscol.navigation.Navigator
 
 @Composable
 fun LegalDocumentScreenRoot(
-    documentType: LegalDocumentType,
+    isTermsAndConditions: Boolean,
     navigator: Navigator,
 ) {
-    val content = LegalContent.forType(documentType)
+    val content = LegalContent.forType(isTermsAndConditions)
 
     BaseScreen(
         title = content.title,

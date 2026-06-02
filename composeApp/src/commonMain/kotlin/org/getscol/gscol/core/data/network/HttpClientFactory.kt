@@ -23,6 +23,7 @@ import org.getscol.gscol.core.data.dto.auth.AuthTokenResponse
 import org.getscol.gscol.core.data.dto.auth.RefreshTokenRequest
 import org.getscol.gscol.core.utils.AppLogger
 import org.getscol.gscol.feature.auth.data.AuthTokenProvider
+import org.getscol.gscol.getPlatform
 import org.getscol.gscol.navigation.LogoutEventManager
 import org.getscol.gscol.navigation.NavigationAction
 
@@ -48,8 +49,12 @@ object HttpClientFactory {
                 logger = object : Logger {
                     override fun log(message: String) = AppLogger.d(message)
                 }
-                // Full HTTP logs only in debug; silence everything in release
-                level = if (AppLogger.isEnabled) LogLevel.ALL else LogLevel.NONE
+
+                level = when {
+                    !AppLogger.isEnabled -> LogLevel.NONE
+                    getPlatform().platformName == "IOS" -> LogLevel.HEADERS
+                    else -> LogLevel.ALL
+                }
             }
 
             // Install custom plugin to add fresh tokens on each request
