@@ -73,12 +73,6 @@ fun ApplicationFormScreenRoute(
                 action(ApplicationFormScreenAction.OnNavigateToApplicationJourney)
             }
             action(ApplicationFormScreenAction.OnDismissApiResponseSheet)
-        },
-        onConfirm = {
-            if (state.isApiSuccess) {
-                action(ApplicationFormScreenAction.OnNavigateToApplicationJourney)
-            }
-            action(ApplicationFormScreenAction.OnDismissApiResponseSheet)
         }
     )
 }

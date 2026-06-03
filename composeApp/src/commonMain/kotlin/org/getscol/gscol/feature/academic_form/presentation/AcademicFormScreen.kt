@@ -493,12 +493,7 @@ fun EligibilityScreen(
         onDismiss = {
             if (uiState.isApiSuccess) {
                 navigator.navigateTo(Route.HomeRoute,true)
-            }
-            onAction(AcademicFormAction.DismissApiResponseSheet)
-        },
-        onConfirm = {
-            if (uiState.isApiSuccess) {
-                navigator.navigateTo(Route.HomeRoute,true)
+                onAction(AcademicFormAction.OnTriggerAcademicForm)
             }
             onAction(AcademicFormAction.DismissApiResponseSheet)
         }

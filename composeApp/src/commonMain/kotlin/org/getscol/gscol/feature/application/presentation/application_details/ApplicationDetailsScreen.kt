@@ -100,7 +100,6 @@ fun ApplicationDetailsRoute(
         isSuccess = state.isFileSuccessResponse,
         message = state.fileBottomSheetMsg,
         onDismiss = { action(ApplicationDetailAction.OnHideDocumentResponseBottomSheet) },
-        onConfirm = { action(ApplicationDetailAction.OnHideDocumentResponseBottomSheet) }
     )
 
     BaseScreen(

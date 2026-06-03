@@ -84,11 +84,10 @@ class AcademicViewmodel(
             is AcademicFormAction.DismissApiResponseSheet -> localUpdates.value =
                 academicUiState.value.copy(showApiResponseBottomSheet = false)
 
+            is AcademicFormAction.OnTriggerAcademicForm -> {
+                viewModelScope.launch { session.triggerAcademicFormSubmission() }
+            }
         }
-    }
-
-    fun fetchAcademicInfo() {
-        fetchAcademicInfo.value = Unit
     }
 
     private fun initDataBindOnAcademicUiState(data: AcademicProfile): AcademicUiState {
@@ -127,7 +126,6 @@ class AcademicViewmodel(
             when (result) {
                 is Result.Success -> {
                     val current = academicUiState.value
-                    session.triggerAcademicFormSubmission()
                     localUpdates.value = current.copy(
                         showLoader = false,
                         isApiSuccess = true,

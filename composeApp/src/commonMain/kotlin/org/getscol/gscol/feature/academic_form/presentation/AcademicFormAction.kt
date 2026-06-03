@@ -18,4 +18,5 @@ sealed interface AcademicFormAction {
     data object SubmitAcademicForm: AcademicFormAction
     data object OnUnselectTestType: AcademicFormAction
     data object DismissApiResponseSheet: AcademicFormAction
+    data object OnTriggerAcademicForm: AcademicFormAction
 }

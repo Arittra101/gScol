@@ -8,12 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.backhandler.BackHandler
 import app.cash.paging.compose.collectAsLazyPagingItems
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import org.getscol.gscol.core.presentation.BaseScreen
 import org.getscol.gscol.core.presentation.components.ExitConfirmationDialog
 import org.getscol.gscol.core.presentation.components.LoginPromptBottomSheet
@@ -38,13 +35,9 @@ fun HomeScreenRoot(
     }
 
     val listState = rememberLazyListState()
+
     LaunchedEffect(Unit) {
-        viewmodel.scrollResetEvent.collect {
-            snapshotFlow { listState.layoutInfo.totalItemsCount }
-                .filter { it > 0 }
-                .first()
-            listState.scrollToItem(0)
-        }
+        viewmodel.scrollResetEvent.collect { listState.scrollToItem(0) }
     }
 
     val academicFormSubmitTrigger by viewmodel.session.academicFormSubmitTrigger.collectAsState(

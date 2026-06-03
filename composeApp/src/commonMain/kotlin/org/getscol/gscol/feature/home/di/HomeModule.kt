@@ -8,7 +8,6 @@ import org.getscol.gscol.feature.home.presentation.HomeViewmodel
 import org.getscol.gscol.feature.home.presentation.InEligibleCourseViewmodel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 

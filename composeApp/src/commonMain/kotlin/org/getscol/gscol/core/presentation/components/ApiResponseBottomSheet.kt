@@ -36,7 +36,6 @@ fun ApiResponseBottomSheet(
     title: String? = null,
     message: String,
     confirmButtonText: String? = null,
-    onConfirm: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -109,7 +108,6 @@ fun ApiResponseBottomSheet(
 
                 Button(
                     onClick = {
-                        onConfirm()
                         scope.launch { sheetState.hide() }.invokeOnCompletion {
                             if (!sheetState.isVisible) onDismiss()
                         }

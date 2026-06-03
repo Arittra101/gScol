@@ -40,7 +40,11 @@ class HomeViewmodel(
         viewModelScope.launch {
             combine(session.isUserLoggedIn, session.academicFormSubmitTrigger) { _, _ -> }
                 .drop(1)
-                .collect { _scrollResetEvent.send(Unit) }
+                .collect {
+                    println("isUserLoggedIn ${session.isUserLoggedIn.value}")
+                    println("academicFormSubmitTrigger ${session.academicFormSubmitTrigger.value}")
+                    _scrollResetEvent.send(Unit)
+                }
         }
     }
 
