@@ -44,13 +44,14 @@ import scol.composeapp.generated.resources.duration_icon
 import scol.composeapp.generated.resources.intake_icon
 import scol.composeapp.generated.resources.tution_fee_icon
 
-// Memoize constant colors and styles to avoid recreation
 private val DIVIDER_COLOR_CARD = Color(0xFFF0F0F0)
 private val BUTTON_CONTENT_PADDING = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
 private val BUTTON_SHAPE = RoundedCornerShape(4.dp)
 private val ICON_BUTTON_SIZE = 24.dp
 private val FAVORITE_TINT_FAVORITED = Color.Red
 private val FAVORITE_TINT_UNFAVORITED = Color.White
+private val COURSE_NAME_AUTO_SIZE = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = 15.sp, stepSize = 1.sp)
+private val SUBTITLE_AUTO_SIZE = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = 14.sp, stepSize = 1.sp)
 
 @Composable
 fun CourseInfoCard(
@@ -74,7 +75,11 @@ fun CourseInfoCard(
 ) {
     val colors = appColors()
 
-    // Only memoize expensive callback - simple conditionals don't need remember
+    val applyButtonContainerColor = remember(colors.customPrimary) {
+        colors.customPrimary.copy(alpha = 0.15f)
+    }
+    val applyButtonColors = ButtonDefaults.buttonColors(containerColor = applyButtonContainerColor)
+
     val onWishlistClick = remember(courseId, isFavorite, action) {
         {
             action(
@@ -115,9 +120,7 @@ fun CourseInfoCard(
                         color = colors.customPrimaryText,
                         maxLines = 1,
                         lineHeight = 24.sp,
-                        autoSize = TextAutoSize.StepBased(
-                            minFontSize = 8.sp, maxFontSize = 15.sp, stepSize = 1.sp
-                        ),
+                        autoSize = COURSE_NAME_AUTO_SIZE,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
@@ -126,9 +129,7 @@ fun CourseInfoCard(
                         color = colors.customSecondaryText,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
-                        autoSize = TextAutoSize.StepBased(
-                            minFontSize = 8.sp, maxFontSize = 14.sp, stepSize = 1.sp
-                        ),
+                        autoSize = SUBTITLE_AUTO_SIZE,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -253,9 +254,7 @@ fun CourseInfoCard(
 
                 Button(
                     onClick = onCourseClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.customPrimary.copy(alpha = 0.15f)
-                    ),
+                    colors = applyButtonColors,
                     shape = BUTTON_SHAPE,
                     contentPadding = BUTTON_CONTENT_PADDING
                 ) {

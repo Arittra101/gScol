@@ -42,11 +42,9 @@ fun CourseItemView(
     isSearchResultScreen: Boolean = false,
     isIneligibleScreen: Boolean = false
 ) {
-    // Simple conditional - don't need remember for lightweight operation
-    val contentPadding = if (isUsedForTopLevelScreen) {
-        PaddingValues(bottom = values.calculateBottomPadding() + 80.dp)
-    } else {
-        DEFAULT_PADDING
+    val contentPadding = remember(values, isUsedForTopLevelScreen) {
+        if (isUsedForTopLevelScreen) PaddingValues(bottom = values.calculateBottomPadding() + 80.dp)
+        else DEFAULT_PADDING
     }
 
     when (val refreshState = courses.loadState.refresh) {

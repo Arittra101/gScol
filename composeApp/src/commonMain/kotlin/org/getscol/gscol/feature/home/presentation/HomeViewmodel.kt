@@ -63,7 +63,7 @@ class HomeViewmodel(
                     course.copy(isWishListed = newValue)
                 } ?: course
             }
-        }
+        }.cachedIn(viewModelScope)
 
     fun onAction(action: HomeAction) {
         when (action) {
